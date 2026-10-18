@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro'; import Icon from '../components/Icon.tsx';
 import ClaimCard from '../components/ClaimCard.astro'; import BgVideo from '../components/BgVideo.astro';
 import { COUNTRIES, INDUSTRIES, series, DATA, fmt, claims } from '../lib/data';
-import media from '../data/media.json';
+import media from '../data/media.json'; import Earth from '../components/Earth.tsx';
 const rows = Object.entries(COUNTRIES).map(([id, c]) => { const g = series(id, 'NY.GDP.MKTP.KD.ZG').at(-1); const i = series(id, 'FP.CPI.TOTL.ZG').at(-1); return { id, ...c, g, i }; }).sort((a, b) => (b.g?.[1] ?? -99) - (a.g?.[1] ?? -99));
 const nInd = Object.keys(DATA.indicators).length;
 const pts = Object.values(DATA.countries).reduce((s: number, c: any) => s + Object.values(c).reduce((t: number, x: any) => t + x.length, 0), 0);
@@ -11,13 +11,14 @@ const ev = (media as any).earth;
 ---
 <Base overlay desc={`Economic dashboards for ${Object.keys(COUNTRIES).length} countries by industry: GDP, inflation, agriculture, healthcare, finance, energy and manufacturing KPIs, all sourced from the World Bank.`}>
 <section class="relative h-[100svh] min-h-[640px] overflow-hidden -mt-16" data-parallax>
- <BgVideo id="earth" cls="hero-media"/>
- <div class="grade-tone" aria-hidden="true"></div><div class="grade-vignette" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div>
- <div class="relative h-full mx-auto max-w-7xl px-4 md:px-6 flex flex-col justify-center pt-16">
+ <div class="absolute inset-0 bg-[#03060c] bg-[radial-gradient(90%_45%_at_50%_80%,rgba(70,120,255,.18),transparent_70%)]" aria-hidden="true"><img src="/earth/poster.webp" srcset="/earth/poster-m.webp 800w, /earth/poster.webp 1600w" sizes="100vw" alt="" width="1600" height="900" fetchpriority="high" class="absolute inset-0 w-full h-full object-cover"/></div>
+ <Earth client:only="react"/>
+ <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/70 to-transparent pointer-events-none" aria-hidden="true"></div><div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-surface to-transparent pointer-events-none" aria-hidden="true"></div>
+ <div class="relative h-full mx-auto max-w-7xl px-4 md:px-6 flex flex-col justify-start pt-32 md:pt-36 pointer-events-none [&_a]:pointer-events-auto">
   <div data-depth>
    <p class="kicker">Live from {Object.keys(COUNTRIES).length} economies / {nInd} indicators / {pts.toLocaleString()} data points</p>
    <h1 class="display mt-8 text-[clamp(3.6rem,13vw,12.5rem)]">
-    <span class="line-mask"><span>The</span></span><span class="line-mask"><span style="transition-delay:.08s">Economic</span></span><span class="line-mask"><span style="transition-delay:.16s"><i class="not-italic text-white/60">Pulse</i></span></span>
+    <span class="line-mask"><span>The</span></span><span class="line-mask"><span style="transition-delay:.08s">Economic</span></span><span class="line-mask"><span style="transition-delay:.16s"><i class="not-italic text-accent">Pulse</i></span></span>
    </h1>
    <p class="mt-8 max-w-xl text-lg md:text-xl font-extralight text-text">Country-first dashboards by industry. Every number shows its source and date, and every claim gets its counter-metric.</p>
    <div class="mt-10 flex flex-wrap gap-3">
@@ -26,7 +27,7 @@ const ev = (media as any).earth;
    </div>
   </div>
  </div>
- <p class="absolute bottom-3 right-4 text-[10px] text-text bg-black/60 backdrop-blur px-2 py-1 rounded">Video: {ev.label}, {ev.author} ({ev.license}) · <a href="/credits" class="underline">credits</a></p>
+ <p class="absolute bottom-3 right-4 text-[10px] text-text bg-black/60 backdrop-blur px-2 py-1 rounded">Live WebGL Earth · textures: NASA Blue Marble &amp; Black Marble (public domain) · drag to rotate · <a href="/credits" class="underline">credits</a></p>
 </section>
 
 <section class="mx-auto max-w-7xl px-4 md:px-6 pt-32 md:pt-44 grid md:grid-cols-[1fr_2fr] gap-10 reveal">
@@ -37,7 +38,7 @@ const ev = (media as any).earth;
 <section class="mx-auto max-w-7xl px-4 md:px-6 pt-28 md:pt-40">
  <div class="label-pair reveal"><b>Leaderboard</b><span>Real GDP growth, latest year</span></div>
  <ol class="mt-10 border-t border-white/15">
-  {rows.map((r, i) => { const g = r.g?.[1] ?? 0; return <li class="reveal border-b border-white/15"><a href={`/${r.id}`} class="group grid grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_1fr_10rem_8rem] items-baseline gap-4 py-5 md:py-7 hover:pl-3 transition-all cursor-pointer">
+  {rows.map((r, i) => { const g = r.g?.[1] ?? 0; return <li class="reveal border-b border-white/15"><a href={`/${r.id}#dash`} class="group grid grid-cols-[2.5rem_1fr_auto] md:grid-cols-[4rem_1fr_10rem_8rem] items-baseline gap-4 py-5 md:py-7 hover:pl-3 transition-all cursor-pointer">
    <span class="font-mono text-sm text-muted tabular">{String(i + 1).padStart(2, '0')}</span>
    <span class="text-2xl md:text-5xl font-extralight tracking-tight text-strong group-hover:italic">{r.name}</span>
    <span class:list={['font-mono text-lg md:text-2xl tabular inline-flex items-center gap-1 justify-end', g >= 0 ? 'text-up' : 'text-down']}><Icon name={g >= 0 ? 'ArrowUpRight' : 'ArrowDownRight'} size={18}/><span class="sr-only">{g >= 0 ? 'growth' : 'contraction'}</span>{fmt(r.g?.[1] ?? null, '%')}</span>

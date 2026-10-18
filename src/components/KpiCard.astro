@@ -8,7 +8,7 @@ const tone = dir === 0 || good == null ? 'text-muted' : good ? 'text-up' : 'text
 const pts = k.series.slice(-15); const ys = pts.map((p: any) => p[1]); const mn = Math.min(...ys), mx = Math.max(...ys);
 const path = pts.map((p: any, i: number) => `${i ? 'L' : 'M'}${(i / Math.max(1, pts.length - 1)) * 100},${28 - ((p[1] - mn) / ((mx - mn) || 1)) * 26}`).join(' ');
 ---
-<article class="spot glass rounded-2xl p-5 min-w-0 flex flex-col gap-3 min-h-[168px]">
+<article class="spot edge tilt rounded-2xl p-5 min-w-0 flex flex-col gap-3 min-h-[168px]">
  <div class="flex items-start justify-between gap-3"><h3 class="text-sm text-muted font-normal leading-snug">{k.label}</h3><span class="font-mono text-[11px] text-muted border border-line rounded px-1.5 py-0.5 whitespace-nowrap">{k.unit}</span></div>
  {k.value == null ? <p class="text-muted text-sm">No World Bank data for this country.</p> : <>
  <div class="flex flex-wrap items-end gap-x-3 gap-y-1"><span class="font-mono text-3xl font-semibold tracking-tight tabular-nums break-all">{fmt(k.value, k.unit)}</span>

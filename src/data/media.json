@@ -40,7 +40,7 @@
   }
  },
  "earth": {
-  "label": "Earth from the ISS (Alexander Gerst timelapses)",
+  "label": "Earth from the ISS (Alexander Gerst timelapses) (no longer on the home page; kept for reference)",
   "type": "video",
   "title": "Alexander Gerst’s Earth timelapses (2017 reissue) ESA380570.webm",
   "author": "European Space Agency",
@@ -137,6 +137,192 @@
    "webm": 0.79,
    "mp4": 1.12,
    "webp": 0.03
+  }
+ },
+ "india": {
+  "label": "Monsoon clouds over Kinnaur, Himachal Pradesh (timelapse)",
+  "type": "video",
+  "title": "Timelapse 2025 Kinnaur Monsoon.webm",
+  "author": "Dfromhimalayas",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Timelapse_2025_Kinnaur_Monsoon.webm",
+  "clip": "8s–20s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/india.webm",
+   "mp4": "/media/india.mp4",
+   "webp": "/media/india.webp"
+  },
+  "sizeMB": {
+   "webm": 0.85,
+   "mp4": 1.17,
+   "webp": 0.02
+  }
+ },
+ "india-overview": {
+  "label": "ISKCON Mayapur, West Bengal, by drone",
+  "type": "video",
+  "title": "Chandrodaya Mandir and Srila Prabhupada Pushpa Samadhi Mandir at ISKCON, Mayapur in Nadia District, West Bengal, India 01.webm",
+  "author": "Biswas Dibyendu",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Chandrodaya_Mandir_and_Srila_Prabhupada_Pushpa_Samadhi_Mandir_at_ISKCON,_Mayapur_in_Nadia_District,_West_Bengal,_India_01.webm",
+  "clip": "55s–67s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/india-overview.webm",
+   "mp4": "/media/india-overview.mp4",
+   "webp": "/media/india-overview.webp"
+  },
+  "sizeMB": {
+   "webm": 0.21,
+   "mp4": 0.41,
+   "webp": 0.01
+  }
+ },
+ "india-agriculture": {
+  "label": "Tea gardens of Munnar, Kerala",
+  "type": "video",
+  "title": "Munnar road and tea gardens.webm",
+  "author": "Vinayaraj",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Munnar_road_and_tea_gardens.webm",
+  "clip": "150s–162s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/india-agriculture.webm",
+   "mp4": "/media/india-agriculture.mp4",
+   "webp": "/media/india-agriculture.webp"
+  },
+  "sizeMB": {
+   "webm": 2.43,
+   "mp4": 2.56,
+   "webp": 0.08
+  }
+ },
+ "india-finance": {
+  "label": "Aerial view of Bengaluru",
+  "type": "video",
+  "title": "Aerial view, BSK 6th stage, Bangalore (2024) 01.webm",
+  "author": "Gpkp",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Aerial_view,_BSK_6th_stage,_Bangalore_(2024)_01.webm",
+  "clip": "10s–22s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/india-finance.webm",
+   "mp4": "/media/india-finance.mp4",
+   "webp": "/media/india-finance.webp"
+  },
+  "sizeMB": {
+   "webm": 0.38,
+   "mp4": 0.5,
+   "webp": 0.05
+  }
+ },
+ "india-energy": {
+  "label": "Wind turbine by drone",
+  "type": "video",
+  "title": "Drone video of wind turbine near Kunda in Estonia.webm",
+  "author": "Sillerkiil",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Drone_video_of_wind_turbine_near_Kunda_in_Estonia.webm",
+  "clip": "15s–27s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/india-energy.webm",
+   "mp4": "/media/india-energy.mp4",
+   "webp": "/media/india-energy.webp"
+  },
+  "sizeMB": {
+   "webm": 0.44,
+   "mp4": 0.68,
+   "webp": 0.02
+  }
+ },
+ "india-healthcare": {
+  "label": "Clinical chemistry analyzer in a lab",
+  "type": "video",
+  "title": "AU700 chemistry analyzer in action.webm",
+  "author": "Shanel",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:AU700_chemistry_analyzer_in_action.webm",
+  "clip": "1s–13s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/india-healthcare.webm",
+   "mp4": "/media/india-healthcare.mp4",
+   "webp": "/media/india-healthcare.webp"
+  },
+  "sizeMB": {
+   "webm": 0.29,
+   "mp4": 0.44,
+   "webp": 0.03
+  }
+ },
+ "india-wellness": {
+  "label": "Functional fitness centre",
+  "type": "video",
+  "title": "Espaço Funcional Naval Viva Mais.webm",
+  "author": "Clube Naval do Funchal",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Espa%C3%A7o_Funcional_Naval_Viva_Mais.webm",
+  "clip": "26s–38s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/india-wellness.webm",
+   "mp4": "/media/india-wellness.mp4",
+   "webp": "/media/india-wellness.webp"
+  },
+  "sizeMB": {
+   "webm": 1.52,
+   "mp4": 1.7,
+   "webp": 0.05
+  }
+ },
+ "india-manufacturing": {
+  "label": "Steel works",
+  "type": "video",
+  "title": "Vicart - Aciérie.webm",
+  "author": "Damien-VICART",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Vicart_-_Aci%C3%A9rie.webm",
+  "clip": "5s–17s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/india-manufacturing.webm",
+   "mp4": "/media/india-manufacturing.mp4",
+   "webp": "/media/india-manufacturing.webp"
+  },
+  "sizeMB": {
+   "webm": 1.62,
+   "mp4": 1.89,
+   "webp": 0.02
+  }
+ },
+ "earth-day": {
+  "label": "Live Earth day texture",
+  "type": "texture",
+  "title": "Blue Marble Next Generation, December 2004 (world.200412)",
+  "author": "NASA Earth Observatory (Reto Stöckli)",
+  "license": "Public domain (NASA)",
+  "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+  "source": "https://visibleearth.nasa.gov/images/74218/december-blue-marble-next-generation",
+  "clip": "resized to 2048×1024 WebP",
+  "files": {
+   "webp": "/earth/day.webp"
+  }
+ },
+ "earth-night": {
+  "label": "Live Earth night-lights texture",
+  "type": "texture",
+  "title": "Black Marble 2016 (0.1°)",
+  "author": "NASA Earth Observatory / Suomi NPP VIIRS",
+  "license": "Public domain (NASA)",
+  "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+  "source": "https://earthobservatory.nasa.gov/features/NightLights",
+  "clip": "resized to 2048×1024 WebP, tinted amber in shader",
+  "files": {
+   "webp": "/earth/night.webp"
   }
  }
 }

@@ -81,3 +81,16 @@ Static JSON generated at build: `/api/v1/index.json`, `/api/v1/countries.json`, 
 5. GitHub repo secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` so the nightly workflow can deploy (it will fail until set).
 6. Custom domain (optional, ~$10/yr); then update `SITE` in `astro.config.mjs` and `src/config/site.ts`.
 7. Approve upgrading to Node 22 / Astro 7 to clear the audit findings.
+
+## v4 update (2026-10-18)
+| Item | Result |
+|---|---|
+| Node 22 + Astro 7.4 (nightly workflow on Node 22) | PASS. `npm audit --omit=dev`: 0 vulnerabilities |
+| Warm accents: amber #FFB224 (10.2:1 on cards), signal red-orange #FF6A45 (6.5:1) | PASS |
+| Media shown in natural colour with a warm grade (no grayscale) | PASS |
+| India hero + every India tab use new aerial, timelapse and interior clips (Wikimedia Commons, recorded in media.json + /credits) | PASS |
+| Sticky filter bar (year range, industry, metric A vs B on dual axes, country vs country): locked for free users; `?pro=1` preview works on localhost only | PASS |
+| Live WebGL Earth (three.js, NASA Blue Marble + Black Marble), poster fallback for no WebGL, reduced motion and Save-Data | PASS (renders in headless SwiftShader) |
+| axe WCAG 2.2 AA: 13 pages × 2 widths | PASS, 0 violations |
+| Lighthouse mobile: home 87, /india 97, /india/agriculture 92, /india/healthcare 95, /pricing 96. A11y, best practices and SEO: 100 | PASS |
+| Overflow at 375/768/1024/1440 | PASS, none |

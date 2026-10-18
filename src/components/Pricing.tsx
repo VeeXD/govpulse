@@ -15,11 +15,11 @@ export default function Pricing({ links = {} as Record<string, { monthly: string
     </div></div>
     <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
       {plans.map((p, i) => <motion.article key={p.n} initial={r ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08, duration: 0.5 }} whileHover={r ? undefined : { y: -4 }}
-        className={`spot glass rounded-2xl p-6 flex flex-col ${p.hot ? 'ring-2 ring-white shadow-[0_0_70px_-20px_rgba(255,255,255,.35)]' : ''}`}>
+        className={`spot edge rounded-2xl p-6 flex flex-col ${p.hot ? 'glow-amber' : ''}`}>
         <div className="flex items-center justify-between"><h2 className="text-lg font-semibold">{p.n}</h2>{p.hot && <span className="text-[11px] font-semibold bg-cta text-black rounded-full px-2 py-0.5 inline-flex items-center gap-1"><Sparkles size={12} aria-hidden />Most popular</span>}</div>
         <p className="text-sm text-muted mt-1">{p.d}</p>
         <div className="mt-5 h-14 flex items-end gap-1">{p.m == null ? <span className="text-4xl font-semibold">Custom</span> : <><span className="font-mono text-5xl font-semibold">${yr ? p.y : p.m}</span><span className="text-muted pb-1.5">/{yr ? 'yr' : 'mo'}</span></>}</div>
-        <ul className="mt-6 grid gap-2.5 text-sm">{p.f.map(f => <li key={f} className="flex gap-2"><Check size={16} className="text-up shrink-0 mt-0.5" aria-hidden />{f}</li>)}</ul>
+        <ul className="mt-6 grid gap-2.5 text-sm">{p.f.map(f => <li key={f} className="flex gap-2"><Check size={16} className="text-accent shrink-0 mt-0.5" aria-hidden />{f}</li>)}</ul>
         {(() => { const base = `mt-8 text-center rounded-full py-2.5 font-semibold transition ${p.hot ? 'bg-cta text-black hover:bg-white' : 'border border-white/30 hover:bg-white/10'}`;
           if (p.n === 'Free') return <a href="/india" className={base + ' cursor-pointer'}>{p.cta}</a>;
           if (p.n === 'Enterprise') return <a href="/contact" className={base + ' cursor-pointer'}>{p.cta}</a>;

@@ -17,5 +17,5 @@ const words = name.split(' ');
   <a href="#dash" class="mt-10 inline-flex items-center gap-3 kicker hover:text-strong w-fit cursor-pointer"><Icon name="ArrowDown" size={16}/>Scroll</a>
  </div>
  <p class="absolute bottom-3 right-4 text-[10px] md:text-[11px] text-text bg-black/60 backdrop-blur px-2 py-1 rounded max-w-[92vw]">
-  {v ? <>{v.label} · Video: <a class="underline underline-offset-2" href={v.source}>{v.author}</a> · {v.license}</> : h && <>{h.landmark} · Photo: <a class="underline underline-offset-2" href={h.url}>{h.author || 'Wikimedia Commons'}</a> · {h.license}</>} · grayscale · <a class="underline underline-offset-2" href="/credits">credits</a></p>
+  {v ? <>{v.label} · Video: <a class="underline underline-offset-2" href={v.source}>{v.author}</a> · {v.license}</> : h && <>{h.landmark} · Photo: <a class="underline underline-offset-2" href={h.url}>{h.author || 'Wikimedia Commons'}</a> · {h.license}</>} · colour-graded · <a class="underline underline-offset-2" href="/credits">credits</a></p>
 </section>

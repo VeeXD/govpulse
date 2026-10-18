@@ -3,7 +3,7 @@ import Icon from './Icon.tsx'; import { fmt } from '../lib/data';
 const { c } = Astro.props;
 const arrow = (d: number) => (d > 0 ? 'ArrowUpRight' : d < 0 ? 'ArrowDownRight' : 'ArrowRight');
 ---
-<article class="spot glass rounded-2xl p-5 sm:p-6 flex flex-col gap-4 min-w-0" data-claim>
+<article class="spot edge edge-signal tilt rounded-2xl p-5 sm:p-6 flex flex-col gap-4 min-w-0" data-claim>
  <div class="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-accent"><Icon name="ScanSearch" size={15}/>Claim check</div>
  <p class="text-lg font-semibold leading-snug break-words">{c.claim}</p>
  <div class="grid grid-cols-1 min-[420px]:grid-cols-2 gap-3 min-w-0">

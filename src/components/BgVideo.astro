@@ -2,13 +2,13 @@
 import media from '../data/media.json';
 import heroes from '../data/heroes.json';
 // Full-bleed background: lazy video (webm+mp4) with poster; falls back to photo + Ken Burns when no video.
-const { id, photo, cls = 'bg-media', label = '' } = Astro.props;
-const m = (media as any)[id];
+const { id, photo, cls = 'bg-media', label = '', alt } = Astro.props;
+const m = (media as any)[id]; const m2 = alt ? (media as any)[alt] : null;
 const h = photo ? (heroes as any)[photo] : null;
 ---
-<div class={cls} aria-hidden="true">
- {m ? <video data-bg muted loop playsinline preload="none" poster={m.files.webp} width="1280" height="720">
+<div class:list={[cls, m2 && 'xfade']} aria-hidden="true">
+ {m ? <><video data-bg muted loop playsinline preload="none" poster={m.files.webp} width="1280" height="720">
    <source data-src={m.files.webm} type="video/webm"/><source data-src={m.files.mp4} type="video/mp4"/>
   </video>
- : h ? <picture><source media="(max-width: 767px)" srcset={`/heroes/${photo}-m.webp`}/><img class="kb" src={`/heroes/${photo}.webp`} alt="" decoding="async" fetchpriority="high" width="2400" height="1350"/></picture> : null}
+  {m2 && <video data-bg muted loop playsinline preload="none" poster={m2.files.webp} width="1280" height="720"><source data-src={m2.files.webm} type="video/webm"/><source data-src={m2.files.mp4} type="video/mp4"/></video>}</> : h ? <picture><source media="(max-width: 767px)" srcset={`/heroes/${photo}-m.webp`}/><img class="kb" src={`/heroes/${photo}.webp`} alt="" decoding="async" fetchpriority="high" width="2400" height="1350"/></picture> : null}
 </div>

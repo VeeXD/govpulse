@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Maximize2, X } from 'lucide-react';
 type S = { name: string; data: [number, number][]; unit?: string };
-type P = { series: S[]; colors: string[]; height?: number; area?: boolean; source?: string; title?: string; theme?: any };
+type P = { series: S[]; colors: string[]; height?: number; area?: boolean; source?: string; title?: string; theme?: any; dual?: boolean };
 export const CT = { text: '#F2F2F2', muted: '#B8B8B8', line: '#5C5C5C', grid: '#2E2E2E', bg: '#141414' };
-let ec: any; const loadEc = async () => {
+let ec: any; export const loadEc = async () => {
   if (ec) return ec;
   const [core, charts, comps, r] = await Promise.all([import('echarts/core'), import('echarts/charts'), import('echarts/components'), import('echarts/renderers')]);
   core.use([charts.LineChart, comps.GridComponent, comps.TooltipComponent, comps.LegendComponent, comps.DataZoomComponent, comps.TitleComponent, r.CanvasRenderer]);
@@ -14,19 +14,19 @@ function option(p: P, full: boolean, reduce: boolean) {
   return {
     animation: !reduce, color: p.colors, backgroundColor: 'transparent',
     textStyle: { fontFamily: 'Fira Sans', color: CT.muted },
-    grid: { left: 56, right: 20, top: p.series.length > 1 ? 40 : 24, bottom: full ? 80 : 44, containLabel: false },
+    grid: { left: 56, right: p.dual ? 64 : 20, top: p.series.length > 1 ? 40 : 24, bottom: full ? 80 : 44, containLabel: false },
     legend: p.series.length > 1 ? { top: 0, textStyle: { color: CT.text }, icon: 'roundRect' } : undefined,
     tooltip: { trigger: 'axis', backgroundColor: CT.bg, borderColor: CT.line, textStyle: { color: CT.text, fontFamily: 'Fira Code' },
       formatter: (ps: any[]) => `<b>${ps[0]?.value?.[0]}</b><br/>` + ps.map(x => `${x.marker} ${x.seriesName}: <b>${Number(x.value[1]).toLocaleString('en-US', { maximumFractionDigits: 2 })}</b>`).join('<br/>') },
     xAxis: { type: 'value', name: 'Year', nameLocation: 'middle', nameGap: 28, nameTextStyle: { color: CT.muted }, min: 'dataMin', max: 'dataMax', minInterval: 1,
       axisLabel: { formatter: (v: number) => String(v), color: CT.muted }, axisLine: { show: true, lineStyle: { color: CT.line } }, axisTick: { show: true, lineStyle: { color: CT.line } }, splitLine: { show: true, lineStyle: { color: CT.grid } } },
-    yAxis: { type: 'value', scale: true, name: unit, nameTextStyle: { color: CT.muted, align: 'left' }, axisLabel: { color: CT.muted }, axisLine: { show: true, lineStyle: { color: CT.line } }, splitLine: { lineStyle: { color: CT.grid } } },
-    dataZoom: full ? [{ type: 'inside' }, { type: 'slider', bottom: 18, height: 22, borderColor: CT.line, textStyle: { color: CT.muted }, fillerColor: 'rgba(255,255,255,.12)', handleStyle: { color: CT.text } }] : undefined,
-    series: p.series.map((s, i) => ({ name: s.name, type: 'line', smooth: 0.25, showSymbol: full, symbolSize: 5, data: s.data, lineStyle: { width: 2.25, type: i ? 'dashed' : 'solid' },
-      areaStyle: p.area !== false && i === 0 ? { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(255,255,255,.18)' }, { offset: 1, color: 'rgba(255,255,255,0)' }] } } : undefined })),
+    yAxis: p.dual ? p.series.map((s, i) => ({ type: 'value', scale: true, name: s.unit ?? '', position: i ? 'right' : 'left', nameTextStyle: { color: p.colors[i] }, axisLabel: { color: p.colors[i] }, axisLine: { show: true, lineStyle: { color: p.colors[i] } }, splitLine: { show: !i, lineStyle: { color: CT.grid } } })) : { type: 'value', scale: true, name: unit, nameTextStyle: { color: CT.muted, align: 'left' }, axisLabel: { color: CT.muted }, axisLine: { show: true, lineStyle: { color: CT.line } }, splitLine: { lineStyle: { color: CT.grid } } },
+    dataZoom: full ? [{ type: 'inside' }, { type: 'slider', bottom: 18, height: 22, borderColor: CT.line, textStyle: { color: CT.muted }, fillerColor: 'rgba(255,178,36,.18)', handleStyle: { color: CT.text } }] : undefined,
+    series: p.series.map((s, i) => ({ name: s.name, type: 'line', yAxisIndex: p.dual ? i : 0, smooth: 0.25, showSymbol: full, symbolSize: 5, data: s.data, lineStyle: { width: 2.25, type: i ? 'dashed' : 'solid' },
+      areaStyle: p.area !== false && i === 0 ? { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(255,178,36,.28)' }, { offset: 1, color: 'rgba(255,178,36,0)' }] } } : undefined })),
   };
 }
-function Canvas({ p, full, h }: { p: P; full: boolean; h: number | string }) {
+export function Canvas({ p, full, h }: { p: P; full: boolean; h: number | string }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => { let c: any, ro: ResizeObserver, dead = false;
     loadEc().then(e => { if (dead || !ref.current) return; c = e.init(ref.current); c.setOption(option(p, full, matchMedia('(prefers-reduced-motion: reduce)').matches)); ro = new ResizeObserver(() => c.resize()); ro.observe(ref.current); });
