@@ -1,8 +1,8 @@
 ---
 import Prose from '../components/Prose.astro';
 ---
-<Prose bg="overview" title="Cookie policy" desc="GovPulse uses no cookies for browsing and no consent banner is needed. Learn why and what changes if accounts launch." template>
-<h2>We do not use cookies</h2><p>Browsing GovPulse sets no cookies, uses no localStorage identifiers and loads no third-party trackers. That is why there is no cookie banner: under the ePrivacy Directive and GDPR, consent is required for non-essential storage on your device, and we do not do any.</p>
+<Prose bg="overview" title="Cookie policy" desc="GovPulse sets no cookies by default. If Google Analytics is enabled, it only loads after you accept in the consent banner." template>
+<h2>No cookies by default</h2><p>Browsing GovPulse sets no cookies, uses no localStorage identifiers and loads no third-party trackers. That is why there is no cookie banner: under the ePrivacy Directive and GDPR, consent is required for non-essential storage on your device, and we do not do any.</p>
 <h2>Analytics</h2><p>If enabled, we use <a href="https://www.cloudflare.com/web-analytics/">Cloudflare Web Analytics</a>, which works without cookies and without fingerprinting, measuring page views in aggregate only.</p>
-<h2>If this changes</h2><p>When sign-in for paid plans launches, a strictly necessary session cookie will be used to keep you signed in. Strictly necessary cookies do not require consent, but this page will list them. If we ever add non-essential cookies, we will ask for consent first with an equal "Reject" option.</p>
+<h2>Google Analytics (only if enabled)</h2><p>The site owner may switch on Google Analytics 4. When they do, a consent banner appears on your first visit, and analytics cookies (<code>_ga</code>, <code>_ga_*</code>, kept up to 2 years) are set only if you click Accept. Before you choose, Google Consent Mode stays at "denied", so no analytics cookies are written. Your choice is stored in your browser's localStorage under <code>gp-consent</code>. To change it, clear site data for govpulse.pages.dev and you'll be asked again. Declining is as easy as accepting.</p><h2>No accounts</h2><p>GovPulse has no sign-in and no paid plans, so it uses no session cookies.</p>
 </Prose>

@@ -1,0 +1,6 @@
+---
+import { SPONSORS } from '../config/sponsors';
+const { tier, industry, country, label = 'Supported by' } = Astro.props;
+const list = (SPONSORS as any)[tier].filter((s: any) => (!industry || s.industry === industry) && (!country || !s.country || s.country === country));
+---
+{list.length > 0 && <div class="flex flex-wrap items-center gap-4 text-xs text-muted"><span class="kicker">{label}</span>{list.map((s: any) => <a href={s.url} rel="sponsored noopener noreferrer"><img src={s.logo} alt={s.alt ?? s.name} class="h-6 w-auto opacity-80 hover:opacity-100"/></a>)}<a href="/sponsor#disclosure" class="underline underline-offset-2">Sponsorship disclosure</a></div>}

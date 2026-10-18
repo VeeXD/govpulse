@@ -1,18 +1,18 @@
 ---
 import '../styles/global.css';
 import Icon from '../components/Icon.tsx';
-import { SITE, BRAND, CF_BEACON } from '../config/site';
+import { SITE, BRAND, CF_BEACON, GSC_VERIFICATION, GA4_ID } from '../config/site'; import SponsorSlot from '../components/SponsorSlot.astro';
 interface Props { title?: string; desc?: string; overlay?: boolean; og?: string; jsonld?: any[]; noindex?: boolean }
 const { overlay = false, title = BRAND, desc = 'Country-first economic analytics by industry for 10 countries. Every KPI shows its World Bank source and date.', og = '/og/default.png', jsonld = [], noindex = false } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const canonical = new URL(path === '/' ? '/' : path + '/', SITE).href; // Cloudflare Pages serves directory URLs with a trailing slash
-const fullTitle = title === BRAND ? `${BRAND}: the economic pulse of nations` : `${title} | ${BRAND}`;
+const fullTitle = title === BRAND ? `${BRAND}: free economic indicators dashboard by country & industry` : `${title} | ${BRAND}`;
 const ogUrl = new URL(og, SITE).href;
-const nav = [['/', 'Home'], ['/india', 'Countries'], ['/pricing', 'Pricing'], ['/api', 'API'], ['/methodology', 'Methodology']];
+const nav = [['/', 'Home'], ['/india', 'Countries'], ['/sponsor', 'Sponsor'], ['/api', 'API'], ['/methodology', 'Methodology']];
 const isCountry = /^\/(india|usa|china|uk|germany|japan|brazil|indonesia|nigeria|uae)/.test(path);
 const ld = [
-  { '@context': 'https://schema.org', '@type': 'Organization', name: BRAND, url: SITE, logo: `${SITE}/icons/icon-512.png` },
-  { '@context': 'https://schema.org', '@type': 'WebSite', name: BRAND, url: SITE, inLanguage: 'en' },
+  { '@context': 'https://schema.org', '@type': 'Organization', name: BRAND, url: SITE, logo: `${SITE}/icons/icon-512.png`, email: 'sadam.veekshtih007@gmail.com', description: 'Free, open economic analytics by country and industry, sourced from the World Bank.' },
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: BRAND, url: SITE, inLanguage: 'en', isAccessibleForFree: true },
   ...jsonld,
 ];
 const legal = [['/privacy', 'Privacy'], ['/cookies', 'Cookies'], ['/terms', 'Terms'], ['/disclaimer', 'Disclaimer'], ['/credits', 'Data & media licences'], ['/accessibility', 'Accessibility'], ['/contact', 'Contact']];
@@ -29,6 +29,9 @@ const pageCredits: Credit[] = (Astro.props.credits ?? []).filter(Boolean);
 <link rel="preload" href="/fonts/fira-sans-400.woff2" as="font" type="font/woff2" crossorigin/>
 <meta property="og:type" content="website"/><meta property="og:site_name" content={BRAND}/><meta property="og:title" content={fullTitle}/><meta property="og:description" content={desc}/><meta property="og:url" content={canonical}/><meta property="og:image" content={ogUrl}/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/>
 <meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={fullTitle}/><meta name="twitter:description" content={desc}/><meta name="twitter:image" content={ogUrl}/>
+{GSC_VERIFICATION && <meta name="google-site-verification" content={GSC_VERIFICATION}/>}
+<link rel="alternate" type="text/plain" href="/llms.txt" title="LLM summary"/>
+{GA4_ID && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`} data-ga4={GA4_ID}></script>}
 <slot name="head"/>
 <script type="application/ld+json" set:html={JSON.stringify(ld)}/>
 </head>
@@ -41,7 +44,7 @@ const pageCredits: Credit[] = (Astro.props.credits ?? []).filter(Boolean);
    {nav.map(([h, l]) => { const active = h === '/' ? path === '/' : l === 'Countries' ? isCountry : path.startsWith(h); return <a href={h} aria-current={active ? 'page' : undefined} class:list={['px-3 py-2 transition-colors cursor-pointer tracking-wide', active ? 'text-strong underline underline-offset-8 decoration-1' : 'text-muted hover:text-strong']}>{l}</a>; })}
   </nav>
   <div class="ml-auto flex items-center gap-2">
-   <a href="/pricing" class="inline-flex items-center gap-1.5 rounded-full bg-cta text-black font-semibold text-sm px-4 py-2 hover:bg-white transition cursor-pointer"><Icon name="Sparkles" size={15}/>Go Pro</a>
+   <a href="/sponsor" class="inline-flex items-center gap-1.5 rounded-full bg-cta text-black font-semibold text-sm px-4 py-2 hover:bg-white transition cursor-pointer"><Icon name="Heart" size={15}/><span class="hidden sm:inline">Support GovPulse</span><span class="sm:hidden">Support</span></a>
   </div>
  </div>
  <nav aria-label="Main mobile" class="md:hidden flex gap-1 px-3 pb-2 text-sm overflow-x-auto">{nav.map(([h, l]) => <a href={h} class="px-3 py-1.5 text-muted hover:text-strong whitespace-nowrap">{l}</a>)}</nav>
@@ -50,9 +53,10 @@ const pageCredits: Credit[] = (Astro.props.credits ?? []).filter(Boolean);
 <footer class="mt-32 border-t border-white/10">
  <div class="mx-auto max-w-7xl px-4 md:px-6 py-14 grid gap-10 md:grid-cols-4 text-sm text-muted">
   <div class="md:col-span-2"><p class="display text-5xl md:text-7xl">GovPulse</p><p class="mt-4 max-w-sm">Every number carries its source and date. Data: World Bank WDI (CC BY 4.0). Not financial advice.</p></div>
-  <nav aria-label="Product" class="flex flex-col gap-2"><p class="kicker mb-1">Product</p><a href="/india" class="hover:text-strong">Countries</a><a href="/pricing" class="hover:text-strong">Pricing</a><a href="/api" class="hover:text-strong">Public API</a><a href="/methodology" class="hover:text-strong">Methodology</a></nav>
+  <nav aria-label="Product" class="flex flex-col gap-2"><p class="kicker mb-1">Product</p><a href="/india" class="hover:text-strong">Countries</a><a href="/sponsor" class="hover:text-strong">Support GovPulse</a><a href="/api" class="hover:text-strong">Public API</a><a href="/methodology" class="hover:text-strong">Methodology</a></nav>
   <nav aria-label="Legal" class="flex flex-col gap-2"><p class="kicker mb-1">Legal</p>{legal.map(([h, l]) => <a href={h} class="hover:text-strong">{l}</a>)}</nav>
  </div>
+ <div class="mx-auto max-w-7xl px-4 md:px-6 pb-6"><SponsorSlot tier="bronze" label="Sponsors"/></div>
  <section aria-labelledby="ft-credits" class="mx-auto max-w-7xl px-4 md:px-6 pb-8 text-xs text-muted border-t border-white/10 pt-8">
   <h2 id="ft-credits" class="kicker mb-3">Credits &amp; sources</h2>
   <ul class="grid gap-1.5 md:grid-cols-2">
@@ -64,6 +68,7 @@ const pageCredits: Credit[] = (Astro.props.credits ?? []).filter(Boolean);
  <p class="mx-auto max-w-7xl px-4 md:px-6 pb-10 text-xs text-muted">© {new Date().getFullYear()} GovPulse. No cookies, no tracking pixels.</p>
 </footer>
 <div class="cursor" aria-hidden="true"></div>
+{GA4_ID && <div id="consent" hidden role="dialog" aria-labelledby="consent-t" class="fixed bottom-4 inset-x-4 md:left-auto md:right-6 md:max-w-sm z-[70] edge rounded-2xl p-5 text-sm"><p id="consent-t" class="font-semibold">Analytics cookies?</p><p class="mt-2 text-muted">We'd like to use Google Analytics, which sets cookies, to see which pages help people. It's off unless you accept. <a href="/cookies" class="underline">Cookie policy</a></p><div class="mt-4 flex gap-2"><button type="button" data-consent="granted" class="rounded-full bg-cta text-black font-semibold px-4 py-2">Accept</button><button type="button" data-consent="denied" class="rounded-full border border-white/30 px-4 py-2">Decline</button></div></div>}
 <script src="/js/site.js" defer is:inline></script>
 {CF_BEACON && <script defer is:inline src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: CF_BEACON })}></script>}
 </body></html>

@@ -40,3 +40,14 @@
   scrollTo(0, 0);
   setTimeout(() => { t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 650);
 })();
+/* GA4 with Consent Mode v2: only present when PUBLIC_GA4_ID was set at build. Defaults to denied; banner asks once. */
+(() => {
+  const tag = document.querySelector('script[data-ga4]'); if (!tag) return;
+  const id = tag.dataset.ga4; window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } window.gtag = gtag;
+  const saved = localStorage.getItem('gp-consent');
+  gtag('consent', 'default', { analytics_storage: saved === 'granted' ? 'granted' : 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+  gtag('js', new Date()); gtag('config', id, { anonymize_ip: true });
+  const box = document.getElementById('consent'); if (!box || saved) return; box.hidden = false;
+  box.addEventListener('click', e => { const v = e.target.closest('[data-consent]')?.dataset.consent; if (!v) return;
+    localStorage.setItem('gp-consent', v); gtag('consent', 'update', { analytics_storage: v }); box.hidden = true; });
+})();

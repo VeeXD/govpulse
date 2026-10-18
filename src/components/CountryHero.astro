@@ -1,7 +1,7 @@
 ---
 import heroes from '../data/heroes.json'; import media from '../data/media.json';
 import BgVideo from './BgVideo.astro'; import Icon from './Icon.tsx';
-const { country, name, region, iso, sub } = Astro.props;
+const { country, name, region, iso, sub, h1sub } = Astro.props;
 const h = (heroes as any)[country]; const v = (media as any)[country]; const sp = (media as any)[`${country}-photo`];
 const words = name.split(' ');
 ---
@@ -12,7 +12,7 @@ const words = name.split(' ');
  <div class="relative h-full mx-auto max-w-7xl px-4 md:px-6 flex flex-col justify-end pb-20 md:pb-28">
   <div data-depth>
    <p class="kicker flex items-center gap-3"><span class="h-px w-12 bg-white/60"></span>{region} / {iso}</p>
-   <h1 class="display mt-6 text-[clamp(3.4rem,12vw,11rem)]">{words.map(w => <span class="line-mask"><span>{w}</span></span>)}</h1>
+   <h1 class="display mt-6 text-[clamp(3.4rem,12vw,11rem)]">{words.map(w => <span class="line-mask"><span>{w}</span></span>)}{h1sub && <span class="block mt-4 font-sans text-base md:text-xl tracking-[0.2em] uppercase text-accent not-italic">{h1sub}</span>}</h1>
    <p class="mt-8 text-lg md:text-2xl font-extralight text-text max-w-2xl">{sub}</p>
   </div>
   <a href="#dash" class="mt-10 inline-flex items-center gap-3 kicker hover:text-strong w-fit cursor-pointer"><Icon name="ArrowDown" size={16}/>Scroll</a>

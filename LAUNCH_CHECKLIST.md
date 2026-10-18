@@ -58,8 +58,8 @@ PASS: 0 violations on /, /india, /india/agriculture, /pricing, /methodology, /ap
 
 **Cookie banner choice:** none needed. The site sets no cookies and no localStorage IDs. Analytics are Cloudflare Web Analytics (cookieless, no fingerprinting), switched on by setting `PUBLIC_CF_BEACON` at build time; CSP already allows it. If sign-in launches, only a strictly necessary session cookie is planned (no consent required, but list it).
 
-## Payments
-Pricing has two plans, Free and Pro ($9.99/month, monthly only). The Pro button reads `PAY_PRO` in `src/config/payments.ts` (or env var `PUBLIC_PAY_PRO`). Empty = disabled "checkout soon" button with an explanation. No fake success flow. Needs a Stripe or Lemon Squeezy merchant account and Payment Link URLs. Entitlements (unlocking Pro features) will also need auth + webhook handling, which is not built.
+## Payments (superseded in v6)
+(v6) No paid plans: GovPulse is free; funding is through sponsorship (/sponsor, Zelle).
 
 ## Public API
 Static JSON generated at build: `/api/v1/index.json`, `/api/v1/countries.json`, `/api/v1/indicators.json`, `/api/v1/{country}.json`, `/api/v1/{country}/{indicator}.json` (~250 series). CORS `*`, 1 h cache, `license` and `attribution` fields. Documented at /api. PASS.
@@ -74,7 +74,7 @@ Static JSON generated at build: `/api/v1/index.json`, `/api/v1/countries.json`, 
 | Uptime monitoring | IDEA: free UptimeRobot/Better Stack check on `/` and `/api/v1/index.json` every 5 min, alerts to email |
 
 ## Needs owner
-1. Stripe or Lemon Squeezy merchant account + 4 Payment Link URLs (then set env vars and redeploy).
+1. (v6: no longer needed, the site is free.) Payment merchant account.
 2. Legal review of Privacy, Cookies, Terms and Disclaimer; legal entity name, address, governing law, refund policy.
 3. Real contact inbox (replace `hello@govpulse.example` in `src/config/site.ts`) and security contact in `security.txt`.
 4. Cloudflare Web Analytics token → `PUBLIC_CF_BEACON`.
@@ -105,3 +105,17 @@ Static JSON generated at build: `/api/v1/index.json`, `/api/v1/countries.json`, 
 | Credits and sources moved to the footer of every page; inline credit captions removed | PASS |
 | Plans: Free (10 countries) and Pro $9.99/mo; Analyst, Enterprise and yearly billing removed | PASS |
 | Contact sadam.veekshtih007@gmail.com (contact, footer, privacy, terms, security.txt) | PASS |
+
+## v6 update (2026-10-18): free + growth mode
+| Item | Result |
+|---|---|
+| Paid plans removed; /pricing returns 301 to /sponsor (`public/_redirects`); payments and entitlement config deleted | PASS |
+| Basic filters (industry, year range, single metric chart) free for everyone; advanced comparisons marked "coming soon" | PASS |
+| /sponsor: tiers, Zelle instructions (sadam.veekshith01@gmail.com), disclosure policy, FAQ JSON-LD; sponsor slots driven by `src/config/sponsors.ts` (empty) | PASS |
+| Terms, privacy, cookies, contact and JSON-LD updated for a free service (WebSite isAccessibleForFree) | PASS |
+| SEO/GEO: data-driven titles and meta, H1 with page intent, factual summary sentences, FAQPage, BreadcrumbList and Dataset JSON-LD, 260 per-indicator pages, internal links | PASS |
+| /llms.txt and /llms-full.txt; robots.txt allows the major search and AI crawlers; sitemap lastmod | PASS |
+| IndexNow key file and ping after deploy | PASS |
+| Optional GSC (`PUBLIC_GSC_VERIFICATION`) and GA4 (`PUBLIC_GA4_ID`): gtag and consent banner load only when set (Consent Mode default denied); CSP widened only then | PASS (off by default) |
+
+**Needs owner:** set `PUBLIC_GSC_VERIFICATION` and/or `PUBLIC_GA4_ID` as GitHub/Cloudflare build env vars if wanted; verify the site in Bing Webmaster Tools (it can import from GSC); confirm Zelle details; legal review of the sponsorship wording in the terms.

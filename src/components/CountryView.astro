@@ -13,18 +13,19 @@ const sample = [
  ['Budget', `Mid-year allocation review for the ${ind.name.toLowerCase()} ministry`, '1 week ago'],
 ];
 const desc = `${C.name} ${ind.name.toLowerCase()} indicators: ${ks.slice(0, 3).map((k: any) => k.label).join(', ')} and more, from the World Bank with sources, data years and charts.`;
-const dataset = { '@context': 'https://schema.org', '@type': 'Dataset', name: `${C.name} ${ind.name} indicators`, description: desc, url: `https://govpulse.pages.dev/${country}${industry === 'overview' ? '' : '/' + industry}`, license: 'https://creativecommons.org/licenses/by/4.0/', creator: { '@type': 'Organization', name: 'The World Bank' }, isAccessibleForFree: true, spatialCoverage: C.name, temporalCoverage: '2000/..', variableMeasured: ks.map((k: any) => k.label), distribution: ks.map((k: any) => ({ '@type': 'DataDownload', encodingFormat: 'application/json', contentUrl: `https://govpulse.pages.dev/api/v1/${country}/${k.code}.json` })) };
+const dataset = { '@context': 'https://schema.org', '@type': 'Dataset', name: `${C.name} ${ind.name} indicators`, description: desc, url: `https://govpulse.pages.dev/${country}/${industry === 'overview' ? '' : industry + '/'}`, dateModified: DATA.generated, license: 'https://creativecommons.org/licenses/by/4.0/', creator: { '@type': 'Organization', name: 'The World Bank' }, isAccessibleForFree: true, spatialCoverage: C.name, temporalCoverage: '2000/..', variableMeasured: ks.map((k: any) => k.label), distribution: ks.map((k: any) => ({ '@type': 'DataDownload', encodingFormat: 'application/json', contentUrl: `https://govpulse.pages.dev/api/v1/${country}/${k.code}.json` })) };
 const M = media as any;
 const bgId = M[`${country}-${industry}`] ? `${country}-${industry}` : industry !== 'overview' ? industry : null;
 const bgAlt = industry === 'healthcare' && M[`${country}-wellness`] ? `${country}-wellness` : undefined;
 const indList = Object.entries(DATA.indicators).map(([code, m]: any) => ({ code, label: m.label, unit: m.unit, industry: m.industry }));
 const allYears = Object.values(DATA.countries[country] ?? {}).flat() as any[]; const years: [number, number] = [Math.min(...allYears.map(x => x[0])), Math.max(...allYears.map(x => x[0]))];
-import { mediaCredit } from '../lib/credits';
+import { mediaCredit } from '../lib/credits'; import { pageSeo, faqLd, crumbLd, slug, lc } from '../lib/seo'; import SponsorSlot from './SponsorSlot.astro';
+const seo = pageSeo(country, industry);
 const heroCredit = mediaCredit(`${country}-photo`, 'Hero photo') ?? mediaCredit(country, 'Hero');
 const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.industry, x.b.industry].includes(industry));
 ---
-<Base overlay title={`${C.name} ${ind.name} economy: KPIs & trends`} desc={desc} og={`/og/${country}.png`} jsonld={[dataset]} credits={[heroCredit]}>
-<CountryHero country={country} name={C.name} region={C.region} iso={C.iso} sub={industry === 'overview' ? `How ${C.name.endsWith('s') ? C.name + "'" : C.name + "'s"} economy is moving, sector by sector, with every number sourced.` : `${ind.name}: the indicators that matter, sourced and dated.`}/>
+<Base overlay title={seo.title} desc={seo.desc} og={`/og/${country}.png`} jsonld={[dataset, faqLd(seo.faq), crumbLd(seo.crumbs)]} credits={[heroCredit]}>
+<CountryHero h1sub={industry === 'overview' ? 'Economy & key indicators' : `${ind.name} statistics & indicators`} country={country} name={C.name} region={C.region} iso={C.iso} sub={industry === 'overview' ? `How ${C.name.endsWith('s') ? C.name + "'" : C.name + "'s"} economy is moving, sector by sector, with every number sourced.` : `${ind.name}: the indicators that matter, sourced and dated.`}/>
 <section id="dash" class="sticky top-16 z-30 border-y border-white/10 bg-surface/70 backdrop-blur-2xl scroll-mt-16" aria-label="Dashboard controls">
  <div class="mx-auto max-w-7xl px-4 md:px-6 py-3 flex flex-wrap items-center gap-3 justify-between">
   <p class="text-xs text-muted flex items-center gap-1.5"><Icon name="RefreshCw" size={13}/>Pipeline run {DATA.generated.replace('T', ' ')} UTC</p>
@@ -39,6 +40,7 @@ const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.in
   <IndustryDots client:visible industry={industry}/>
   <div class="absolute left-5 bottom-5 md:left-8 md:bottom-7 pointer-events-none"><p class="kicker">{C.name} / industry</p><h2 class="display mt-3 text-4xl md:text-7xl">{ind.id === 'overview' ? 'All industries' : ind.name}<span class="text-accent">.</span></h2></div>
  </div>
+ {industry !== 'overview' && <div class="mt-3"><SponsorSlot tier="gold" industry={industry} label="Presented by"/></div>}
 </div>
 <div class="relative">
  <div class="relative mx-auto max-w-7xl px-4 md:px-6 py-8 grid gap-6">
@@ -56,10 +58,19 @@ const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.in
   </aside>
  </section>
  {cl.length > 0 && <section aria-labelledby="cc"><div class="label-pair mb-6"><b id="cc">Claim checks</b><span>Each number with its counterweight</span></div><div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{cl.map((c: any) => <ClaimCard c={c}/>)}</div></section>}
- <section class="edge glow-amber rounded-2xl p-6 flex flex-wrap items-center gap-4 justify-between">
-  <div class="flex items-center gap-3"><span class="rounded-xl bg-accent/15 text-accent p-2.5"><Icon name="SlidersHorizontal" size={20}/></span><div><p class="font-semibold">Explorer, CSV export &amp; daily {ind.name.toLowerCase()} brief</p><p class="text-sm text-muted">Filter any KPI by date range, export, and get it in your inbox with Pro.</p></div></div>
-  <a href="/pricing" class="rounded-lg bg-cta text-black font-semibold text-sm px-4 py-2.5 hover:brightness-110 cursor-pointer">See plans</a>
+ <section aria-labelledby="sum" class="grid gap-6 lg:grid-cols-[2fr_1fr]">
+  <div class="edge rounded-2xl p-6"><h2 id="sum" class="text-xl font-semibold">{C.name} {ind.id === 'overview' ? 'economy' : ind.name.toLowerCase()} in numbers</h2>
+   <nav aria-label="Breadcrumb" class="mt-1 text-xs text-muted"><a href="/" class="underline-offset-2 hover:underline">Home</a> / <a href={`/${country}/`} class="underline-offset-2 hover:underline">{C.name}</a>{industry !== 'overview' && <> / <span>{ind.name}</span></>}</nav>
+   <div class="mt-4 grid gap-2 text-text leading-relaxed">{seo.sentences.map(t => <p>{t}</p>)}</div>
+   <h3 class="mt-6 text-sm font-semibold">Indicator pages</h3>
+   <ul class="mt-2 flex flex-wrap gap-2 text-sm">{ks.map((k: any) => <li><a href={`/${country}/indicator/${slug(k.code)}/`} class="inline-block rounded-full border border-white/15 px-3 py-1 hover:border-accent hover:text-accent">{C.name} {lc(k.label)}</a></li>)}</ul>
+   <h3 class="mt-6 text-sm font-semibold">Same view, other countries</h3>
+   <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">{Object.entries(COUNTRIES).filter(([id]) => id !== country).map(([id, c]) => <li><a class="underline underline-offset-2 hover:text-accent" href={`/${id}/${industry === 'overview' ? '' : industry + '/'}`}>{c.name} {industry === 'overview' ? 'economy' : ind.name.toLowerCase()}</a></li>)}</ul>
+  </div>
+  <div class="grid gap-3 content-start"><h2 class="text-xl font-semibold">FAQ</h2>{seo.faq.map(([q, a]) => <details class="edge rounded-xl p-4"><summary class="cursor-pointer font-semibold text-sm">{q}</summary><p class="mt-2 text-sm text-muted">{a}</p></details>)}
+   <a href="/sponsor" class="edge glow-amber rounded-xl p-4 text-sm hover:text-accent"><b>Free and open.</b> Support GovPulse to fund more countries and data sources →</a></div>
  </section>
+ <SponsorSlot tier="silver" country={country}/>
 </div>
 </div>
 </Base>
