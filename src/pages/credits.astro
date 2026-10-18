@@ -1,7 +1,7 @@
 ---
 import Prose from '../components/Prose.astro'; import media from '../data/media.json'; import heroes from '../data/heroes.json'; import { COUNTRIES, DATA } from '../lib/data';
 ---
-<Prose bg="india-agriculture" title="Data & media licences" kicker="Credits" desc="Licences and attributions for GovPulse data (World Bank CC BY 4.0), fonts, background videos and photos.">
+<Prose bg="agriculture" title="Data & media licences" kicker="Credits" desc="Licences and attributions for GovPulse data (World Bank CC BY 4.0), fonts, background videos and photos.">
 <h2>Data</h2><p>Indicators: <strong>The World Bank, World Development Indicators</strong>, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. {Object.keys(DATA.indicators).length} indicators, retrieved {DATA.generated} UTC from <a href="https://data.worldbank.org/">data.worldbank.org</a>. GovPulse reformats the data; the World Bank does not endorse GovPulse.</p>
 <h2>Background videos</h2><p>Clips are trimmed to 12 seconds, re-encoded without audio and colour-graded (slight warm/contrast grade; modifications). Share-alike clips stay under their licence.</p>
 <table><thead><tr><th>Used for</th><th>Clip</th><th>Author</th><th>Licence</th></tr></thead><tbody>

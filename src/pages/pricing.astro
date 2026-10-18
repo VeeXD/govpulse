@@ -1,8 +1,8 @@
 ---
-import Base from '../layouts/Base.astro'; import { mediaCredit } from '../lib/credits'; import BgVideo from '../components/BgVideo.astro'; import Pricing from '../components/Pricing.tsx'; import { PAY_PRO, PROVIDER } from '../config/payments';
+import Base from '../layouts/Base.astro'; import { mediaCredit } from '../lib/credits'; import IndustryDots from '../components/IndustryDots.tsx'; import Pricing from '../components/Pricing.tsx'; import { PAY_PRO, PROVIDER } from '../config/payments';
 ---
-<Base overlay credits={[mediaCredit('india-finance', 'Header video')]} title="Pricing: Free and Pro plans" desc="GovPulse plans: Free (10 countries) and Pro at $9.99/month. Unlock all countries, the explorer, CSV export and daily briefs.">
-<section class="relative overflow-hidden -mt-16 pt-16"><BgVideo id="india-finance" cls="bg-media opacity-60"/><div class="absolute inset-0 bg-gradient-to-b from-black/50 via-surface/80 to-surface" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div>
+<Base overlay title="Pricing: Free and Pro plans" desc="GovPulse plans: Free (10 countries) and Pro at $9.99/month. Unlock all countries, the explorer, CSV export and daily briefs.">
+<section class="relative overflow-hidden -mt-16 pt-16"><div class="absolute inset-0 opacity-90" aria-hidden="true"><IndustryDots client:visible industry="finance" density={0.8} morph={false}/></div><div class="absolute inset-0 bg-gradient-to-b from-transparent via-surface/60 to-surface pointer-events-none" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div>
 <div class="relative mx-auto max-w-7xl px-4 md:px-6 pt-24 pb-10">
  <div class="text-center max-w-2xl mx-auto"><p class="kicker">Pricing</p><h1 class="display mt-5 text-5xl md:text-8xl">Pay for insight, <span class="gold-text">not raw data</span>.</h1><p class="mt-5 text-muted text-lg">The open data stays free. Subscriptions unlock depth: every country, the explorer, exports, alerts and daily briefs.</p></div>
  <div class="mt-12"><Pricing client:load link={PAY_PRO}/></div>

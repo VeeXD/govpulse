@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro'; import Icon from '../components/Icon.tsx';
-import ClaimCard from '../components/ClaimCard.astro'; import BgVideo from '../components/BgVideo.astro';
+import ClaimCard from '../components/ClaimCard.astro'; import IndustryDots from '../components/IndustryDots.tsx';
 import { COUNTRIES, INDUSTRIES, series, DATA, fmt, claims } from '../lib/data';
 import media from '../data/media.json'; import Earth from '../components/Earth.tsx'; import { mediaCredit, EARTH_CREDITS } from '../lib/credits';
 const rows = Object.entries(COUNTRIES).map(([id, c]) => { const g = series(id, 'NY.GDP.MKTP.KD.ZG').at(-1); const i = series(id, 'FP.CPI.TOTL.ZG').at(-1); return { id, ...c, g, i }; }).sort((a, b) => (b.g?.[1] ?? -99) - (a.g?.[1] ?? -99));
@@ -9,7 +9,7 @@ const pts = Object.values(DATA.countries).reduce((s: number, c: any) => s + Obje
 const featured = claims('india')[0];
 const ev = (media as any).earth;
 ---
-<Base overlay credits={[...EARTH_CREDITS, ...INDUSTRIES.slice(1).map(i => mediaCredit(i.id, `${i.name} card`)), ...Object.entries(COUNTRIES).map(([id, c]) => mediaCredit(id, `${c.name} photo`))]} desc={`Economic dashboards for ${Object.keys(COUNTRIES).length} countries by industry: GDP, inflation, agriculture, healthcare, finance, energy and manufacturing KPIs, all sourced from the World Bank.`}>
+<Base overlay credits={[...EARTH_CREDITS]} desc={`Economic dashboards for ${Object.keys(COUNTRIES).length} countries by industry: GDP, inflation, agriculture, healthcare, finance, energy and manufacturing KPIs, all sourced from the World Bank.`}>
 <section class="relative min-h-[100svh] overflow-hidden -mt-16 flex flex-col" data-parallax>
  <div class="absolute inset-0 bg-[#03060c] bg-[radial-gradient(90%_45%_at_50%_80%,rgba(70,120,255,.18),transparent_70%)]" aria-hidden="true"><img src="/earth/poster.webp" srcset="/earth/poster-m.webp 800w, /earth/poster.webp 1600w" sizes="100vw" alt="" width="1600" height="900" fetchpriority="high" class="absolute inset-0 w-full h-full object-cover"/></div>
  <Earth client:only="react"/>
@@ -58,7 +58,7 @@ const ev = (media as any).earth;
  <div class="label-pair reveal"><b>Industries</b><span>Six lenses per country</span></div>
  <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/15 border border-white/15">
   {INDUSTRIES.slice(1).map((i, n) => <a href={`/india/${i.id}`} class="reveal group relative overflow-hidden bg-surface aspect-[4/3] p-6 flex flex-col justify-end cursor-pointer">
-   <BgVideo id={i.id} cls="bg-media opacity-50 group-hover:opacity-80 transition-opacity duration-700"/>
+   <div class="absolute inset-0 opacity-70 group-hover:opacity-100 transition-opacity duration-700" aria-hidden="true"><IndustryDots client:visible industry={i.id} density={0.35} morph={false}/></div>
    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
    <span class="relative font-mono text-xs text-muted">{String(n + 1).padStart(2, '0')}</span>
    <span class="relative mt-2 text-3xl font-extralight text-strong flex items-center gap-3"><Icon name={i.icon} size={22}/>{i.name}</span>

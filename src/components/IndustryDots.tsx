@@ -10,12 +10,12 @@ const forms: Record<string, (n: number) => Pt[]> = {
   energy: n => Array.from({ length: n }, (_, i) => { const rays = 36; if (i % 2) { const a = (i % rays) / rays * 6.283, r = .14 + Math.random() * .42; return [.5 + Math.cos(a) * r * .62, .5 + Math.sin(a) * r]; } const a = Math.random() * 6.283, r = Math.sqrt(Math.random()) * .12; return [.5 + Math.cos(a) * r * .62, .5 + Math.sin(a) * r]; }),
   manufacturing: n => Array.from({ length: n }, (_, i) => { const a = i / n * 6.283 * 3, ring = i % 3; const r = [.42, .3, .16][ring] + (ring === 0 ? (Math.sin(a * 12 / 3) > 0 ? .05 : 0) : 0); return [.5 + Math.cos(a) * r * .62, .5 + Math.sin(a) * r]; }),
 };
-export default function IndustryDots({ industry = 'overview' }: { industry?: string }) {
+export default function IndustryDots({ industry = 'overview', density = 1, morph = true }: { industry?: string; density?: number; morph?: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const cv = ref.current!, ctx = cv.getContext('2d')!; const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const N = innerWidth < 768 ? 380 : 760; let W = 0, H = 0, dpr = Math.min(devicePixelRatio, 1.5);
-    const prev = sessionStorage.getItem('gp-dots'); sessionStorage.setItem('gp-dots', industry);
+    const N = Math.round((innerWidth < 768 ? 380 : 760) * density); let W = 0, H = 0, dpr = Math.min(devicePixelRatio, 1.5);
+    const prev = morph ? sessionStorage.getItem('gp-dots') : null; if (morph) sessionStorage.setItem('gp-dots', industry);
     const tgt = (forms[industry] || forms.overview)(N); const src = prev && prev !== industry && forms[prev] ? forms[prev](N) : tgt.map(() => [Math.random(), Math.random()] as Pt);
     const amber = Array.from({ length: N }, (_, i) => i % 7 === 0);
     const size = () => { W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };

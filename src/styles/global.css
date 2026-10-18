@@ -104,3 +104,4 @@ html{background:var(--color-surface);color:var(--color-text);font-family:var(--f
 @keyframes xf2{0%,45%{opacity:0}50%,95%{opacity:1}100%{opacity:0}}
 
 .hero-media.hero-bright img{filter:contrast(1.05) saturate(1.05) brightness(1)!important}
+html,body{overflow-x:clip}
