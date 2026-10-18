@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import KpiCard from './KpiCard.astro'; import ClaimCard from './ClaimCard.astro';
 import Chart from './Chart.tsx'; import CountryHero from './CountryHero.astro'; import BgVideo from './BgVideo.astro'; import Icon from './Icon.tsx';
-import { COUNTRIES, INDUSTRIES, kpis, claims, RAMP, TOKENS, DATA } from '../lib/data'; import FilterBar from './FilterBar.tsx'; import media from '../data/media.json';
+import { COUNTRIES, INDUSTRIES, kpis, claims, RAMP, TOKENS, DATA } from '../lib/data'; import FilterBar from './FilterBar.tsx'; import IndustryDots from './IndustryDots.tsx'; import media from '../data/media.json';
 const { country, industry } = Astro.props;
 const C = COUNTRIES[country]; const ind = INDUSTRIES.find(i => i.id === industry)!;
 const ks = kpis(country, industry); const withData = ks.filter((k: any) => k.series.length);
@@ -19,15 +19,14 @@ const bgId = M[`${country}-${industry}`] ? `${country}-${industry}` : industry !
 const bgAlt = industry === 'healthcare' && M[`${country}-wellness`] ? `${country}-wellness` : undefined;
 const indList = Object.entries(DATA.indicators).map(([code, m]: any) => ({ code, label: m.label, unit: m.unit, industry: m.industry }));
 const allYears = Object.values(DATA.countries[country] ?? {}).flat() as any[]; const years: [number, number] = [Math.min(...allYears.map(x => x[0])), Math.max(...allYears.map(x => x[0]))];
+import { mediaCredit } from '../lib/credits';
+const heroCredit = mediaCredit(`${country}-photo`, 'Hero photo') ?? mediaCredit(country, 'Hero');
 const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.industry, x.b.industry].includes(industry));
 ---
-<Base overlay title={`${C.name} ${ind.name} economy: KPIs & trends`} desc={desc} og={`/og/${country}.png`} jsonld={[dataset]}>
+<Base overlay title={`${C.name} ${ind.name} economy: KPIs & trends`} desc={desc} og={`/og/${country}.png`} jsonld={[dataset]} credits={[heroCredit]}>
 <CountryHero country={country} name={C.name} region={C.region} iso={C.iso} sub={industry === 'overview' ? `How ${C.name.endsWith('s') ? C.name + "'" : C.name + "'s"} economy is moving, sector by sector, with every number sourced.` : `${ind.name}: the indicators that matter, sourced and dated.`}/>
 <section id="dash" class="sticky top-16 z-30 border-y border-white/10 bg-surface/70 backdrop-blur-2xl scroll-mt-16" aria-label="Dashboard controls">
  <div class="mx-auto max-w-7xl px-4 md:px-6 py-3 flex flex-wrap items-center gap-3 justify-between">
-  <div role="tablist" aria-label="Industries" class="flex gap-1 overflow-x-auto glass rounded-xl p-1 max-w-full">
-   {INDUSTRIES.map(i => <a role="tab" aria-selected={i.id === industry ? 'true' : 'false'} href={`/${country}${i.id === 'overview' ? '' : '/' + i.id}#dash`} class:list={['flex items-center gap-2 text-sm rounded-lg px-3.5 py-2 whitespace-nowrap transition-colors cursor-pointer', i.id === industry ? 'bg-cta text-black font-semibold' : 'text-muted hover:text-strong hover:bg-white/5']}><Icon name={i.icon} size={16}/>{i.name}</a>)}
-  </div>
   <p class="text-xs text-muted flex items-center gap-1.5"><Icon name="RefreshCw" size={13}/>Pipeline run {DATA.generated.replace('T', ' ')} UTC</p>
  </div>
  <FilterBar client:visible country={country} countryName={C.name} industry={industry} indicators={indList} years={years} countries={Object.entries(COUNTRIES).map(([id, c]) => ({ id, name: c.name }))} industries={INDUSTRIES.slice(1).map(i => ({ id: i.id, name: i.name }))}/>
@@ -36,12 +35,13 @@ const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.in
  <nav aria-label="Countries" class="flex gap-2 overflow-x-auto pb-1">
   {Object.entries(COUNTRIES).map(([id, c]) => <a href={`/${id}${industry === 'overview' ? '' : '/' + industry}#dash`} aria-current={id === country ? 'page' : undefined} class:list={['text-xs whitespace-nowrap rounded-full border px-3 py-1.5 transition-colors cursor-pointer backdrop-blur', id === country ? 'border-link text-link bg-primary/15' : 'border-white/15 text-muted hover:text-strong hover:border-white/30']}>{c.name}</a>)}
  </nav>
- <h2 class="sr-only">{C.name} {ind.name} dashboard</h2>
+ <div class="relative mt-6 h-[46svh] min-h-[300px] max-h-[520px] rounded-3xl overflow-hidden border border-white/10 bg-[radial-gradient(70%_80%_at_70%_40%,rgba(255,178,36,.08),transparent_70%)]">
+  <IndustryDots client:visible industry={industry}/>
+  <div class="absolute left-5 bottom-5 md:left-8 md:bottom-7 pointer-events-none"><p class="kicker">{C.name} / industry</p><h2 class="display mt-3 text-4xl md:text-7xl">{ind.id === 'overview' ? 'All industries' : ind.name}<span class="text-accent">.</span></h2></div>
+ </div>
 </div>
 <div class="relative">
- {bgId && <div class="industry-bg absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true"><div class="sticky top-0 h-[100svh]"><BgVideo id={bgId} alt={bgAlt} cls="bg-media opacity-70"/><div class="absolute inset-0 bg-gradient-to-b from-surface via-surface/20 to-surface"></div></div></div>}
-<div class="relative mx-auto max-w-7xl px-4 md:px-6 py-8 grid gap-6">
-{bgId && <p class="text-[11px] text-muted -mb-2">Background: {[bgId, bgAlt].filter(Boolean).map((id: any, i: number) => <>{i ? ' · ' : ''}{M[id].label}, <a class="underline underline-offset-2" href={M[id].source}>{M[id].author}</a> ({M[id].license})</>)} · <a class="underline underline-offset-2" href="/credits">credits</a></p>}
+ <div class="relative mx-auto max-w-7xl px-4 md:px-6 py-8 grid gap-6">
  <section aria-label="Key indicators" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{ks.map((k: any) => <KpiCard k={k}/>)}</section>
  <section class="grid gap-6 lg:grid-cols-3">
   <div class="edge rounded-2xl p-5 lg:col-span-2">

@@ -16,6 +16,8 @@ const ld = [
   ...jsonld,
 ];
 const legal = [['/privacy', 'Privacy'], ['/cookies', 'Cookies'], ['/terms', 'Terms'], ['/disclaimer', 'Disclaimer'], ['/credits', 'Data & media licences'], ['/accessibility', 'Accessibility'], ['/contact', 'Contact']];
+import type { Credit } from '../lib/credits'; import { CONTACT_EMAIL } from '../config/site';
+const pageCredits: Credit[] = (Astro.props.credits ?? []).filter(Boolean);
 ---
 <!doctype html><html lang="en" class="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>{fullTitle}</title><meta name="description" content={desc}/>
@@ -51,6 +53,14 @@ const legal = [['/privacy', 'Privacy'], ['/cookies', 'Cookies'], ['/terms', 'Ter
   <nav aria-label="Product" class="flex flex-col gap-2"><p class="kicker mb-1">Product</p><a href="/india" class="hover:text-strong">Countries</a><a href="/pricing" class="hover:text-strong">Pricing</a><a href="/api" class="hover:text-strong">Public API</a><a href="/methodology" class="hover:text-strong">Methodology</a></nav>
   <nav aria-label="Legal" class="flex flex-col gap-2"><p class="kicker mb-1">Legal</p>{legal.map(([h, l]) => <a href={h} class="hover:text-strong">{l}</a>)}</nav>
  </div>
+ <section aria-labelledby="ft-credits" class="mx-auto max-w-7xl px-4 md:px-6 pb-8 text-xs text-muted border-t border-white/10 pt-8">
+  <h2 id="ft-credits" class="kicker mb-3">Credits &amp; sources</h2>
+  <ul class="grid gap-1.5 md:grid-cols-2">
+   <li>Data: <a class="underline underline-offset-2 hover:text-strong" href="https://data.worldbank.org/">World Bank World Development Indicators</a> (CC BY 4.0)</li>
+   {pageCredits.map(c => <li>{c.what}: {c.href ? <a class="underline underline-offset-2 hover:text-strong" href={c.href}>{c.title}</a> : c.title} · {c.author} · {c.license}</li>)}
+   <li>Fonts: Fira Sans &amp; Fira Code (SIL OFL 1.1) · <a class="underline underline-offset-2 hover:text-strong" href="/credits">All credits &amp; licences</a> · Contact <a class="underline underline-offset-2 hover:text-strong" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
+  </ul>
+ </section>
  <p class="mx-auto max-w-7xl px-4 md:px-6 pb-10 text-xs text-muted">© {new Date().getFullYear()} GovPulse. No cookies, no tracking pixels.</p>
 </footer>
 <div class="cursor" aria-hidden="true"></div>

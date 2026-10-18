@@ -1,8 +1,8 @@
 ---
-import Base from '../layouts/Base.astro'; import BgVideo from './BgVideo.astro';
+import Base from '../layouts/Base.astro'; import BgVideo from './BgVideo.astro'; import { mediaCredit } from '../lib/credits';
 const { title, desc, kicker = 'Legal', template = false, updated = '2026-10-18', bg = 'finance' } = Astro.props;
 ---
-<Base overlay title={title} desc={desc}>
+<Base overlay title={title} desc={desc} credits={[mediaCredit(bg, 'Header video')]}>
 <header class="page-hero -mt-16 pt-16">
  <BgVideo id={bg} cls="bg-media"/><div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-surface" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div>
  <div class="relative mx-auto max-w-5xl px-4 md:px-6 pt-24 pb-16">

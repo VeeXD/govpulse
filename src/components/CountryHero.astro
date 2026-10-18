@@ -2,12 +2,13 @@
 import heroes from '../data/heroes.json'; import media from '../data/media.json';
 import BgVideo from './BgVideo.astro'; import Icon from './Icon.tsx';
 const { country, name, region, iso, sub } = Astro.props;
-const h = (heroes as any)[country]; const v = (media as any)[country];
+const h = (heroes as any)[country]; const v = (media as any)[country]; const sp = (media as any)[`${country}-photo`];
 const words = name.split(' ');
 ---
 <section class="relative h-[100svh] min-h-[600px] max-h-[1100px] overflow-hidden -mt-16" data-parallax>
- <BgVideo id={country} photo={country} cls="hero-media"/>
- <div class="grade-tone" aria-hidden="true"></div><div class="grade-vignette" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div>
+ {sp ? <div class="hero-media hero-bright" aria-hidden="true"><img src={sp.files.webp} srcset={`${sp.files.webpM} 960w, ${sp.files.webp} 1920w`} sizes="100vw" alt="" width="1920" height="1200" fetchpriority="high" decoding="async"/></div>
+  <div class="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-black/75 via-black/30 to-transparent" aria-hidden="true"></div><div class="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/50 to-transparent" aria-hidden="true"></div>
+ : <><BgVideo id={country} photo={country} cls="hero-media"/><div class="grade-tone" aria-hidden="true"></div><div class="grade-vignette" aria-hidden="true"></div></>}<div class="grain" aria-hidden="true"></div>
  <div class="relative h-full mx-auto max-w-7xl px-4 md:px-6 flex flex-col justify-end pb-20 md:pb-28">
   <div data-depth>
    <p class="kicker flex items-center gap-3"><span class="h-px w-12 bg-white/60"></span>{region} / {iso}</p>
@@ -16,6 +17,4 @@ const words = name.split(' ');
   </div>
   <a href="#dash" class="mt-10 inline-flex items-center gap-3 kicker hover:text-strong w-fit cursor-pointer"><Icon name="ArrowDown" size={16}/>Scroll</a>
  </div>
- <p class="absolute bottom-3 right-4 text-[10px] md:text-[11px] text-text bg-black/60 backdrop-blur px-2 py-1 rounded max-w-[92vw]">
-  {v ? <>{v.label} · Video: <a class="underline underline-offset-2" href={v.source}>{v.author}</a> · {v.license}</> : h && <>{h.landmark} · Photo: <a class="underline underline-offset-2" href={h.url}>{h.author || 'Wikimedia Commons'}</a> · {h.license}</>} · colour-graded · <a class="underline underline-offset-2" href="/credits">credits</a></p>
 </section>

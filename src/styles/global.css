@@ -102,3 +102,5 @@ html{background:var(--color-surface);color:var(--color-text);font-family:var(--f
 .xfade video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .xfade video:nth-child(2){animation:xf2 24s infinite}
 @keyframes xf2{0%,45%{opacity:0}50%,95%{opacity:1}100%{opacity:0}}
+
+.hero-media.hero-bright img{filter:contrast(1.05) saturate(1.05) brightness(1)!important}

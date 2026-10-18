@@ -139,26 +139,6 @@
    "webp": 0.03
   }
  },
- "india": {
-  "label": "Monsoon clouds over Kinnaur, Himachal Pradesh (timelapse)",
-  "type": "video",
-  "title": "Timelapse 2025 Kinnaur Monsoon.webm",
-  "author": "Dfromhimalayas",
-  "license": "CC BY 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Timelapse_2025_Kinnaur_Monsoon.webm",
-  "clip": "8s–20s, re-encoded 1280px, no audio",
-  "files": {
-   "webm": "/media/india.webm",
-   "mp4": "/media/india.mp4",
-   "webp": "/media/india.webp"
-  },
-  "sizeMB": {
-   "webm": 0.85,
-   "mp4": 1.17,
-   "webp": 0.02
-  }
- },
  "india-overview": {
   "label": "ISKCON Mayapur, West Bengal, by drone",
   "type": "video",
@@ -219,26 +199,6 @@
    "webp": 0.05
   }
  },
- "india-energy": {
-  "label": "Wind turbine by drone",
-  "type": "video",
-  "title": "Drone video of wind turbine near Kunda in Estonia.webm",
-  "author": "Sillerkiil",
-  "license": "CC BY-SA 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Drone_video_of_wind_turbine_near_Kunda_in_Estonia.webm",
-  "clip": "15s–27s, re-encoded 1280px, no audio",
-  "files": {
-   "webm": "/media/india-energy.webm",
-   "mp4": "/media/india-energy.mp4",
-   "webp": "/media/india-energy.webp"
-  },
-  "sizeMB": {
-   "webm": 0.44,
-   "mp4": 0.68,
-   "webp": 0.02
-  }
- },
  "india-healthcare": {
   "label": "Clinical chemistry analyzer in a lab",
   "type": "video",
@@ -279,26 +239,6 @@
    "webp": 0.05
   }
  },
- "india-manufacturing": {
-  "label": "Steel works",
-  "type": "video",
-  "title": "Vicart - Aciérie.webm",
-  "author": "Damien-VICART",
-  "license": "CC BY 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Vicart_-_Aci%C3%A9rie.webm",
-  "clip": "5s–17s, re-encoded 1280px, no audio",
-  "files": {
-   "webm": "/media/india-manufacturing.webm",
-   "mp4": "/media/india-manufacturing.mp4",
-   "webp": "/media/india-manufacturing.webp"
-  },
-  "sizeMB": {
-   "webm": 1.62,
-   "mp4": 1.89,
-   "webp": 0.02
-  }
- },
  "earth-day": {
   "label": "Live Earth day texture",
   "type": "texture",
@@ -323,6 +263,20 @@
   "clip": "resized to 2048×1024 WebP, tinted amber in shader",
   "files": {
    "webp": "/earth/night.webp"
+  }
+ },
+ "india-photo": {
+  "label": "Snow-capped Himalayan peaks above the clouds",
+  "type": "photo",
+  "title": "Himalayan range (owner-supplied photo)",
+  "author": "Supplied by site owner",
+  "license": "Used with the site owner's permission",
+  "licenseUrl": "",
+  "source": "",
+  "clip": "upscaled to 1920px, warm colour grade, WebP",
+  "files": {
+   "webp": "/heroes/india-himalaya.webp",
+   "webpM": "/heroes/india-himalaya-m.webp"
   }
  }
 }

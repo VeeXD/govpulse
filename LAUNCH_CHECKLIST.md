@@ -59,7 +59,7 @@ PASS: 0 violations on /, /india, /india/agriculture, /pricing, /methodology, /ap
 **Cookie banner choice:** none needed. The site sets no cookies and no localStorage IDs. Analytics are Cloudflare Web Analytics (cookieless, no fingerprinting), switched on by setting `PUBLIC_CF_BEACON` at build time; CSP already allows it. If sign-in launches, only a strictly necessary session cookie is planned (no consent required, but list it).
 
 ## Payments
-Pricing buttons read `src/config/payments.ts` (or env vars `PUBLIC_PAY_PRO_MONTHLY`, `PUBLIC_PAY_PRO_YEARLY`, `PUBLIC_PAY_ANALYST_MONTHLY`, `PUBLIC_PAY_ANALYST_YEARLY`). Empty = disabled "checkout soon" button with an explanation. No fake success flow. Needs a Stripe or Lemon Squeezy merchant account and Payment Link URLs. Entitlements (unlocking Pro features) will also need auth + webhook handling, which is not built.
+Pricing has two plans, Free and Pro ($9.99/month, monthly only). The Pro button reads `PAY_PRO` in `src/config/payments.ts` (or env var `PUBLIC_PAY_PRO`). Empty = disabled "checkout soon" button with an explanation. No fake success flow. Needs a Stripe or Lemon Squeezy merchant account and Payment Link URLs. Entitlements (unlocking Pro features) will also need auth + webhook handling, which is not built.
 
 ## Public API
 Static JSON generated at build: `/api/v1/index.json`, `/api/v1/countries.json`, `/api/v1/indicators.json`, `/api/v1/{country}.json`, `/api/v1/{country}/{indicator}.json` (~250 series). CORS `*`, 1 h cache, `license` and `attribution` fields. Documented at /api. PASS.
@@ -94,3 +94,14 @@ Static JSON generated at build: `/api/v1/index.json`, `/api/v1/countries.json`, 
 | axe WCAG 2.2 AA: 13 pages × 2 widths | PASS, 0 violations |
 | Lighthouse mobile: home 87, /india 97, /india/agriculture 92, /india/healthcare 95, /pricing 96. A11y, best practices and SEO: 100 | PASS |
 | Overflow at 375/768/1024/1440 | PASS, none |
+
+## v5 update (2026-10-18)
+| Item | Result |
+|---|---|
+| Home hero: no clipping at 1024×666, 1280×720, 1440×900, 375×667 (buttons sit inside hero) | PASS |
+| Industry video backgrounds removed, replaced by an interactive dot field that changes formation per industry, with a static version for reduced motion | PASS |
+| India hero: owner-supplied Himalaya photo, warm grade, WebP 1920/960 | PASS |
+| Industry tabs removed; the industry filter is free; other filters show a "Pro" tooltip on hover/focus | PASS |
+| Credits and sources moved to the footer of every page; inline credit captions removed | PASS |
+| Plans: Free (10 countries) and Pro $9.99/mo; Analyst, Enterprise and yearly billing removed | PASS |
+| Contact sadam.veekshtih007@gmail.com (contact, footer, privacy, terms, security.txt) | PASS |
