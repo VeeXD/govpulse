@@ -13,3 +13,15 @@ for (const f of walk('dist')) {
   fs.writeFileSync(f, h);
 }
 console.log('external links processed:', n);
+// CSP: hash every inline executable <script> so script-src needs no 'unsafe-inline'.
+import crypto from 'node:crypto';
+const hashes = new Set();
+for (const f of walk('dist')) {
+  const h = fs.readFileSync(f, 'utf8');
+  for (const m of h.matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/g)) {
+    const attrs = m[1] || ''; if (/\bsrc=/.test(attrs) || /application\/ld\+json/.test(attrs) || !m[2].trim()) continue;
+    hashes.add(`'sha256-${crypto.createHash('sha256').update(m[2]).digest('base64')}'`);
+  }
+}
+const hp = 'dist/_headers'; fs.writeFileSync(hp, fs.readFileSync(hp, 'utf8').replace('__SCRIPT_HASHES__', [...hashes].join(' ')));
+console.log('CSP inline script hashes:', hashes.size);

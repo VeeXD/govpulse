@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import KpiCard from './KpiCard.astro'; import ClaimCard from './ClaimCard.astro';
-import Chart from './Chart.tsx'; import CountryHero from './CountryHero.astro'; import Icon from './Icon.tsx';
+import Chart from './Chart.tsx'; import CountryHero from './CountryHero.astro'; import BgVideo from './BgVideo.astro'; import Icon from './Icon.tsx';
 import { COUNTRIES, INDUSTRIES, kpis, claims, RAMP, TOKENS, DATA } from '../lib/data';
 const { country, industry } = Astro.props;
 const C = COUNTRIES[country]; const ind = INDUSTRIES.find(i => i.id === industry)!;
@@ -12,14 +12,16 @@ const sample = [
  ['Regulation', `Draft rules on ${ind.name.toLowerCase()} data reporting open for comment`, '5 days ago'],
  ['Budget', `Mid-year allocation review for the ${ind.name.toLowerCase()} ministry`, '1 week ago'],
 ];
+const desc = `${C.name} ${ind.name.toLowerCase()} indicators: ${ks.slice(0, 3).map((k: any) => k.label).join(', ')} and more, from the World Bank with sources, data years and charts.`;
+const dataset = { '@context': 'https://schema.org', '@type': 'Dataset', name: `${C.name} ${ind.name} indicators`, description: desc, url: `https://govpulse.pages.dev/${country}${industry === 'overview' ? '' : '/' + industry}`, license: 'https://creativecommons.org/licenses/by/4.0/', creator: { '@type': 'Organization', name: 'The World Bank' }, isAccessibleForFree: true, spatialCoverage: C.name, temporalCoverage: '2000/..', variableMeasured: ks.map((k: any) => k.label), distribution: ks.map((k: any) => ({ '@type': 'DataDownload', encodingFormat: 'application/json', contentUrl: `https://govpulse.pages.dev/api/v1/${country}/${k.code}.json` })) };
 const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.industry, x.b.industry].includes(industry));
 ---
-<Base overlay title={`${C.name} · ${ind.name}`} desc={`${C.name} ${ind.name} KPIs from the World Bank, with sources and dates.`}>
+<Base overlay title={`${C.name} ${ind.name} economy: KPIs & trends`} desc={desc} og={`/og/${country}.png`} jsonld={[dataset]}>
 <CountryHero country={country} name={C.name} region={C.region} iso={C.iso} sub={industry === 'overview' ? `How ${C.name.endsWith('s') ? C.name + "'" : C.name + "'s"} economy is moving, sector by sector, with every number sourced.` : `${ind.name}: the indicators that matter, sourced and dated.`}/>
 <section id="dash" class="sticky top-16 z-30 border-y border-white/10 bg-surface/55 backdrop-blur-2xl">
  <div class="mx-auto max-w-7xl px-4 md:px-6 py-3 flex flex-wrap items-center gap-3 justify-between">
   <div role="tablist" aria-label="Industries" class="flex gap-1 overflow-x-auto glass rounded-xl p-1 max-w-full">
-   {INDUSTRIES.map(i => <a role="tab" aria-selected={i.id === industry ? 'true' : 'false'} href={`/${country}${i.id === 'overview' ? '' : '/' + i.id}#dash`} class:list={['flex items-center gap-2 text-sm rounded-lg px-3.5 py-2 whitespace-nowrap transition-colors cursor-pointer', i.id === industry ? 'bg-cta text-white font-semibold shadow-[0_0_24px_-6px_#964734]' : 'text-muted hover:text-strong hover:bg-white/5']}><Icon name={i.icon} size={16}/>{i.name}</a>)}
+   {INDUSTRIES.map(i => <a role="tab" aria-selected={i.id === industry ? 'true' : 'false'} href={`/${country}${i.id === 'overview' ? '' : '/' + i.id}#dash`} class:list={['flex items-center gap-2 text-sm rounded-lg px-3.5 py-2 whitespace-nowrap transition-colors cursor-pointer', i.id === industry ? 'bg-cta text-black font-semibold' : 'text-muted hover:text-strong hover:bg-white/5']}><Icon name={i.icon} size={16}/>{i.name}</a>)}
   </div>
   <p class="text-xs text-muted flex items-center gap-1.5"><Icon name="RefreshCw" size={13}/>Pipeline run {DATA.generated.replace('T', ' ')} UTC</p>
  </div>
@@ -30,12 +32,14 @@ const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.in
  </nav>
  <h2 class="sr-only">{C.name} {ind.name} dashboard</h2>
 </div>
-<div class="mx-auto max-w-7xl px-4 md:px-6 py-8 grid gap-6">
+<div class="relative">
+ {industry !== 'overview' && <div class="industry-bg absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true"><div class="sticky top-0 h-[100svh]"><BgVideo id={industry} cls="bg-media opacity-60"/><div class="absolute inset-0 bg-gradient-to-b from-surface via-surface/20 to-surface"></div></div></div>}
+<div class="relative mx-auto max-w-7xl px-4 md:px-6 py-8 grid gap-6">
  <section aria-label="Key indicators" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{ks.map((k: any) => <KpiCard k={k}/>)}</section>
  <section class="grid gap-6 lg:grid-cols-3">
   <div class="glass rounded-2xl p-5 lg:col-span-2">
    <div class="flex items-center justify-between"><h2 class="font-semibold">Long-run trend</h2><span class="text-xs text-muted">Annual · World Bank WDI</span></div>
-   {main.length ? <Chart client:visible series={main.map((k: any) => ({ name: `${k.label} (${k.unit})`, data: k.series }))} colors={[TOKENS.link, TOKENS.accent]} height={300} title={`${C.name}: ${main.map((k: any) => k.label).join(' vs ')}`} source={`World Bank WDI (${main.map((k: any) => k.code).join(', ')}), CC BY 4.0`}/> : <p class="text-muted text-sm py-10">No series available.</p>}
+   {main.length ? <Chart client:visible series={main.map((k: any) => ({ name: `${k.label} (${k.unit})`, data: k.series, unit: k.unit }))} colors={[TOKENS.link, TOKENS.accent]} height={300} title={`${C.name}: ${main.map((k: any) => k.label).join(' vs ')}`} source={`World Bank WDI (${main.map((k: any) => k.code).join(', ')}), CC BY 4.0`}/> : <p class="text-muted text-sm py-10">No series available.</p>}
    <p class="text-[11px] text-muted mt-2">Full series 2000–latest so no single baseline year is cherry-picked.</p>
   </div>
   <aside class="glass rounded-2xl p-5" aria-labelledby="feed">
@@ -44,10 +48,11 @@ const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.in
    <p class="text-[11px] text-muted mt-3">Placeholder items, not real events. The live feed (GDELT + official gazettes, AI-tagged with source links) is not connected yet.</p>
   </aside>
  </section>
- {cl.length > 0 && <section aria-labelledby="cc"><h2 id="cc" class="text-xl font-bold mb-4">Claim checks</h2><div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{cl.map((c: any) => <ClaimCard c={c}/>)}</div></section>}
+ {cl.length > 0 && <section aria-labelledby="cc"><h2 id="cc" class="text-xl font-semibold mb-4">Claim checks</h2><div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{cl.map((c: any) => <ClaimCard c={c}/>)}</div></section>}
  <section class="glass rounded-2xl p-6 flex flex-wrap items-center gap-4 justify-between">
   <div class="flex items-center gap-3"><span class="rounded-xl bg-accent/15 text-accent p-2.5"><Icon name="SlidersHorizontal" size={20}/></span><div><p class="font-semibold">Explorer, CSV export &amp; daily {ind.name.toLowerCase()} brief</p><p class="text-sm text-muted">Filter any KPI by date range, export, and get it in your inbox with Pro.</p></div></div>
-  <a href="/pricing" class="rounded-lg bg-cta text-white font-semibold text-sm px-4 py-2.5 hover:brightness-110 cursor-pointer">See plans</a>
+  <a href="/pricing" class="rounded-lg bg-cta text-black font-semibold text-sm px-4 py-2.5 hover:brightness-110 cursor-pointer">See plans</a>
  </section>
+</div>
 </div>
 </Base>

@@ -46,7 +46,7 @@ function oklchToHex(L: number, C: number, h: number) {
 /* blue(255°) → amber(75°) ramp via the long way through teal/green avoided: go through violet-free path by lerping L/C and hue through 255→435(75) */
 /* teal(200°) → rust(40°) in OKLCH at constant L=0.78 so every step is text-safe on card */
 export const RAMP = Array.from({ length: 6 }, (_, i) => { const k = i / 5; return oklchToHex(0.80 - 0.03 * k, 0.11, 200 - 160 * k); });
-export const TOKENS = { surface: '#003135', card: '#024950', line: '#2E7A82', primary: '#0FA4AF', link: '#5ED3DC', accent: '#EB9A80', cta: '#964734', text: '#AFDDE5', muted: '#9CCCD4', up: '#6EE7B0', down: '#FF9C88' };
+export const TOKENS = { surface: '#0A0A0A', card: '#141414', line: '#3A3A3A', primary: '#D4D4D4', link: '#FFFFFF', accent: '#8A8A8A', cta: '#F2F2F2', text: '#E6E6E6', muted: '#A3A3A3', up: '#E3F5EA', down: '#F5DCD8' };
 export function change(c: string, code: string, span = 10) {
   const s = series(c, code); if (s.length < 2) return null;
   const last = s.at(-1)!; const base = s.find(([y]) => y >= last[0] - span) ?? s[0];

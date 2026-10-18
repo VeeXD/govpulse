@@ -1,0 +1,8 @@
+---
+import Prose from '../components/Prose.astro'; import { CONTACT_EMAIL } from '../config/site';
+---
+<Prose title="Contact" kicker="Contact" desc="Contact GovPulse about data, enterprise plans, corrections, privacy requests or security reports.">
+<p>Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> for:</p>
+<ul><li>Enterprise plans and custom industry reports</li><li>Data corrections (include the page URL and indicator code)</li><li>Privacy requests (GDPR / CCPA)</li><li>Accessibility feedback</li></ul>
+<p>Security issues: see <a href="/.well-known/security.txt">security.txt</a>.</p>
+</Prose>

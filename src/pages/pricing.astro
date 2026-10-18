@@ -1,11 +1,11 @@
 ---
-import Base from '../layouts/Base.astro'; import Pricing from '../components/Pricing.tsx';
+import Base from '../layouts/Base.astro'; import Pricing from '../components/Pricing.tsx'; import { PAYMENT_LINKS, PROVIDER } from '../config/payments';
 ---
-<Base title="Pricing">
+<Base title="Pricing: Free, Pro and Analyst plans" desc="GovPulse plans: Free, Pro at $9/month or $90/year, Analyst at $29/month, and Enterprise. Unlock all countries, the explorer, CSV export and daily briefs.">
 <section class="relative overflow-hidden"><div class="aurora" aria-hidden="true"></div><div class="absolute inset-0 grid-bg" aria-hidden="true"></div>
 <div class="relative mx-auto max-w-7xl px-4 md:px-6 pt-16 pb-10">
- <div class="text-center max-w-2xl mx-auto"><p class="text-accent font-semibold text-sm tracking-wider uppercase">Pricing</p><h1 class="mt-3 text-4xl md:text-6xl font-extrabold tracking-tight">Pay for insight, <span class="gold-text">not raw data</span>.</h1><p class="mt-5 text-muted text-lg">The open data stays free. Subscriptions unlock depth: every country, the explorer, exports, alerts and daily briefs.</p></div>
- <div class="mt-12"><Pricing client:load/></div>
- <p class="text-center text-xs text-muted mt-8">Prices in USD. Analyst yearly ($290) is a suggestion. Checkout (Lemon Squeezy/Stripe) not connected yet; buttons are inactive in this MVP.</p>
+ <div class="text-center max-w-2xl mx-auto"><p class="text-accent font-semibold text-sm tracking-wider uppercase">Pricing</p><h1 class="mt-3 text-4xl md:text-6xl font-semibold tracking-tight">Pay for insight, <span class="gold-text">not raw data</span>.</h1><p class="mt-5 text-muted text-lg">The open data stays free. Subscriptions unlock depth: every country, the explorer, exports, alerts and daily briefs.</p></div>
+ <div class="mt-12"><Pricing client:load links={PAYMENT_LINKS}/></div>
+ <p id="checkout-note" class="text-center text-xs text-muted mt-8">Prices in USD. Checkout is not live yet: payments will run through {PROVIDER}. No account is charged until real checkout links are configured.</p>
 </div></section>
 </Base>

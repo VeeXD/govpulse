@@ -1,50 +1,59 @@
 ---
 import '../styles/global.css';
 import Icon from '../components/Icon.tsx';
-const { overlay = false, title = 'GovPulse', desc = 'Country-first economic analytics by industry, with every number sourced.' } = Astro.props;
-const path = Astro.url.pathname;
-const nav = [['/', 'Home'], ['/india', 'Countries'], ['/pricing', 'Pricing'], ['/methodology', 'Methodology']];
+import { SITE, BRAND, CF_BEACON } from '../config/site';
+interface Props { title?: string; desc?: string; overlay?: boolean; og?: string; jsonld?: any[]; noindex?: boolean }
+const { overlay = false, title = BRAND, desc = 'Country-first economic analytics by industry for 10 countries. Every KPI shows its World Bank source and date.', og = '/og/default.png', jsonld = [], noindex = false } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const canonical = new URL(path === '/' ? '/' : path, SITE).href;
+const fullTitle = title === BRAND ? `${BRAND}: the economic pulse of nations` : `${title} | ${BRAND}`;
+const ogUrl = new URL(og, SITE).href;
+const nav = [['/', 'Home'], ['/india', 'Countries'], ['/pricing', 'Pricing'], ['/api', 'API'], ['/methodology', 'Methodology']];
+const isCountry = /^\/(india|usa|china|uk|germany|japan|brazil|indonesia|nigeria|uae)/.test(path);
+const ld = [
+  { '@context': 'https://schema.org', '@type': 'Organization', name: BRAND, url: SITE, logo: `${SITE}/icons/icon-512.png` },
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: BRAND, url: SITE, inLanguage: 'en' },
+  ...jsonld,
+];
+const legal = [['/privacy', 'Privacy'], ['/cookies', 'Cookies'], ['/terms', 'Terms'], ['/disclaimer', 'Disclaimer'], ['/credits', 'Data & media licences'], ['/accessibility', 'Accessibility'], ['/contact', 'Contact']];
 ---
 <!doctype html><html lang="en" class="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="color-scheme" content="dark"/><meta name="theme-color" content="#003135"/><link rel="icon" href="/favicon.svg"/>
-<title>{title === 'GovPulse' ? 'GovPulse · Economic pulse of nations' : `${title} · GovPulse`}</title><meta name="description" content={desc}/></head>
+<title>{fullTitle}</title><meta name="description" content={desc}/>
+<link rel="canonical" href={canonical}/>
+{noindex && <meta name="robots" content="noindex"/>}
+<meta name="color-scheme" content="dark"/><meta name="theme-color" content="#0A0A0A"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/icon-180.png"/><link rel="manifest" href="/manifest.webmanifest"/>
+<link rel="preload" href="/fonts/fira-sans-200.woff2" as="font" type="font/woff2" crossorigin/>
+<link rel="preload" href="/fonts/fira-sans-400.woff2" as="font" type="font/woff2" crossorigin/>
+<meta property="og:type" content="website"/><meta property="og:site_name" content={BRAND}/><meta property="og:title" content={fullTitle}/><meta property="og:description" content={desc}/><meta property="og:url" content={canonical}/><meta property="og:image" content={ogUrl}/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/>
+<meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={fullTitle}/><meta name="twitter:description" content={desc}/><meta name="twitter:image" content={ogUrl}/>
+<slot name="head"/>
+<script type="application/ld+json" set:html={JSON.stringify(ld)}/>
+</head>
 <body class="min-h-screen bg-surface text-text">
-<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 bg-cta text-white px-3 py-2 rounded-md">Skip to content</a>
-<header class:list={["sticky top-0 z-40 border-b border-white/10 backdrop-blur-2xl", overlay ? "bg-surface/25" : "bg-surface/55"]}>
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 bg-cta text-black px-3 py-2 rounded-md">Skip to content</a>
+<header class:list={["sticky top-0 z-40 border-b border-white/10 backdrop-blur-xl", overlay ? "bg-black/20" : "bg-black/60"]}>
  <div class="mx-auto max-w-7xl px-4 md:px-6 h-16 flex items-center gap-6">
-  <a href="/" class="flex items-center gap-2 font-bold tracking-tight text-lg"><img src="/favicon.svg" alt="" width="28" height="28"/><span>Gov<span class="text-accent">Pulse</span></span></a>
+  <a href="/" class="flex items-center gap-2 font-semibold tracking-[0.2em] uppercase text-sm text-strong"><img src="/favicon.svg" alt="" width="26" height="26"/><span>GovPulse</span></a>
   <nav aria-label="Main" class="hidden md:flex gap-1 text-sm">
-   {nav.map(([h, l]) => <a href={h} class:list={['px-3 py-2 rounded-lg transition-colors hover:bg-card cursor-pointer', (h === '/' ? path === '/' : path.startsWith(h === '/india' ? '/__' : h)) || (l === 'Countries' && /^\/(india|usa|china|uk|germany|japan|brazil|indonesia|nigeria|uae)/.test(path)) ? 'text-accent' : 'text-muted hover:text-text']}>{l}</a>)}
+   {nav.map(([h, l]) => { const active = h === '/' ? path === '/' : l === 'Countries' ? isCountry : path.startsWith(h); return <a href={h} aria-current={active ? 'page' : undefined} class:list={['px-3 py-2 transition-colors cursor-pointer tracking-wide', active ? 'text-strong underline underline-offset-8 decoration-1' : 'text-muted hover:text-strong']}>{l}</a>; })}
   </nav>
   <div class="ml-auto flex items-center gap-2">
-   <a href="/pricing" class="hidden sm:inline-flex text-sm text-muted hover:text-text px-3 py-2 cursor-pointer">Sign in</a>
-   <a href="/pricing" class="inline-flex items-center gap-1.5 rounded-lg bg-cta text-white font-semibold text-sm px-3.5 py-2 hover:brightness-110 transition cursor-pointer"><Icon name="Sparkles" size={16}/>Go Pro</a>
+   <a href="/pricing" class="inline-flex items-center gap-1.5 rounded-full bg-cta text-black font-semibold text-sm px-4 py-2 hover:bg-white transition cursor-pointer"><Icon name="Sparkles" size={15}/>Go Pro</a>
   </div>
  </div>
- <nav aria-label="Main mobile" class="md:hidden flex gap-1 px-3 pb-2 text-sm overflow-x-auto">{nav.map(([h, l]) => <a href={h} class="px-3 py-1.5 rounded-lg text-muted hover:text-text whitespace-nowrap">{l}</a>)}</nav>
+ <nav aria-label="Main mobile" class="md:hidden flex gap-1 px-3 pb-2 text-sm overflow-x-auto">{nav.map(([h, l]) => <a href={h} class="px-3 py-1.5 text-muted hover:text-strong whitespace-nowrap">{l}</a>)}</nav>
 </header>
 <main id="main"><slot/></main>
-<footer class="mt-24 border-t border-white/10 bg-card/30 backdrop-blur">
- <div class="mx-auto max-w-7xl px-4 md:px-6 py-10 grid gap-6 md:grid-cols-3 text-sm text-muted">
-  <div><div class="font-bold text-text text-base">Gov<span class="text-accent">Pulse</span></div><p class="mt-2 max-w-xs">Every number carries its source and date. Data: World Bank WDI (CC BY 4.0).</p></div>
-  <div class="flex flex-col gap-1.5"><a href="/methodology" class="hover:text-text">Methodology &amp; sources</a><a href="/pricing" class="hover:text-text">Pricing</a></div>
-  <div>Built on free infrastructure. Not investment advice.</div>
+<footer class="mt-32 border-t border-white/10">
+ <div class="mx-auto max-w-7xl px-4 md:px-6 py-14 grid gap-10 md:grid-cols-4 text-sm text-muted">
+  <div class="md:col-span-2"><p class="display text-5xl md:text-7xl">GovPulse</p><p class="mt-4 max-w-sm">Every number carries its source and date. Data: World Bank WDI (CC BY 4.0). Not financial advice.</p></div>
+  <nav aria-label="Product" class="flex flex-col gap-2"><p class="kicker mb-1">Product</p><a href="/india" class="hover:text-strong">Countries</a><a href="/pricing" class="hover:text-strong">Pricing</a><a href="/api" class="hover:text-strong">Public API</a><a href="/methodology" class="hover:text-strong">Methodology</a></nav>
+  <nav aria-label="Legal" class="flex flex-col gap-2"><p class="kicker mb-1">Legal</p>{legal.map(([h, l]) => <a href={h} class="hover:text-strong">{l}</a>)}</nav>
  </div>
+ <p class="mx-auto max-w-7xl px-4 md:px-6 pb-10 text-xs text-muted">© {new Date().getFullYear()} GovPulse. No cookies, no tracking pixels.</p>
 </footer>
-<script>
- document.addEventListener('pointermove', (e) => { const t = (e.target as HTMLElement)?.closest?.('.spot') as HTMLElement | null; if (!t) return; const r = t.getBoundingClientRect(); t.style.setProperty('--mx', `${e.clientX - r.left}px`); t.style.setProperty('--my', `${e.clientY - r.top}px`); });
-</script>
-<script>
- const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
- if (!reduce) document.querySelectorAll<HTMLElement>('[data-parallax]').forEach(sec => {
-  const media = sec.querySelector<HTMLElement>('.hero-media'); const title = sec.querySelector<HTMLElement>('[data-depth]');
-  let tx = 0, ty = 0, cx = 0, cy = 0, sy = 0;
-  sec.addEventListener('pointermove', e => { const r = sec.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - .5) * -24; ty = ((e.clientY - r.top) / r.height - .5) * -16; });
-  addEventListener('scroll', () => { sy = scrollY; }, { passive: true });
-  const loop = () => { cx += (tx - cx) * .06; cy += (ty - cy) * .06;
-   media?.style.setProperty('--px', cx + 'px'); media?.style.setProperty('--py', cy + 'px'); media?.style.setProperty('--sy', sy * .35 + 'px');
-   if (title) { title.style.transform = `translate3d(${cx * .4}px,${sy * -.12}px,0)`; title.style.opacity = String(Math.max(0, 1 - sy / 600)); }
-   requestAnimationFrame(loop); }; loop();
- });
-</script>
+<div class="cursor" aria-hidden="true"></div>
+<script src="/js/site.js" defer is:inline></script>
+{CF_BEACON && <script defer is:inline src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: CF_BEACON })}></script>}
 </body></html>

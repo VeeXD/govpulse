@@ -1,20 +1,21 @@
 ---
-import heroes from '../data/heroes.json';
-import Icon from './Icon.tsx';
+import heroes from '../data/heroes.json'; import media from '../data/media.json';
+import BgVideo from './BgVideo.astro'; import Icon from './Icon.tsx';
 const { country, name, region, iso, sub } = Astro.props;
-const h = (heroes as any)[country];
+const h = (heroes as any)[country]; const v = (media as any)[country];
+const words = name.split(' ');
 ---
-<section class="relative h-[86vh] min-h-[560px] max-h-[980px] overflow-hidden -mt-16" data-parallax>
- <div class="hero-media" aria-hidden="true">
-  <picture><source media="(max-width: 767px)" srcset={`/heroes/${country}-m.webp`}/><img src={`/heroes/${country}.webp`} alt="" fetchpriority="high" decoding="async"/></picture>
+<section class="relative h-[100svh] min-h-[600px] max-h-[1100px] overflow-hidden -mt-16" data-parallax>
+ <BgVideo id={country} photo={country} cls="hero-media"/>
+ <div class="grade-tone" aria-hidden="true"></div><div class="grade-vignette" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div>
+ <div class="relative h-full mx-auto max-w-7xl px-4 md:px-6 flex flex-col justify-end pb-20 md:pb-28">
+  <div data-depth>
+   <p class="kicker flex items-center gap-3"><span class="h-px w-12 bg-white/60"></span>{region} / {iso}</p>
+   <h1 class="display mt-6 text-[clamp(3.4rem,12vw,11rem)]">{words.map(w => <span class="line-mask"><span>{w}</span></span>)}</h1>
+   <p class="mt-8 text-lg md:text-2xl font-extralight text-text max-w-2xl">{sub}</p>
+  </div>
+  <a href="#dash" class="mt-10 inline-flex items-center gap-3 kicker hover:text-strong w-fit cursor-pointer"><Icon name="ArrowDown" size={16}/>Scroll</a>
  </div>
- <div class="grade-color" aria-hidden="true"></div><div class="grade-tone" aria-hidden="true"></div><div class="grade-vignette" aria-hidden="true"></div>
- <div class="relative h-full mx-auto max-w-7xl px-4 md:px-6 flex flex-col justify-end pb-20 md:pb-24">
-  <p class="font-mono text-xs md:text-sm tracking-[0.3em] uppercase text-link/90 flex items-center gap-2"><span class="h-px w-10 bg-link/70"></span>{region} · {iso}</p>
-  <h1 class="mt-4 font-extralight tracking-[-0.04em] leading-[0.9] text-strong text-[clamp(3.2rem,11vw,10rem)]" data-depth="0.4">{name}</h1>
-  <p class="mt-5 text-lg md:text-2xl font-light text-text/90 max-w-2xl">{sub}</p>
-  <a href="#dash" class="mt-8 inline-flex items-center gap-2 text-sm text-muted hover:text-strong w-fit cursor-pointer"><Icon name="ChevronsDown" size={18}/>Scroll to the dashboard</a>
- </div>
- {h && <p class="absolute bottom-3 right-4 text-[10px] md:text-[11px] text-text/80 bg-surface/50 backdrop-blur px-2 py-1 rounded">
-  {h.landmark} · Photo: <a class="underline underline-offset-2" href={h.url}>{h.author || 'Wikimedia Commons'}</a> · <a class="underline underline-offset-2" href={h.licenseUrl || h.url}>{h.license}</a> · Colour-graded</p>}
+ <p class="absolute bottom-3 right-4 text-[10px] md:text-[11px] text-text bg-black/60 backdrop-blur px-2 py-1 rounded max-w-[92vw]">
+  {v ? <>{v.label} · Video: <a class="underline underline-offset-2" href={v.source}>{v.author}</a> · {v.license}</> : h && <>{h.landmark} · Photo: <a class="underline underline-offset-2" href={h.url}>{h.author || 'Wikimedia Commons'}</a> · {h.license}</>} · grayscale · <a class="underline underline-offset-2" href="/credits">credits</a></p>
 </section>

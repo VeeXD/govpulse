@@ -2,21 +2,21 @@
 import Base from '../layouts/Base.astro'; import Icon from '../components/Icon.tsx'; import { DATA, INDUSTRIES, COUNTRIES } from '../lib/data'; import heroes from '../data/heroes.json';
 const inds = Object.entries(DATA.indicators) as any[];
 ---
-<Base title="Methodology & Sources">
+<Base title="Methodology & sources" desc="How GovPulse collects, checks and dates its data: World Bank WDI indicators, refresh schedule, claim-check rules, licences and photo credits.">
 <div class="mx-auto max-w-5xl px-4 md:px-6 pt-14">
- <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">Methodology &amp; <span class="gold-text">sources</span></h1>
+ <h1 class="text-4xl md:text-5xl font-semibold tracking-tight">Methodology &amp; <span class="gold-text">sources</span></h1>
  <p class="mt-4 text-muted text-lg max-w-3xl">GovPulse never invents numbers. Real values come from open APIs; anything not yet connected is labelled <span class="font-mono text-accent">SAMPLE</span>.</p>
  <div class="mt-10 grid md:grid-cols-3 gap-4">
   {[['Workflow', 'Pipeline', `A Python script pulls the World Bank API nightly via GitHub Actions. Last run: ${DATA.generated} UTC.`], ['CalendarClock', 'Freshness', 'Official statistics are annual and usually lag 1–2 years. Each KPI shows its data year and the World Bank update date.'], ['Scale', 'Context rules', 'Claim checks pair each metric with a counter-metric over a ~10-year window. Up/down colours always come with arrows.']].map(([i, t, d]) => <div class="glass rounded-2xl p-5"><Icon name={i} size={20} className="text-accent"/><h2 class="font-semibold mt-3">{t}</h2><p class="text-sm text-muted mt-1.5">{d}</p></div>)}
  </div>
- <h2 class="text-2xl font-bold mt-14">Indicators ({inds.length})</h2>
- <div class="mt-4 glass rounded-2xl overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-muted text-xs"><th class="p-3 font-medium">Industry</th><th class="p-3 font-medium">Indicator</th><th class="p-3 font-medium">Code</th><th class="p-3 font-medium">Source updated</th></tr></thead>
+ <h2 class="text-2xl font-semibold mt-14">Indicators ({inds.length})</h2>
+ <div class="mt-4 glass rounded-2xl overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-muted text-xs"><th class="p-3 font-normal">Industry</th><th class="p-3 font-normal">Indicator</th><th class="p-3 font-normal">Code</th><th class="p-3 font-normal">Source updated</th></tr></thead>
  <tbody>{inds.map(([c, m]) => <tr class="border-t border-white/10"><td class="p-3 capitalize text-muted">{m.industry}</td><td class="p-3">{m.label} <span class="text-muted">({m.unit})</span></td><td class="p-3 font-mono"><a class="text-link underline underline-offset-2" href={m.url}>{c}</a></td><td class="p-3 font-mono text-muted">{m.wb_updated}</td></tr>)}</tbody></table></div>
- <h2 class="text-2xl font-bold mt-14">Licences &amp; attribution</h2>
+ <h2 class="text-2xl font-semibold mt-14">Licences &amp; attribution</h2>
  <ul class="mt-4 grid gap-2 text-muted list-disc pl-5"><li>World Bank World Development Indicators, CC BY 4.0. Source: The World Bank.</li><li>Planned: OECD, Our World in Data (CC BY), FAO, ILO, GDELT. IMF data needs written permission for commercial use; it is not used.</li><li>Hero photos: Wikimedia Commons, licences listed under Photo credits.</li><li>Policy/news feed and daily brief are placeholders (SAMPLE) until the AI-tagged feed is connected.</li></ul>
- <h2 id="credits" class="text-2xl font-bold mt-14">Photo credits</h2>
+ <h2 id="credits" class="text-2xl font-semibold mt-14">Photo credits</h2>
  <p class="text-muted mt-2 text-sm">Country hero photos are real photographs from Wikimedia Commons, resized to WebP and colour-graded with CSS overlays (a modification). Share-alike licences apply to the graded images.</p>
- <div class="mt-4 glass rounded-2xl overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-muted text-xs"><th class="p-3 font-medium">Country</th><th class="p-3 font-medium">Landmark</th><th class="p-3 font-medium">Author</th><th class="p-3 font-medium">Licence</th><th class="p-3 font-medium">File</th></tr></thead>
+ <div class="mt-4 glass rounded-2xl overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-muted text-xs"><th class="p-3 font-normal">Country</th><th class="p-3 font-normal">Landmark</th><th class="p-3 font-normal">Author</th><th class="p-3 font-normal">Licence</th><th class="p-3 font-normal">File</th></tr></thead>
  <tbody>{Object.entries(heroes as any).map(([c, h]: any) => <tr class="border-t border-white/10"><td class="p-3">{COUNTRIES[c].name}</td><td class="p-3">{h.landmark}</td><td class="p-3 text-muted">{h.author}</td><td class="p-3"><a class="text-link underline underline-offset-2" href={h.licenseUrl || h.url}>{h.license}</a></td><td class="p-3"><a class="text-link underline underline-offset-2 break-all" href={h.url}>{h.title}</a></td></tr>)}</tbody></table></div>
 </div>
 </Base>

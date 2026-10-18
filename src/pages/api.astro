@@ -1,0 +1,21 @@
+---
+import Prose from '../components/Prose.astro'; import { COUNTRIES, DATA } from '../lib/data';
+const ex = Object.keys(DATA.indicators)[0];
+---
+<Prose title="Public API" kicker="Developers" desc="Free static JSON API for GovPulse indicators: countries, indicators and time series for 10 countries, CC BY 4.0.">
+<p>All endpoints are static JSON files rebuilt nightly, served from the CDN with CORS enabled. No key needed. Please cache responses.</p>
+<h2>Endpoints</h2>
+<table><thead><tr><th>Path</th><th>Returns</th></tr></thead><tbody>
+<tr><td><code>/api/v1/index.json</code></td><td>Version, generated time, licence, endpoint list</td></tr>
+<tr><td><code>/api/v1/countries.json</code></td><td>Countries with ISO codes and available indicators</td></tr>
+<tr><td><code>/api/v1/indicators.json</code></td><td>Indicator codes, labels, units, industries, source URLs</td></tr>
+<tr><td><code>/api/v1/&#123;country&#125;.json</code></td><td>All series for one country</td></tr>
+<tr><td><code>/api/v1/&#123;country&#125;/&#123;indicator&#125;.json</code></td><td>One time series: <code>[[year, value], …]</code></td></tr>
+</tbody></table>
+<p>Countries: {Object.keys(COUNTRIES).map(c => <code>{c} </code>)}</p>
+<h2>Example</h2>
+<pre tabindex="0">curl https://govpulse.pages.dev/api/v1/india/{ex}.json</pre>
+<p><a href={`/api/v1/india/${ex}.json`}>Open the example</a></p>
+<h2>Licence</h2><p>Values are from the World Bank World Development Indicators under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Attribute as: "Source: World Bank WDI, via GovPulse". Responses include a <code>license</code> and <code>attribution</code> field. Data only from openly licensed sources is published through the API.</p>
+<h2>Stability</h2><p>v1 field names will not change without a new version path. No uptime guarantee.</p>
+</Prose>

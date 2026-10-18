@@ -1,0 +1,2 @@
+import { DATA, COUNTRIES } from '../../../lib/data';
+export const GET = () => new Response(JSON.stringify({ generated: DATA.generated, license: 'CC BY 4.0', attribution: 'Source: World Bank WDI, via GovPulse', countries: Object.entries(COUNTRIES).map(([id, c]) => ({ id, name: c.name, iso3: c.iso, region: c.region, indicators: Object.keys(DATA.countries[id] ?? {}), url: `/api/v1/${id}.json` })) }));

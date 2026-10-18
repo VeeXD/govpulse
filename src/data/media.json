@@ -1,0 +1,142 @@
+{
+ "manufacturing": {
+  "label": "Rocket hardware assembly, NASA Michoud",
+  "type": "video",
+  "title": "Production Begins on Sixth Core Stage Hardware (MAF_20260814_CS6_Ring_Lift_TL)",
+  "author": "NASA / Michoud Assembly Facility",
+  "license": "Public domain (NASA media usage guidelines)",
+  "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+  "source": "https://images.nasa.gov/details/MAF_20260814_CS6_Ring_Lift_TL",
+  "clip": "2s–14s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/manufacturing.webm",
+   "mp4": "/media/manufacturing.mp4",
+   "webp": "/media/manufacturing.webp"
+  },
+  "sizeMB": {
+   "webm": 2.81,
+   "mp4": 2.26,
+   "webp": 0.13
+  }
+ },
+ "uk": {
+  "label": "Aerial footage of London",
+  "type": "video",
+  "title": "Aerial footage of London, United Kingdom featuring London Tower, Downtown London, London Bridge, River Thames.webm",
+  "author": "the Dronalist",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Aerial_footage_of_London,_United_Kingdom_featuring_London_Tower,_Downtown_London,_London_Bridge,_River_Thames.webm",
+  "clip": "60s–72s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/uk.webm",
+   "mp4": "/media/uk.mp4",
+   "webp": "/media/uk.webp"
+  },
+  "sizeMB": {
+   "webm": 1.91,
+   "mp4": 1.59,
+   "webp": 0.05
+  }
+ },
+ "earth": {
+  "label": "Earth from the ISS (Alexander Gerst timelapses)",
+  "type": "video",
+  "title": "Alexander Gerst’s Earth timelapses (2017 reissue) ESA380570.webm",
+  "author": "European Space Agency",
+  "license": "CC BY-SA 3.0 igo",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/igo/deed.en",
+  "source": "https://commons.wikimedia.org/wiki/File:Alexander_Gerst%E2%80%99s_Earth_timelapses_(2017_reissue)_ESA380570.webm",
+  "clip": "75s–87s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/earth.webm",
+   "mp4": "/media/earth.mp4",
+   "webp": "/media/earth.webp"
+  },
+  "sizeMB": {
+   "webm": 0.3,
+   "mp4": 0.56,
+   "webp": 0.02
+  }
+ },
+ "agriculture": {
+  "label": "Maize farm",
+  "type": "video",
+  "title": "View of a Maize Farm.webm",
+  "author": "Salifu Wumpini Hussein",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:View_of_a_Maize_Farm.webm",
+  "clip": "8s–20s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/agriculture.webm",
+   "mp4": "/media/agriculture.mp4",
+   "webp": "/media/agriculture.webp"
+  },
+  "sizeMB": {
+   "webm": 3.98,
+   "mp4": 3.31,
+   "webp": 0.13
+  }
+ },
+ "finance": {
+  "label": "Shanghai Lujiazui skyline timelapse",
+  "type": "video",
+  "title": "Shanghai Bund, Lujiazui Skyline Timelapse.webm",
+  "author": "Yigang Yu",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "source": "https://commons.wikimedia.org/wiki/File:Shanghai_Bund,_Lujiazui_Skyline_Timelapse.webm",
+  "clip": "5s–17s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/finance.webm",
+   "mp4": "/media/finance.mp4",
+   "webp": "/media/finance.webp"
+  },
+  "sizeMB": {
+   "webm": 0.68,
+   "mp4": 1.04,
+   "webp": 0.03
+  }
+ },
+ "energy": {
+  "label": "Wind farms, Lower Austria",
+  "type": "video",
+  "title": "Wind farms Tattendorf and Pottendorf in Lower Austria, Austria-hover VNr°0012.webm",
+  "author": "D-Kuru",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wind_farms_Tattendorf_and_Pottendorf_in_Lower_Austria,_Austria-hover_VNr%C2%B00012.webm",
+  "clip": "6s–18s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/energy.webm",
+   "mp4": "/media/energy.mp4",
+   "webp": "/media/energy.webp"
+  },
+  "sizeMB": {
+   "webm": 0.58,
+   "mp4": 0.58,
+   "webp": 0.04
+  }
+ },
+ "healthcare": {
+  "label": "Hospital laboratory",
+  "type": "video",
+  "title": "Behind the Results- Laboratory Readiness at U S Naval Hospital Guantanamo Bay (1003958).webm",
+  "author": "U.S. Navy NMRTC by Emily McCamy, Staff Sgt. Haylee Smith",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "source": "https://commons.wikimedia.org/wiki/File:Behind_the_Results-_Laboratory_Readiness_at_U_S_Naval_Hospital_Guantanamo_Bay_(1003958).webm",
+  "clip": "8s–20s, re-encoded 1280px, no audio",
+  "files": {
+   "webm": "/media/healthcare.webm",
+   "mp4": "/media/healthcare.mp4",
+   "webp": "/media/healthcare.webp"
+  },
+  "sizeMB": {
+   "webm": 0.79,
+   "mp4": 1.12,
+   "webp": 0.03
+  }
+ }
+}

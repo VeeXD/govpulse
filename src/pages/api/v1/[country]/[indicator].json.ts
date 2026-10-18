@@ -1,0 +1,3 @@
+import { DATA, COUNTRIES } from '../../../../lib/data';
+export function getStaticPaths() { return Object.keys(COUNTRIES).flatMap(country => Object.keys(DATA.countries[country] ?? {}).map(indicator => ({ params: { country, indicator } }))); }
+export const GET = ({ params }: any) => { const m = DATA.indicators[params.indicator]; return new Response(JSON.stringify({ country: params.country, indicator: params.indicator, label: m.label, unit: m.unit, source: m.url, source_updated: m.wb_updated, license: 'CC BY 4.0', attribution: 'Source: World Bank WDI, via GovPulse', data: DATA.countries[params.country][params.indicator] })); };

@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Page not found" desc="This page does not exist." noindex>
+<section class="mx-auto max-w-7xl px-4 md:px-6 min-h-[70vh] flex flex-col justify-center">
+ <p class="kicker">Error 404</p>
+ <h1 class="display mt-6 text-[clamp(4rem,16vw,14rem)]">Lost</h1>
+ <p class="mt-6 text-xl font-extralight max-w-lg">This page does not exist. Try a country dashboard or the home page.</p>
+ <div class="mt-8 flex gap-3"><a href="/" class="rounded-full bg-cta text-black font-semibold px-6 py-3">Home</a><a href="/india" class="rounded-full border border-white/40 px-6 py-3">India dashboard</a></div>
+</section>
+</Base>

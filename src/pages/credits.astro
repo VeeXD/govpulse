@@ -1,0 +1,15 @@
+---
+import Prose from '../components/Prose.astro'; import media from '../data/media.json'; import heroes from '../data/heroes.json'; import { COUNTRIES, DATA } from '../lib/data';
+---
+<Prose title="Data & media licences" kicker="Credits" desc="Licences and attributions for GovPulse data (World Bank CC BY 4.0), fonts, background videos and photos.">
+<h2>Data</h2><p>Indicators: <strong>The World Bank, World Development Indicators</strong>, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. {Object.keys(DATA.indicators).length} indicators, retrieved {DATA.generated} UTC from <a href="https://data.worldbank.org/">data.worldbank.org</a>. GovPulse reformats the data; the World Bank does not endorse GovPulse.</p>
+<h2>Background videos</h2><p>Clips are trimmed to 12 seconds, re-encoded without audio and shown in grayscale (modifications). Share-alike clips stay under their licence.</p>
+<table><thead><tr><th>Used for</th><th>Clip</th><th>Author</th><th>Licence</th></tr></thead><tbody>
+{Object.entries(media as any).map(([k, m]: any) => <tr><td>{k}</td><td><a href={m.source}>{m.title}</a><br/><span class="text-muted text-xs">{m.clip}</span></td><td>{m.author}</td><td>{m.licenseUrl ? <a href={m.licenseUrl}>{m.license}</a> : m.license}</td></tr>)}
+</tbody></table>
+<h2>Photos</h2><p>Country photos are shown in grayscale and with overlays (modifications).</p>
+<table><thead><tr><th>Country</th><th>Photo</th><th>Author</th><th>Licence</th></tr></thead><tbody>
+{Object.entries(heroes as any).map(([c, h]: any) => <tr><td>{COUNTRIES[c].name}</td><td><a href={h.url}>{h.title}</a></td><td>{h.author}</td><td>{h.licenseUrl ? <a href={h.licenseUrl}>{h.license}</a> : h.license}</td></tr>)}
+</tbody></table>
+<h2>Fonts and software</h2><ul><li>Fira Sans and Fira Code, SIL Open Font License 1.1 (<a href="/fonts/OFL.txt">licence text</a>), self-hosted.</li><li>Icons: <a href="https://lucide.dev">Lucide</a> (ISC). Charts: <a href="https://echarts.apache.org">Apache ECharts</a> (Apache 2.0). Built with Astro, React and Tailwind CSS (MIT).</li></ul>
+</Prose>

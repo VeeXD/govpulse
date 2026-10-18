@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+const { title, desc, kicker = 'Legal', template = false, updated = '2026-10-18' } = Astro.props;
+---
+<Base title={title} desc={desc}>
+<article class="mx-auto max-w-3xl px-4 md:px-6 pt-20">
+ <p class="kicker">{kicker}</p>
+ <h1 class="display mt-4 text-5xl md:text-7xl">{title}</h1>
+ <p class="mt-6 text-sm text-muted">Last updated {updated}</p>
+ {template && <div role="note" class="mt-6 rounded-xl border border-white/30 bg-white/5 p-4 text-sm"><strong class="text-strong">Template, review before launch.</strong> This is a generic draft, not legal advice. Have a qualified lawyer review it for your jurisdiction and business before relying on it.</div>}
+ <div class="prose-gp mt-10"><slot/></div>
+</article>
+</Base>
+<style is:global>
+.prose-gp{line-height:1.75;color:var(--color-text)}
+.prose-gp h2{font-size:1.5rem;font-weight:400;color:#fff;margin:2.5rem 0 .75rem}
+.prose-gp h3{font-size:1.1rem;font-weight:600;color:#fff;margin:1.5rem 0 .5rem}
+.prose-gp p,.prose-gp ul,.prose-gp table{margin:.75rem 0}
+.prose-gp ul{list-style:disc;padding-left:1.25rem}
+.prose-gp a{text-decoration:underline;text-underline-offset:3px;color:#fff}
+.prose-gp code{font-family:var(--font-mono);font-size:.85em;background:rgba(255,255,255,.08);padding:.1em .35em;border-radius:4px}
+.prose-gp pre{font-family:var(--font-mono);font-size:.8rem;background:#141414;border:1px solid #3A3A3A;padding:1rem;border-radius:8px;overflow:auto}
+.prose-gp table{width:100%;font-size:.875rem;border-collapse:collapse;table-layout:fixed}.prose-gp td,.prose-gp th{overflow-wrap:anywhere}.prose-gp th,.prose-gp td{border-top:1px solid rgba(255,255,255,.12);padding:.5rem;text-align:left;vertical-align:top}.prose-gp th{color:#A3A3A3;font-weight:400}
+</style>
