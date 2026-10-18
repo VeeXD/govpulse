@@ -35,7 +35,7 @@ const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.in
  <section class="grid gap-6 lg:grid-cols-3">
   <div class="glass rounded-2xl p-5 lg:col-span-2">
    <div class="flex items-center justify-between"><h2 class="font-semibold">Long-run trend</h2><span class="text-xs text-muted">Annual · World Bank WDI</span></div>
-   {main.length ? <Chart client:visible series={main.map((k: any) => ({ name: `${k.label} (${k.unit})`, data: k.series }))} colors={[TOKENS.link, TOKENS.accent]} height={300}/> : <p class="text-muted text-sm py-10">No series available.</p>}
+   {main.length ? <Chart client:visible series={main.map((k: any) => ({ name: `${k.label} (${k.unit})`, data: k.series }))} colors={[TOKENS.link, TOKENS.accent]} height={300} title={`${C.name}: ${main.map((k: any) => k.label).join(' vs ')}`} source={`World Bank WDI (${main.map((k: any) => k.code).join(', ')}), CC BY 4.0`}/> : <p class="text-muted text-sm py-10">No series available.</p>}
    <p class="text-[11px] text-muted mt-2">Full series 2000–latest so no single baseline year is cherry-picked.</p>
   </div>
   <aside class="glass rounded-2xl p-5" aria-labelledby="feed">
