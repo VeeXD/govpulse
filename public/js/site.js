@@ -33,7 +33,7 @@
 /* Country selection flow: arriving with #dash shows the hero briefly, then glides to the sticky dashboard bar. */
 (() => {
   if (location.hash !== '#dash') return;
-  const t = document.getElementById('dash'); if (!t) return;
+  const t = document.getElementById('dash-top') || document.getElementById('dash'); if (!t) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   history.scrollRestoration = 'manual';
   if (reduce) { t.scrollIntoView(); return; }

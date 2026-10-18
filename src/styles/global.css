@@ -105,3 +105,6 @@ html{background:var(--color-surface);color:var(--color-text);font-family:var(--f
 
 .hero-media.hero-bright img{filter:contrast(1.05) saturate(1.05) brightness(1)!important}
 html,body{overflow-x:clip}
+.fade-in{animation:fadein .45s cubic-bezier(.2,.7,.2,1) both}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.text-signal{color:var(--ref-signal)}
