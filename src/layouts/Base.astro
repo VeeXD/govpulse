@@ -5,7 +5,7 @@ import { SITE, BRAND, CF_BEACON } from '../config/site';
 interface Props { title?: string; desc?: string; overlay?: boolean; og?: string; jsonld?: any[]; noindex?: boolean }
 const { overlay = false, title = BRAND, desc = 'Country-first economic analytics by industry for 10 countries. Every KPI shows its World Bank source and date.', og = '/og/default.png', jsonld = [], noindex = false } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const canonical = new URL(path === '/' ? '/' : path, SITE).href;
+const canonical = new URL(path === '/' ? '/' : path + '/', SITE).href; // Cloudflare Pages serves directory URLs with a trailing slash
 const fullTitle = title === BRAND ? `${BRAND}: the economic pulse of nations` : `${title} | ${BRAND}`;
 const ogUrl = new URL(og, SITE).href;
 const nav = [['/', 'Home'], ['/india', 'Countries'], ['/pricing', 'Pricing'], ['/api', 'API'], ['/methodology', 'Methodology']];
