@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro'; import Icon from '../components/Icon.tsx'; import Reveal from '../components/Reveal.tsx';
+import ClaimCard from '../components/ClaimCard.astro';
+import { COUNTRIES, INDUSTRIES, series, DATA, fmt, claims } from '../lib/data';
+const rows = Object.entries(COUNTRIES).map(([id, c]) => { const g = series(id, 'NY.GDP.MKTP.KD.ZG').at(-1); const i = series(id, 'FP.CPI.TOTL.ZG').at(-1); return { id, ...c, g, i }; }).sort((a, b) => (b.g?.[1] ?? -99) - (a.g?.[1] ?? -99));
+const nInd = Object.keys(DATA.indicators).length;
+const pts = Object.values(DATA.countries).reduce((s: number, c: any) => s + Object.values(c).reduce((t: number, x: any) => t + x.length, 0), 0);
+const featured = claims('india')[0];
+import heroes from '../data/heroes.json';
+const top5 = rows.slice(0, 5).map(r => { const g = r.g?.[1] ?? 0; return { ...r, pos: g >= 0, w: Math.max(6, Math.min(100, g * 100 / (rows[0].g?.[1] || 1))) }; });
+const mini = [['india', 'FP.CPI.TOTL.ZG', 'India inflation'], ['usa', 'SL.UEM.TOTL.ZS', 'US unemployment']].map(([id, code, l]) => ({ id, l, s: series(id, code).at(-1) }));
+const montage = ['uk', 'india', 'usa', 'japan', 'brazil'];
+const credits = montage.map(c => (heroes as any)[c]);
+---
+<Base overlay>
+<section class="relative overflow-hidden -mt-16 pt-16 min-h-[92vh] flex items-center" data-parallax>
+ <div class="hero-media montage" aria-hidden="true">{montage.map((c, i) => <img src={`/heroes/${c}.webp`} alt="" style={`animation-delay:${i * 6}s`} loading={i ? 'lazy' : 'eager'}/>)}</div>
+ <div class="grade-color" aria-hidden="true"></div><div class="grade-tone" aria-hidden="true"></div><div class="grade-vignette" aria-hidden="true"></div>
+ <div class="absolute inset-0 bg-surface/35" aria-hidden="true"></div>
+ <div class="relative w-full mx-auto max-w-7xl px-4 md:px-6 pt-14 md:pt-20 pb-16 grid lg:grid-cols-2 gap-10 items-center">
+  <Reveal client:load>
+   <span class="inline-flex items-center gap-2 glass rounded-full px-3 py-1 text-xs text-muted"><span class="h-1.5 w-1.5 rounded-full bg-up"></span>{Object.keys(COUNTRIES).length} countries · {nInd} indicators · {pts.toLocaleString()} real data points</span>
+   <h1 class="mt-5 text-5xl md:text-6xl xl:text-7xl font-extralight tracking-[-0.04em] leading-[0.95] text-strong">The economic pulse<br/>of every <span class="gold-text">nation</span>.</h1>
+   <p class="mt-6 text-lg text-muted max-w-xl">Country-first dashboards by industry: agriculture, healthcare, finance, energy and manufacturing. Every number shows its source and date, and every claim gets its counter-metric.</p>
+   <div class="mt-8 flex flex-wrap gap-3">
+    <a href="/india/agriculture" class="inline-flex items-center gap-2 rounded-xl bg-cta text-white font-semibold px-5 py-3 hover:brightness-110 transition cursor-pointer">Explore India <Icon name="ArrowRight" size={18}/></a>
+    <a href="/methodology" class="inline-flex items-center gap-2 rounded-xl glass px-5 py-3 hover:border-muted transition cursor-pointer"><Icon name="ShieldCheck" size={18}/>How we source data</a>
+   </div>
+  </Reveal>
+  <div class="relative w-full max-w-md lg:ml-auto grid gap-3" data-depth="0.2">
+   <div class="glass rounded-2xl p-5"><div class="flex items-center justify-between text-xs text-muted"><span class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-up animate-pulse"></span>Fastest-growing economies</span><span>Real GDP growth · World Bank</span></div>
+    <ul class="mt-3 grid gap-2">{top5.map((r) => <li><a href={`/${r.id}`} class="group grid grid-cols-[7.5rem_1fr_4.5rem] items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-white/5 cursor-pointer"><span class="text-sm text-strong truncate">{r.name}</span><span class="h-1.5 rounded-full bg-white/10 overflow-hidden"><span class="block h-full rounded-full bg-gradient-to-r from-primary to-link" style={`width:${r.w}%`}></span></span><span class:list={['font-mono text-sm text-right inline-flex items-center justify-end gap-0.5', r.pos ? 'text-up' : 'text-down']}><Icon name={r.pos ? 'ArrowUpRight' : 'ArrowDownRight'} size={13}/>{fmt(r.g?.[1] ?? null, '%')}</span></a></li>)}</ul></div>
+   <div class="grid grid-cols-2 gap-3">{mini.map((m) => <a href={`/${m.id}`} class="glass rounded-2xl p-4 hover:border-white/30 transition cursor-pointer"><div class="text-xs text-muted">{m.l}</div><div class="font-mono text-2xl mt-1 text-strong">{fmt(m.s?.[1] ?? null, '%')}</div><div class="text-[10px] text-muted mt-1">{m.s?.[0]} · World Bank</div></a>)}</div>
+  </div>
+ </div>
+ <p class="absolute bottom-3 right-4 text-[10px] text-text/80 bg-surface/50 backdrop-blur px-2 py-1 rounded max-w-[90vw]">Backdrop photos (Wikimedia Commons): {credits.map(h => `${h.landmark}, ${h.author} (${h.license})`).join(' · ')}. Full credits on <a href="/methodology#credits" class="underline">Methodology</a>.</p>
+</section>
+<section class="relative mx-auto max-w-7xl px-4 md:px-6 grid gap-4 lg:grid-cols-3">
+ <div class="spot glass rounded-2xl p-6 lg:col-span-2">
+  <div class="flex items-center justify-between"><h2 class="font-semibold text-lg flex items-center gap-2"><Icon name="Activity" size={18}/>Growth leaderboard</h2><span class="text-xs text-muted">Real GDP growth & CPI inflation, latest year · World Bank</span></div>
+  <div class="overflow-x-auto"><table class="w-full mt-4 text-sm"><thead><tr class="text-muted text-left text-xs"><th class="py-2 font-medium">Country</th><th class="font-medium text-right">GDP growth</th><th class="font-medium text-right">Inflation</th><th class="font-medium text-right">Year</th></tr></thead>
+  <tbody>{rows.map(r => { const g = r.g?.[1] ?? 0; return <tr class="border-t border-white/10 hover:bg-raised/40"><td class="py-2.5"><a href={`/${r.id}`} class="hover:text-accent cursor-pointer">{r.name}</a></td><td class:list={['text-right font-mono', g >= 0 ? 'text-up' : 'text-down']}><span class="inline-flex items-center gap-0.5"><Icon name={g >= 0 ? 'ArrowUpRight' : 'ArrowDownRight'} size={13}/>{fmt(r.g?.[1] ?? null, '%')}</span></td><td class="text-right font-mono">{fmt(r.i?.[1] ?? null, '%')}</td><td class="text-right font-mono text-muted">{r.g?.[0]}</td></tr>; })}</tbody></table></div>
+ </div>
+ <div class="spot glass rounded-2xl p-6 flex flex-col">
+  <div class="flex items-center justify-between"><h2 class="font-semibold text-lg flex items-center gap-2"><Icon name="Sunrise" size={18}/>Daily brief</h2><span class="text-[10px] font-mono font-semibold uppercase tracking-wider text-accent border border-accent/60 rounded px-1.5 py-0.5">Sample</span></div>
+  <p class="text-sm text-muted mt-4 leading-relaxed">Placeholder. Once live, a short AI-written brief appears here each morning, summarising what changed across tracked countries, with a source link on every sentence.</p>
+  <div class="mt-auto pt-6 grid grid-cols-2 gap-2">{INDUSTRIES.slice(1).map(i => <a href={`/india/${i.id}`} class="flex items-center gap-2 rounded-lg border border-line px-3 py-2 text-sm hover:border-accent hover:text-accent transition cursor-pointer"><Icon name={i.icon} size={15}/>{i.name}</a>)}</div>
+ </div>
+ <div class="lg:col-span-1">{featured && <ClaimCard c={featured}/>}</div>
+ <div class="spot glass rounded-2xl p-6 lg:col-span-2 grid sm:grid-cols-3 gap-6">
+  {[['ShieldCheck', 'Sourced, always', 'Each KPI links to its World Bank indicator with data year and update date.'], ['Scale', 'Context over spin', 'Raw values beside share-of-GDP, full time series, counter-metrics on every claim.'], ['Bot', 'Self-maintaining', 'Nightly pipeline refreshes data and rebuilds the static site automatically.']].map(([i, t, d]) => <div><span class="inline-flex rounded-xl bg-primary/15 text-link p-2.5"><Icon name={i} size={20}/></span><h3 class="font-semibold mt-3">{t}</h3><p class="text-sm text-muted mt-1.5">{d}</p></div>)}
+ </div>
+</section>
+</Base>

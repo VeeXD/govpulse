@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import KpiCard from './KpiCard.astro'; import ClaimCard from './ClaimCard.astro';
+import Chart from './Chart.tsx'; import CountryHero from './CountryHero.astro'; import Icon from './Icon.tsx';
+import { COUNTRIES, INDUSTRIES, kpis, claims, RAMP, TOKENS, DATA } from '../lib/data';
+const { country, industry } = Astro.props;
+const C = COUNTRIES[country]; const ind = INDUSTRIES.find(i => i.id === industry)!;
+const ks = kpis(country, industry); const withData = ks.filter((k: any) => k.series.length);
+const main = withData.slice(0, 2);
+const sample = [
+ ['Policy', `New ${ind.name.toLowerCase()} subsidy framework notified`, '2 days ago'],
+ ['Regulation', `Draft rules on ${ind.name.toLowerCase()} data reporting open for comment`, '5 days ago'],
+ ['Budget', `Mid-year allocation review for the ${ind.name.toLowerCase()} ministry`, '1 week ago'],
+];
+const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.industry, x.b.industry].includes(industry));
+---
+<Base overlay title={`${C.name} · ${ind.name}`} desc={`${C.name} ${ind.name} KPIs from the World Bank, with sources and dates.`}>
+<CountryHero country={country} name={C.name} region={C.region} iso={C.iso} sub={industry === 'overview' ? `How ${C.name.endsWith('s') ? C.name + "'" : C.name + "'s"} economy is moving, sector by sector, with every number sourced.` : `${ind.name}: the indicators that matter, sourced and dated.`}/>
+<section id="dash" class="sticky top-16 z-30 border-y border-white/10 bg-surface/55 backdrop-blur-2xl">
+ <div class="mx-auto max-w-7xl px-4 md:px-6 py-3 flex flex-wrap items-center gap-3 justify-between">
+  <div role="tablist" aria-label="Industries" class="flex gap-1 overflow-x-auto glass rounded-xl p-1 max-w-full">
+   {INDUSTRIES.map(i => <a role="tab" aria-selected={i.id === industry ? 'true' : 'false'} href={`/${country}${i.id === 'overview' ? '' : '/' + i.id}#dash`} class:list={['flex items-center gap-2 text-sm rounded-lg px-3.5 py-2 whitespace-nowrap transition-colors cursor-pointer', i.id === industry ? 'bg-cta text-white font-semibold shadow-[0_0_24px_-6px_#964734]' : 'text-muted hover:text-strong hover:bg-white/5']}><Icon name={i.icon} size={16}/>{i.name}</a>)}
+  </div>
+  <p class="text-xs text-muted flex items-center gap-1.5"><Icon name="RefreshCw" size={13}/>Pipeline run {DATA.generated.replace('T', ' ')} UTC</p>
+ </div>
+</section>
+<div class="mx-auto max-w-7xl px-4 md:px-6 pt-6">
+ <nav aria-label="Countries" class="flex gap-2 overflow-x-auto pb-1">
+  {Object.entries(COUNTRIES).map(([id, c]) => <a href={`/${id}${industry === 'overview' ? '' : '/' + industry}`} aria-current={id === country ? 'page' : undefined} class:list={['text-xs whitespace-nowrap rounded-full border px-3 py-1.5 transition-colors cursor-pointer backdrop-blur', id === country ? 'border-link text-link bg-primary/15' : 'border-white/15 text-muted hover:text-strong hover:border-white/30']}>{c.name}</a>)}
+ </nav>
+ <h2 class="sr-only">{C.name} {ind.name} dashboard</h2>
+</div>
+<div class="mx-auto max-w-7xl px-4 md:px-6 py-8 grid gap-6">
+ <section aria-label="Key indicators" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{ks.map((k: any) => <KpiCard k={k}/>)}</section>
+ <section class="grid gap-6 lg:grid-cols-3">
+  <div class="glass rounded-2xl p-5 lg:col-span-2">
+   <div class="flex items-center justify-between"><h2 class="font-semibold">Long-run trend</h2><span class="text-xs text-muted">Annual · World Bank WDI</span></div>
+   {main.length ? <Chart client:visible series={main.map((k: any) => ({ name: `${k.label} (${k.unit})`, data: k.series }))} colors={[TOKENS.link, TOKENS.accent]} height={300}/> : <p class="text-muted text-sm py-10">No series available.</p>}
+   <p class="text-[11px] text-muted mt-2">Full series 2000–latest so no single baseline year is cherry-picked.</p>
+  </div>
+  <aside class="glass rounded-2xl p-5" aria-labelledby="feed">
+   <div class="flex items-center justify-between"><h2 id="feed" class="font-semibold flex items-center gap-2"><Icon name="Newspaper" size={17}/>Policy &amp; news feed</h2><span class="text-[10px] font-mono font-semibold uppercase tracking-wider text-accent border border-accent/60 rounded px-1.5 py-0.5">Sample</span></div>
+   <ul class="mt-4 grid gap-3">{sample.map(([t, h, w]) => <li class="rounded-xl border border-dashed border-line p-3"><div class="text-[11px] text-muted flex justify-between"><span>{t}</span><span>{w}</span></div><p class="text-sm mt-1">{h}</p></li>)}</ul>
+   <p class="text-[11px] text-muted mt-3">Placeholder items, not real events. The live feed (GDELT + official gazettes, AI-tagged with source links) is not connected yet.</p>
+  </aside>
+ </section>
+ {cl.length > 0 && <section aria-labelledby="cc"><h2 id="cc" class="text-xl font-bold mb-4">Claim checks</h2><div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{cl.map((c: any) => <ClaimCard c={c}/>)}</div></section>}
+ <section class="glass rounded-2xl p-6 flex flex-wrap items-center gap-4 justify-between">
+  <div class="flex items-center gap-3"><span class="rounded-xl bg-accent/15 text-accent p-2.5"><Icon name="SlidersHorizontal" size={20}/></span><div><p class="font-semibold">Explorer, CSV export &amp; daily {ind.name.toLowerCase()} brief</p><p class="text-sm text-muted">Filter any KPI by date range, export, and get it in your inbox with Pro.</p></div></div>
+  <a href="/pricing" class="rounded-lg bg-cta text-white font-semibold text-sm px-4 py-2.5 hover:brightness-110 cursor-pointer">See plans</a>
+ </section>
+</div>
+</Base>

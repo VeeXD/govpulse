@@ -1,0 +1,50 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.tsx';
+const { overlay = false, title = 'GovPulse', desc = 'Country-first economic analytics by industry, with every number sourced.' } = Astro.props;
+const path = Astro.url.pathname;
+const nav = [['/', 'Home'], ['/india', 'Countries'], ['/pricing', 'Pricing'], ['/methodology', 'Methodology']];
+---
+<!doctype html><html lang="en" class="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="color-scheme" content="dark"/><meta name="theme-color" content="#003135"/><link rel="icon" href="/favicon.svg"/>
+<title>{title === 'GovPulse' ? 'GovPulse · Economic pulse of nations' : `${title} · GovPulse`}</title><meta name="description" content={desc}/></head>
+<body class="min-h-screen bg-surface text-text">
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 bg-cta text-white px-3 py-2 rounded-md">Skip to content</a>
+<header class:list={["sticky top-0 z-40 border-b border-white/10 backdrop-blur-2xl", overlay ? "bg-surface/25" : "bg-surface/55"]}>
+ <div class="mx-auto max-w-7xl px-4 md:px-6 h-16 flex items-center gap-6">
+  <a href="/" class="flex items-center gap-2 font-bold tracking-tight text-lg"><img src="/favicon.svg" alt="" width="28" height="28"/><span>Gov<span class="text-accent">Pulse</span></span></a>
+  <nav aria-label="Main" class="hidden md:flex gap-1 text-sm">
+   {nav.map(([h, l]) => <a href={h} class:list={['px-3 py-2 rounded-lg transition-colors hover:bg-card cursor-pointer', (h === '/' ? path === '/' : path.startsWith(h === '/india' ? '/__' : h)) || (l === 'Countries' && /^\/(india|usa|china|uk|germany|japan|brazil|indonesia|nigeria|uae)/.test(path)) ? 'text-accent' : 'text-muted hover:text-text']}>{l}</a>)}
+  </nav>
+  <div class="ml-auto flex items-center gap-2">
+   <a href="/pricing" class="hidden sm:inline-flex text-sm text-muted hover:text-text px-3 py-2 cursor-pointer">Sign in</a>
+   <a href="/pricing" class="inline-flex items-center gap-1.5 rounded-lg bg-cta text-white font-semibold text-sm px-3.5 py-2 hover:brightness-110 transition cursor-pointer"><Icon name="Sparkles" size={16}/>Go Pro</a>
+  </div>
+ </div>
+ <nav aria-label="Main mobile" class="md:hidden flex gap-1 px-3 pb-2 text-sm overflow-x-auto">{nav.map(([h, l]) => <a href={h} class="px-3 py-1.5 rounded-lg text-muted hover:text-text whitespace-nowrap">{l}</a>)}</nav>
+</header>
+<main id="main"><slot/></main>
+<footer class="mt-24 border-t border-white/10 bg-card/30 backdrop-blur">
+ <div class="mx-auto max-w-7xl px-4 md:px-6 py-10 grid gap-6 md:grid-cols-3 text-sm text-muted">
+  <div><div class="font-bold text-text text-base">Gov<span class="text-accent">Pulse</span></div><p class="mt-2 max-w-xs">Every number carries its source and date. Data: World Bank WDI (CC BY 4.0).</p></div>
+  <div class="flex flex-col gap-1.5"><a href="/methodology" class="hover:text-text">Methodology &amp; sources</a><a href="/pricing" class="hover:text-text">Pricing</a></div>
+  <div>Built on free infrastructure. Not investment advice.</div>
+ </div>
+</footer>
+<script>
+ document.addEventListener('pointermove', (e) => { const t = (e.target as HTMLElement)?.closest?.('.spot') as HTMLElement | null; if (!t) return; const r = t.getBoundingClientRect(); t.style.setProperty('--mx', `${e.clientX - r.left}px`); t.style.setProperty('--my', `${e.clientY - r.top}px`); });
+</script>
+<script>
+ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if (!reduce) document.querySelectorAll<HTMLElement>('[data-parallax]').forEach(sec => {
+  const media = sec.querySelector<HTMLElement>('.hero-media'); const title = sec.querySelector<HTMLElement>('[data-depth]');
+  let tx = 0, ty = 0, cx = 0, cy = 0, sy = 0;
+  sec.addEventListener('pointermove', e => { const r = sec.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - .5) * -24; ty = ((e.clientY - r.top) / r.height - .5) * -16; });
+  addEventListener('scroll', () => { sy = scrollY; }, { passive: true });
+  const loop = () => { cx += (tx - cx) * .06; cy += (ty - cy) * .06;
+   media?.style.setProperty('--px', cx + 'px'); media?.style.setProperty('--py', cy + 'px'); media?.style.setProperty('--sy', sy * .35 + 'px');
+   if (title) { title.style.transform = `translate3d(${cx * .4}px,${sy * -.12}px,0)`; title.style.opacity = String(Math.max(0, 1 - sy / 600)); }
+   requestAnimationFrame(loop); }; loop();
+ });
+</script>
+</body></html>

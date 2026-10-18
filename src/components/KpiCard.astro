@@ -1,0 +1,18 @@
+---
+import { fmt, DATA } from '../lib/data';
+import Icon from './Icon.tsx';
+const { k } = Astro.props;
+const d = k.delta; const dir = d == null || Math.abs(d) < 1e-9 ? 0 : d > 0 ? 1 : -1;
+const good = k.good == null ? null : (dir === 1) === k.good;
+const tone = dir === 0 || good == null ? 'text-muted' : good ? 'text-up' : 'text-down';
+const pts = k.series.slice(-15); const ys = pts.map((p: any) => p[1]); const mn = Math.min(...ys), mx = Math.max(...ys);
+const path = pts.map((p: any, i: number) => `${i ? 'L' : 'M'}${(i / Math.max(1, pts.length - 1)) * 100},${28 - ((p[1] - mn) / ((mx - mn) || 1)) * 26}`).join(' ');
+---
+<article class="spot glass rounded-2xl p-5 flex flex-col gap-3 min-h-[168px]">
+ <div class="flex items-start justify-between gap-3"><h3 class="text-sm text-muted font-medium leading-snug">{k.label}</h3><span class="font-mono text-[11px] text-muted border border-line rounded px-1.5 py-0.5 whitespace-nowrap">{k.unit}</span></div>
+ {k.value == null ? <p class="text-muted text-sm">No World Bank data for this country.</p> : <>
+ <div class="flex items-end gap-3"><span class="font-mono text-3xl font-semibold tracking-tight">{fmt(k.value, k.unit)}</span>
+  {d != null && <span class:list={['font-mono text-sm flex items-center gap-0.5 pb-1', tone]}><Icon name={dir > 0 ? 'ArrowUpRight' : dir < 0 ? 'ArrowDownRight' : 'ArrowRight'} size={15}/><span class="sr-only">{dir > 0 ? 'up' : dir < 0 ? 'down' : 'flat'}</span>{(d >= 0 ? '+' : '') + d.toFixed(Math.abs(d) >= 100 ? 0 : 2)}</span>}</div>
+ <svg viewBox="0 0 100 30" preserveAspectRatio="none" class="w-full h-8" aria-hidden="true"><path d={path} fill="none" stroke="#5ED3DC" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>
+ <p class="text-[11px] text-muted mt-auto flex items-center gap-1"><Icon name="Database" size={12}/><a class="underline decoration-line underline-offset-2 hover:text-text" href={k.url}>World Bank {k.code}</a> · data year {k.year}{k.prevYear ? ` (vs ${k.prevYear})` : ''} · updated {k.wb_updated}</p></>}
+</article>

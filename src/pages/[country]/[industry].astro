@@ -1,0 +1,5 @@
+---
+import CountryView from '../../components/CountryView.astro'; import { COUNTRIES, INDUSTRIES } from '../../lib/data';
+export function getStaticPaths() { return Object.keys(COUNTRIES).flatMap(country => INDUSTRIES.filter(i => i.id !== 'overview').map(i => ({ params: { country, industry: i.id } }))); }
+---
+<CountryView country={Astro.params.country} industry={Astro.params.industry}/>

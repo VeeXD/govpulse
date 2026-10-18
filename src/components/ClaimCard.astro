@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.tsx'; import { fmt } from '../lib/data';
+const { c } = Astro.props;
+const Row = ({ x, tag }: any) => null;
+const arrow = (d: number) => (d > 0 ? 'ArrowUpRight' : d < 0 ? 'ArrowDownRight' : 'ArrowRight');
+---
+<article class="spot glass rounded-2xl p-6 flex flex-col gap-4">
+ <div class="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-accent"><Icon name="ScanSearch" size={15}/>Claim check</div>
+ <p class="text-lg font-semibold leading-snug">{c.claim}</p>
+ <div class="grid grid-cols-2 gap-3">
+  {[['The data', c.a, 'border-primary/50'], ['Counter-metric', c.b, 'border-accent/50']].map(([t, x, b]: any) => (
+   <div class:list={['rounded-xl bg-surface/60 border p-3', b]}>
+    <div class="text-[11px] uppercase tracking-wider text-muted">{t}</div>
+    <div class="text-sm mt-1">{x.label} <span class="text-muted">({x.unit})</span></div>
+    <div class="font-mono mt-2 flex items-center gap-1.5 text-sm"><span class="text-muted">{x.from[0]}</span>{fmt(x.from[1], x.unit)}<Icon name="MoveRight" size={14}/><span class="text-muted">{x.to[0]}</span><span class="font-semibold">{fmt(x.to[1], x.unit)}</span></div>
+    <div class="font-mono text-xs mt-1 flex items-center gap-1 text-muted"><Icon name={arrow(x.diff)} size={13}/>{x.diff >= 0 ? '+' : ''}{x.diff.toFixed(1)} change</div>
+   </div>))}
+ </div>
+ <p class="text-sm text-muted leading-relaxed">{c.note}</p>
+ <p class="text-[11px] text-muted mt-auto">Sources: World Bank {c.a.code}, {c.b.code}. Claim wording is a generic template, not a quote.</p>
+</article>

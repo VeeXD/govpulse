@@ -1,0 +1,122 @@
+{
+ "india": {
+  "landmark": "Red Fort, Delhi",
+  "title": "20191203 Naubat Khana, Red Fort, Delhi 0453 6340 DxO.jpg",
+  "author": "Jakub Ha\u0142un",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:20191203_Naubat_Khana,_Red_Fort,_Delhi_0453_6340_DxO.jpg",
+  "size": [
+   2400,
+   1963
+  ]
+ },
+ "usa": {
+  "landmark": "United States Capitol",
+  "title": "United States Capitol - west front.jpg",
+  "author": "Architect of the Capitol",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "url": "https://commons.wikimedia.org/wiki/File:United_States_Capitol_-_west_front.jpg",
+  "size": [
+   2400,
+   1245
+  ]
+ },
+ "uk": {
+  "landmark": "Palace of Westminster",
+  "title": "Palace of Westminster, London - Feb 2007.jpg",
+  "author": "Diliff",
+  "license": "CC BY-SA 2.5",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+  "url": "https://commons.wikimedia.org/wiki/File:Palace_of_Westminster,_London_-_Feb_2007.jpg",
+  "size": [
+   2400,
+   946
+  ]
+ },
+ "germany": {
+  "landmark": "Reichstag, Berlin",
+  "title": "Reichstag building Berlin view from west before sunset.jpg",
+  "author": "J\u00fcrgen Matern",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Reichstag_building_Berlin_view_from_west_before_sunset.jpg",
+  "size": [
+   2400,
+   908
+  ]
+ },
+ "japan": {
+  "landmark": "National Diet Building",
+  "title": "National Diet Building.jpg",
+  "author": "Kakidai",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:National_Diet_Building.jpg",
+  "size": [
+   2400,
+   1492
+  ]
+ },
+ "china": {
+  "landmark": "Great Hall of the People",
+  "title": "Great Hall of the People (20200825114146).jpg",
+  "author": "N509FZ",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Great_Hall_of_the_People_(20200825114146).jpg",
+  "size": [
+   2400,
+   1600
+  ]
+ },
+ "brazil": {
+  "landmark": "National Congress, Bras\u00edlia",
+  "title": "Brazilian National Congress.jpg",
+  "author": "Eurico Zimbres",
+  "license": "CC BY-SA 2.5",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+  "url": "https://commons.wikimedia.org/wiki/File:Brazilian_National_Congress.jpg",
+  "size": [
+   2130,
+   1343
+  ]
+ },
+ "indonesia": {
+  "landmark": "MPR/DPR Building, Jakarta",
+  "title": "MPRDPRBuilding.jpg",
+  "author": "Davidelit",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "url": "https://commons.wikimedia.org/wiki/File:MPRDPRBuilding.jpg",
+  "size": [
+   2288,
+   1712
+  ]
+ },
+ "nigeria": {
+  "landmark": "National Assembly, Abuja",
+  "title": "National Assembly Building, Abuja, Nigeria.jpg",
+  "author": "Kabusa16",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:National_Assembly_Building,_Abuja,_Nigeria.jpg",
+  "size": [
+   2400,
+   1600
+  ]
+ },
+ "uae": {
+  "landmark": "Qasr Al Watan, Abu Dhabi",
+  "title": "Qasr Al Watan sunset.jpg",
+  "author": "Darthjipsu",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Qasr_Al_Watan_sunset.jpg",
+  "size": [
+   2400,
+   1600
+  ]
+ }
+}

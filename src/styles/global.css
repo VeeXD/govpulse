@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+/* ── Reference tokens: "Deep Teal & Rust" (dark only). Brand hex are source of truth; OKLCH noted.
+   Contrast (WCAG) measured on worst case card #024950: text 6.9, muted 5.8, link 5.7, accent-text 4.6, up 6.6, down 5.0; white on rust CTA 6.5. */
+:root{
+  --ref-deep-950:#003135;   /* oklch(0.29 0.05 199) */
+  --ref-deep-900:#024950;   /* oklch(0.37 0.06 200) */
+  --ref-deep-800:oklch(0.43 0.07 200);
+  --ref-deep-700:oklch(0.52 0.07 200);
+  --ref-teal-500:#0FA4AF;   /* oklch(0.65 0.11 202) fills/charts only (3.35:1 on card) */
+  --ref-teal-300:#5ED3DC;   /* oklch(0.80 0.11 200) text-safe teal */
+  --ref-rust-600:#964734;   /* oklch(0.50 0.11 37) CTA fill, white text */
+  --ref-rust-300:#EB9A80;   /* oklch(0.77 0.10 40) text-safe rust */
+  --ref-mist-100:#AFDDE5;   /* oklch(0.87 0.05 207) body text */
+  --ref-mist-50:#E6F5F7;
+  --ref-mist-300:#9CCCD4;
+  --ref-green-300:#6EE7B0; --ref-red-300:#FF9C88;
+  color-scheme: dark;
+}
+/* ── Semantic tokens (components only use these) ── */
+@theme{
+  --color-surface:var(--ref-deep-950);
+  --color-card:var(--ref-deep-900);
+  --color-raised:var(--ref-deep-800);
+  --color-line:var(--ref-deep-700);
+  --color-primary:var(--ref-teal-500);
+  --color-link:var(--ref-teal-300);
+  --color-accent:var(--ref-rust-300);
+  --color-cta:var(--ref-rust-600);
+  --color-text:var(--ref-mist-100);
+  --color-strong:var(--ref-mist-50);
+  --color-muted:var(--ref-mist-300);
+  --color-up:var(--ref-green-300);
+  --color-down:var(--ref-red-300);
+  --font-sans:"Fira Sans",ui-sans-serif,system-ui,sans-serif;
+  --font-mono:"Fira Code",ui-monospace,monospace;
+}
+html{background:var(--color-surface);color:var(--color-text);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--color-accent);outline-offset:3px;border-radius:6px}
+a{color:inherit}
+.glass{background:linear-gradient(145deg,oklch(0.55 0.09 200 / .16),oklch(0.37 0.06 200 / .38));border:1px solid oklch(0.87 0.05 207 / .16);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);box-shadow:inset 0 1px 0 oklch(0.95 0.03 207 / .10),0 10px 40px -12px oklch(0.15 0.04 200 / .7)}
+.spot{position:relative;overflow:hidden;transition:border-color .25s,transform .25s}
+.spot::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),color-mix(in oklch,var(--color-link) 16%,transparent),transparent 60%)}
+.spot:hover::before,.spot:focus-within::before{opacity:1}
+.spot:hover{border-color:oklch(0.80 0.11 200 / .45)}
+.aurora{position:absolute;inset:-20%;filter:blur(70px);opacity:.6;background:
+ radial-gradient(40% 35% at 20% 30%,oklch(0.60 0.11 202 / .55),transparent 70%),
+ radial-gradient(35% 30% at 78% 22%,oklch(0.50 0.11 37 / .45),transparent 70%),
+ radial-gradient(45% 40% at 60% 80%,oklch(0.40 0.07 200 / .9),transparent 70%);
+ animation:drift 18s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate3d(4%,-3%,0) rotate(6deg) scale(1.08)}}
+.grid-bg{background-image:linear-gradient(var(--color-line) 1px,transparent 1px),linear-gradient(90deg,var(--color-line) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse at center,#000 20%,transparent 75%);opacity:.25}
+.gold-text{background:linear-gradient(100deg,#5ED3DC,#E6F5F7 45%,#EB9A80);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* ── Cinematic hero ── */
+.hero-media{position:absolute;inset:-6%;will-change:transform;transform:translate3d(var(--px,0),calc(var(--py,0) + var(--sy,0px)),0)}
+.hero-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(.45) contrast(1.08) brightness(.82) saturate(.9);animation:kenburns 32s ease-in-out infinite alternate;transform-origin:60% 40%}
+@keyframes kenburns{from{transform:scale(1.04)}to{transform:scale(1.16) translate3d(-1.5%,-1%,0)}}
+.grade-color{position:absolute;inset:0;background:#0FA4AF;mix-blend-mode:color;opacity:.38}
+.grade-tone{position:absolute;inset:0;background:linear-gradient(180deg,oklch(0.29 0.05 199 / .55) 0%,oklch(0.29 0.05 199 / .05) 35%,oklch(0.29 0.05 199 / .35) 65%,#003135 100%),radial-gradient(60% 50% at 75% 15%,oklch(0.50 0.11 37 / .28),transparent 70%)}
+.grade-vignette{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 40%,transparent 45%,oklch(0.20 0.04 200 / .85) 100%)}
+.haze{position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(0deg,#003135,transparent);}
+.montage img{position:absolute;inset:0;opacity:0;animation:xfade 30s infinite,kenburns 32s ease-in-out infinite alternate}
+@keyframes xfade{0%{opacity:0}4%,20%{opacity:1}26%,100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.hero-media{transform:none!important}.montage img:first-child{opacity:1}}
