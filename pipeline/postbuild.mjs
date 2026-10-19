@@ -24,10 +24,12 @@ for (const f of walk('dist')) {
   }
 }
 const hp = 'dist/_headers'; let H = fs.readFileSync(hp, 'utf8').replace('__SCRIPT_HASHES__', [...hashes].join(' '));
-if (process.env.PUBLIC_GA4_ID) { // widen CSP only when GA4 is enabled
+const cfg = fs.readFileSync('src/config/site.ts', 'utf8');
+const GA4 = process.env.PUBLIC_GA4_ID || (cfg.match(/PUBLIC_GA4_ID \|\| '([^']*)'/) || [])[1];
+if (GA4) { // widen CSP only when GA4 is enabled
   H = H.replace("https://static.cloudflareinsights.com;", "https://static.cloudflareinsights.com https://www.googletagmanager.com;")
-       .replace("connect-src 'self' https://cloudflareinsights.com;", "connect-src 'self' https://cloudflareinsights.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com;")
-       .replace("img-src 'self' data: blob:;", "img-src 'self' data: blob: https://*.google-analytics.com https://www.googletagmanager.com;");
+       .replace("connect-src 'self' https://cloudflareinsights.com;", "connect-src 'self' https://cloudflareinsights.com https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com;")
+       .replace("img-src 'self' data: blob:;", "img-src 'self' data: blob: https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com;");
 }
 fs.writeFileSync(hp, H);
 console.log('CSP inline script hashes:', hashes.size);

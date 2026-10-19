@@ -42,12 +42,17 @@
 })();
 /* GA4 with Consent Mode v2: only present when PUBLIC_GA4_ID was set at build. Defaults to denied; banner asks once. */
 (() => {
-  const tag = document.querySelector('script[data-ga4]'); if (!tag) return;
-  const id = tag.dataset.ga4; window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } window.gtag = gtag;
-  const saved = localStorage.getItem('gp-consent');
-  gtag('consent', 'default', { analytics_storage: saved === 'granted' ? 'granted' : 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
-  gtag('js', new Date()); gtag('config', id, { anonymize_ip: true });
+  const tag = document.querySelector('meta[name="gp-ga4"]'); if (!tag) return;
+  const id = tag.content; window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } window.gtag = gtag;
+  // Consent Mode v2: everything denied by default; gtag.js is only fetched after the visitor accepts.
+  gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+  let loaded = false;
+  const load = () => { if (loaded) return; loaded = true;
+    gtag('consent', 'update', { analytics_storage: 'granted' }); gtag('js', new Date()); gtag('config', id, { anonymize_ip: true });
+    const s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id); document.head.appendChild(s); };
+  let saved = null; try { saved = localStorage.getItem('gp-consent'); } catch {}
+  if (saved === 'granted') load();
   const box = document.getElementById('consent'); if (!box || saved) return; box.hidden = false;
   box.addEventListener('click', e => { const v = e.target.closest('[data-consent]')?.dataset.consent; if (!v) return;
-    localStorage.setItem('gp-consent', v); gtag('consent', 'update', { analytics_storage: v }); box.hidden = true; });
+    try { localStorage.setItem('gp-consent', v); } catch {} box.hidden = true; if (v === 'granted') load(); });
 })();

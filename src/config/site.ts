@@ -1,10 +1,10 @@
 export const SITE = 'https://govpulse.pages.dev';
 export const BRAND = 'GovPulse';
 export const CONTACT_EMAIL = 'sadam.veekshtih007@gmail.com';
-// Cloudflare Web Analytics (cookieless). Set PUBLIC_CF_BEACON at build time to enable; empty = no analytics.
-export const CF_BEACON = import.meta.env.PUBLIC_CF_BEACON ?? '';
+// Cloudflare Web Analytics (cookieless). Paste the site token from Cloudflare dash > Analytics & Logs > Web Analytics, or set PUBLIC_CF_BEACON_TOKEN. Empty = no beacon.
+export const CF_BEACON = import.meta.env.PUBLIC_CF_BEACON_TOKEN || import.meta.env.PUBLIC_CF_BEACON || '';
 // Google Search Console HTML-tag verification token (content value only). Empty = no meta tag.
 export const GSC_VERIFICATION = import.meta.env.PUBLIC_GSC_VERIFICATION || 'QtQOSVxN0GNSTTXklo5nlE59mUzHrb8Mg3skVyeTtjQ';
 // GA4 measurement ID (G-XXXX). Empty = gtag is never loaded and no consent banner appears.
-export const GA4_ID = import.meta.env.PUBLIC_GA4_ID ?? '';
+export const GA4_ID = import.meta.env.PUBLIC_GA4_ID || 'G-B2XLZ94KFT';
 export const INDEXNOW_KEY = '9a4ce3307445d62a8cac1d2dbf1b8b77';

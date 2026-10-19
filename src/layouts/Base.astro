@@ -31,7 +31,7 @@ const pageCredits: Credit[] = (Astro.props.credits ?? []).filter(Boolean);
 <meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={fullTitle}/><meta name="twitter:description" content={desc}/><meta name="twitter:image" content={ogUrl}/>
 {GSC_VERIFICATION && <meta name="google-site-verification" content={GSC_VERIFICATION}/>}
 <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM summary"/>
-{GA4_ID && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`} data-ga4={GA4_ID}></script>}
+{GA4_ID && <meta name="gp-ga4" content={GA4_ID}/>}
 <slot name="head"/>
 <script type="application/ld+json" set:html={JSON.stringify(ld)}/>
 </head>
