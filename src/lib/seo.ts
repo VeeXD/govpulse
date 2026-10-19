@@ -18,7 +18,8 @@ export function valText(v: number | null, unit: string) {
 /** Factual sentence from data, e.g. "India's agriculture value added was 16.4% of GDP in 2024 (World Bank, NV.AGR.TOTL.ZS), down from 16.7% in 2023." */
 export function sentence(country: string, k: any) {
   const C = COUNTRIES[country]; if (k.value == null) return null;
-  const dir = k.delta == null ? '' : k.delta > 0 ? `, up from ${valText(k.value - k.delta, k.unit)} in ${k.prevYear}` : k.delta < 0 ? `, down from ${valText(k.value - k.delta, k.unit)} in ${k.prevYear}` : `, unchanged from ${k.prevYear}`;
+  const prev = k.delta == null ? '' : valText(k.value - k.delta, k.unit), cur = valText(k.value, k.unit);
+  const dir = k.delta == null ? '' : prev === cur ? `, roughly unchanged from ${k.prevYear}` : k.delta > 0 ? `, up from ${prev} in ${k.prevYear}` : `, down from ${prev} in ${k.prevYear}`;
   return `${poss(C.name).replace(/^(United|UAE)/, 'The $1')} ${lc(k.label)} was ${valText(k.value, k.unit)} in ${k.year} (World Bank, ${k.code})${dir}.`;
 }
 export function pageSeo(country: string, industry: string) {

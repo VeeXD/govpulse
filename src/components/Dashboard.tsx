@@ -119,7 +119,7 @@ export default function Dashboard(p: Props) {
   const ctr = COUNTER[metric]; const cm = ctr && meta[ctr]; const cs = ctr ? stats(p.data[ctr] ?? []) : null;
   const seq = [metric, ...rel, ...codes.filter(c => c !== metric && !rel.includes(c)), ...p.meta.map(x => x.code).filter(c => c !== metric && !rel.includes(c) && !codes.includes(c) && p.data[c]?.length)];
   const summary = st.last ? [`${poss(p.countryName)} ${lc(m.label)} was ${fmt(st.last[1], m.unit)}${unitTail(m.unit)} in ${st.last[0]} (World Bank, ${m.code}).`,
-    st.d5 != null && st.five ? `Over five years (${st.five[0]}–${st.last[0]}) it ${st.d5 > 0 ? 'rose' : st.d5 < 0 ? 'fell' : 'held'} ${st.d5 ? 'by ' + fmt(Math.abs(st.d5), m.unit.startsWith('%') ? '' : m.unit) + (m.unit.startsWith('%') ? ' percentage points' : '') : 'steady'}.` : '',
+    st.d5 != null && st.five ? `Over five years (${st.five[0]}–${st.last[0]}) it ${fmt(Math.abs(st.d5), '') === fmt(0, '') ? 'was roughly unchanged' : st.d5 > 0 ? 'rose' : 'fell'}${fmt(Math.abs(st.d5), '') !== fmt(0, '') ? ' by ' + fmt(Math.abs(st.d5), m.unit.startsWith('%') ? '' : m.unit) + (m.unit.startsWith('%') ? ' percentage points' : '') : ''}.` : '',
     rel.length ? `Read it alongside ${rel.slice(0, 3).map(c => lc(meta[c].label)).join(', ')}.` : ''].filter(Boolean).join(' ') : `No ${lc(m.label)} data for ${p.countryName} yet.`;
   const field = 'bg-black/50 border border-white/15 rounded-lg px-2.5 py-1.5 text-sm text-text focus-visible:border-accent';
   return <div>
