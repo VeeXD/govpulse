@@ -53,10 +53,11 @@
   "license": "Owner-held rights",
   "licenseUrl": "",
   "source": "",
-  "clip": "upscaled to 1920px, warm colour grade, WebP",
+  "clip": "AI super-resolution (Real-ESRGAN x4plus), light sharpening, warm colour grade, 16:9 WebP 960/1920/2560",
   "files": {
-   "webp": "/heroes/india-himalaya.webp",
-   "webpM": "/heroes/india-himalaya-m.webp"
+   "webp": "/heroes/india-himalaya-v2.webp",
+   "webpM": "/heroes/india-himalaya-v2-m.webp",
+   "webpXL": "/heroes/india-himalaya-v2-2560.webp"
   }
  }
 }

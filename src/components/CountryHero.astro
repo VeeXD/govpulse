@@ -6,7 +6,7 @@ const h = (heroes as any)[country]; const v = (media as any)[country]; const sp 
 const words = name.split(' ');
 ---
 <section class="relative h-[100svh] min-h-[600px] max-h-[1100px] overflow-hidden -mt-16" data-parallax>
- {sp ? <div class="hero-media hero-bright" aria-hidden="true"><img src={sp.files.webp} srcset={`${sp.files.webpM} 960w, ${sp.files.webp} 1920w`} sizes="100vw" alt="" width="1920" height="1200" fetchpriority="high" decoding="async"/></div>
+ {sp ? <div class="hero-media hero-bright" aria-hidden="true"><img src={sp.files.webp} srcset={`${sp.files.webpM} 960w, ${sp.files.webp} 1920w${sp.files.webpXL ? `, ${sp.files.webpXL} 2560w` : ''}`} sizes="100vw" alt="" width="1920" height="1080" fetchpriority="high" decoding="async"/></div>
   <div class="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-black/75 via-black/30 to-transparent" aria-hidden="true"></div><div class="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/50 to-transparent" aria-hidden="true"></div>
  : <><BgVideo id={country} photo={country} cls="hero-media"/><div class="grade-tone" aria-hidden="true"></div><div class="grade-vignette" aria-hidden="true"></div></>}<div class="grain" aria-hidden="true"></div>
  <div class="relative h-full mx-auto max-w-7xl px-4 md:px-6 flex flex-col justify-end pb-20 md:pb-28">
