@@ -1,0 +1,18 @@
+---
+import Landing from '../components/Landing.astro'; import { COUNTRIES, DATA } from '../lib/data'; import { cell, slug, series, valText } from '../lib/seo';
+const rows = Object.entries(COUNTRIES).map(([id, c]) => { const i = series(id, 'FP.CPI.TOTL.ZG').at(-1), l = series(id, 'FR.INR.LEND').at(-1); return { id, name: c.name, i, l, real: i && l ? l[1] - i[1] : null }; });
+const lead = 'A government news and policy tracker built on outcomes: the monetary, fiscal and sector indicators that show whether policy is working, by country. A live feed of official policy announcements is in development; the indicator side is live now.';
+const faq = [
+  ['What does the policy tracker cover?', 'Monetary policy (inflation vs lending rates), fiscal policy (government debt, current account) and sector policy outcomes (agriculture, healthcare, energy, manufacturing, finance) for each country, with World Bank sources.'],
+  ['Is there a live government news feed?', 'Not yet. A feed built from official gazettes and GDELT, tagged by industry with source links, is planned. Until it launches, GovPulse does not show unsourced news. Dashboard feed items are labelled SAMPLE.'],
+  ['What is a real interest rate?', 'Roughly, the lending interest rate minus inflation. A positive real rate means borrowing costs exceed price growth (tighter policy); a negative one means looser conditions.'],
+];
+---
+<Landing path="/policy-tracker/" title="Government news & policy tracker: monetary, fiscal & sector policy by country" h1="Policy tracker" kicker="Government policy · outcomes first" lead={lead} desc={lead.slice(0, 290)} faq={faq} dots="healthcare">
+ <section aria-labelledby="p1"><h2 id="p1">Monetary policy stance: lending rate minus inflation</h2><div class="tw mt-4 edge rounded-2xl p-2"><table><thead><tr><th>Country</th><th>Inflation (CPI)</th><th>Lending rate</th><th>Approx. real rate</th></tr></thead><tbody>
+  {rows.map(r => <tr><td><a class="underline underline-offset-2 hover:text-accent" href={`/${r.id}/finance/`}>{r.name}</a></td><td>{r.i ? `${valText(r.i[1], '%')} (${r.i[0]})` : '—'}</td><td>{r.l ? `${valText(r.l[1], '%')} (${r.l[0]})` : '—'}</td><td>{r.real == null ? '—' : `${r.real > 0 ? '+' : ''}${r.real.toFixed(1)} pts`}</td></tr>)}</tbody></table></div>
+  <p class="mt-2 text-xs text-muted">Years can differ between the two series. Treat this as indicative, not as a policy-rate measure.</p></section>
+ <section aria-labelledby="p2"><h2 id="p2">Fiscal position</h2><div class="tw mt-4 edge rounded-2xl p-2"><table><thead><tr><th>Country</th><th>Central govt debt</th><th>Current account</th><th>Investment</th></tr></thead><tbody>
+  {Object.entries(COUNTRIES).map(([id, c]) => <tr><td>{c.name}</td>{['GC.DOD.TOTL.GD.ZS', 'BN.CAB.XOKA.GD.ZS', 'NE.GDI.TOTL.ZS'].map(code => <td><a class="hover:text-accent" href={`/${id}/indicator/${slug(code)}/`}>{cell(code, id)}</a></td>)}</tr>)}</tbody></table></div></section>
+ <section aria-labelledby="p3"><h2 id="p3">Sector policy outcomes</h2><ul class="mt-3 grid gap-2 md:grid-cols-2 text-sm">{['agriculture', 'healthcare', 'energy', 'manufacturing', 'finance'].map(s => <li class="edge rounded-xl p-4"><b class="capitalize">{s}</b>: {Object.entries(COUNTRIES).map(([id, c], i) => <>{i ? ' · ' : ' '}<a class="underline underline-offset-2" href={`/${id}/${s}/`}>{c.name}</a></>)}</li>)}</ul></section>
+</Landing>

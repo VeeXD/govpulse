@@ -1,0 +1,23 @@
+---
+import Landing from '../components/Landing.astro'; import { COUNTRIES, DATA } from '../lib/data'; import { cell, ranked, valText, slug } from '../lib/seo';
+const codes = ['GC.DOD.TOTL.GD.ZS', 'FP.CPI.TOTL.ZG', 'SL.UEM.TOTL.ZS', 'SH.XPD.CHEX.GD.ZS', 'EG.ELC.ACCS.ZS', 'BN.CAB.XOKA.GD.ZS'];
+const M = (c: string) => (DATA.indicators as any)[c];
+const debt = ranked('GC.DOD.TOTL.GD.ZS'), inf = ranked('FP.CPI.TOTL.ZG'), hx = ranked('SH.XPD.CHEX.GD.ZS'), un = ranked('SL.UEM.TOTL.ZS');
+const lead = `Government analytics in numbers: the outcomes governments are judged on (debt, inflation, jobs, health spending, electricity access, external balance), compared across ${Object.keys(COUNTRIES).length} countries using official World Bank data.`;
+const faq = [
+  ['What is government analytics?', 'Measuring public-sector performance with data: fiscal position (debt), macro stability (inflation, current account), outcomes (unemployment, life expectancy, electricity access) and spending priorities (health spending). GovPulse shows these by country and industry with sources.'],
+  ['Which government has the highest debt?', `Among the countries covered, ${debt[0].name} has the highest central government debt, ${valText(debt[0].v, '% GDP')} in ${debt[0].y}. Data years differ by country, because some governments report to the World Bank less often.`],
+  ['Where is inflation highest?', `${inf[0].name} had the highest consumer price inflation in our set: ${valText(inf[0].v, '%')} in ${inf[0].y}.`],
+  ['Does GovPulse rate governments?', 'No. It shows sourced indicators and counter-metrics side by side so readers can judge for themselves. There are no composite scores and no editorial ratings.'],
+];
+---
+<Landing path="/government-analytics/" title="Government analytics: debt, inflation, jobs & spending by country" h1="Government analytics" kicker="Public-sector outcomes · sourced" lead={lead} desc={lead.slice(0, 290)} faq={faq} dots="manufacturing">
+ <section aria-labelledby="g1"><h2 id="g1">Scorecard: latest official values</h2><div class="tw mt-4 edge rounded-2xl p-2"><table><thead><tr><th>Country</th>{codes.map(c => <th>{M(c).label}</th>)}</tr></thead><tbody>
+  {Object.entries(COUNTRIES).map(([id, c]) => <tr><td><a class="underline underline-offset-2 hover:text-accent" href={`/${id}/`}>{c.name}</a></td>{codes.map(code => <td><a class="hover:text-accent" href={`/${id}/indicator/${slug(code)}/`}>{cell(code, id)}</a></td>)}</tr>)}</tbody></table></div></section>
+ <section aria-labelledby="g2"><h2 id="g2">Highlights</h2><ul class="mt-3 grid gap-2 list-disc pl-5 max-w-3xl text-text">
+  <li>Debt: {debt.slice(0, 3).map(x => `${x.name} ${valText(x.v, '% GDP')} (${x.y})`).join(', ')} are the most indebted central governments in the set.</li>
+  <li>Inflation: lowest in {inf.at(-1)!.name} ({valText(inf.at(-1)!.v, '%')}), highest in {inf[0].name} ({valText(inf[0].v, '%')}).</li>
+  <li>Health spending: {hx[0].name} spends the most ({valText(hx[0].v, '% GDP')}) and {hx.at(-1)!.name} the least ({valText(hx.at(-1)!.v, '% GDP')}). <a class="underline" href="/india/healthcare/">See healthcare dashboards</a>.</li>
+  <li>Unemployment: highest in {un[0].name} ({valText(un[0].v, '% labour force')}), lowest in {un.at(-1)!.name} ({valText(un.at(-1)!.v, '% labour force')}).</li></ul></section>
+ <section aria-labelledby="g3"><h2 id="g3">Read claims against counter-metrics</h2><p class="mt-3 max-w-3xl text-text">Governments tend to quote the number that flatters them. Each GovPulse dashboard pairs a headline metric with a counter-metric: health spending with infant mortality, exports with imports, manufacturing with total industry. Start with a country: {Object.entries(COUNTRIES).map(([id, c], i) => <>{i ? ', ' : ''}<a class="underline" href={`/${id}/`}>{c.name}</a></>)}.</p></section>
+</Landing>

@@ -1,0 +1,16 @@
+---
+import Landing from '../components/Landing.astro'; import { COUNTRIES, INDUSTRIES, DATA } from '../lib/data'; import { cell, slug, ranked, valText } from '../lib/seo';
+const inds = Object.entries(DATA.indicators) as [string, any][];
+const lead = `A free economic indicators dashboard: ${inds.length} World Bank indicators across ${INDUSTRIES.length - 1} industries for ${Object.keys(COUNTRIES).length} countries. Every value shows its source code and data year, and every chart opens full screen with related metrics.`;
+const faq = [
+  ['What economic indicators does GovPulse track?', `${inds.length} indicators, including GDP growth, inflation, unemployment, government debt, current account, investment, agriculture value added, life expectancy, lending rates, renewable energy share and manufacturing value added.`],
+  ['Is the dashboard free?', 'Yes. Every dashboard, filter, full-screen chart and the JSON API are free. The site is funded by sponsors, who have no influence over data.'],
+  ['Can I download the data?', 'Yes. /api/v1/{country}.json gives every series for a country, and /api/v1/{country}/{indicator}.json gives a single series. The data is CC BY 4.0 from the World Bank.'],
+];
+---
+<Landing path="/economic-indicators-dashboard/" title="Economic indicators dashboard: free data by country & industry" h1="Economic indicators dashboard" kicker={`${inds.length} indicators · ${Object.keys(COUNTRIES).length} countries`} lead={lead} desc={lead.slice(0, 290)} faq={faq}>
+ {INDUSTRIES.map(ind => { const rows = inds.filter(([, m]) => m.industry === ind.id); return rows.length > 0 && <section aria-labelledby={`s-${ind.id}`}><h2 id={`s-${ind.id}`}>{ind.id === 'overview' ? 'Macroeconomy' : ind.name} indicators</h2>
+  <div class="mt-3 grid gap-2 text-text max-w-3xl">{rows.map(([code, m]) => { const r = ranked(code); return r.length > 1 && <p><b>{m.label}</b> ({m.unit}): highest in {r[0].name} ({valText(r[0].v, m.unit)}, {r[0].y}), lowest in {r.at(-1)!.name} ({valText(r.at(-1)!.v, m.unit)}, {r.at(-1)!.y}).</p>; })}</div>
+  <div class="tw mt-4 edge rounded-2xl p-2"><table><thead><tr><th>Country</th>{rows.map(([, m]) => <th>{m.label}</th>)}</tr></thead><tbody>
+  {Object.entries(COUNTRIES).map(([id, c]) => <tr><td><a class="underline underline-offset-2 hover:text-accent" href={`/${id}/${ind.id === 'overview' ? '' : ind.id + '/'}`}>{c.name}</a></td>{rows.map(([code]) => <td><a class="hover:text-accent" href={`/${id}/indicator/${slug(code)}/`}>{cell(code, id)}</a></td>)}</tr>)}</tbody></table></div></section>; })}
+</Landing>

@@ -1,0 +1,22 @@
+---
+import Landing from '../components/Landing.astro'; import { COUNTRIES, DATA } from '../lib/data'; import { ranked, cell, valText, slug, meta } from '../lib/seo';
+const g = ranked('NY.GDP.MKTP.KD.ZG'), pc = ranked('NY.GDP.PCAP.CD'), inv = ranked('NE.GDI.TOTL.ZS');
+const yr = Math.max(...g.map(x => x.y as number));
+const lead = `Real GDP growth and GDP per capita for ${Object.keys(COUNTRIES).length} major economies, from the World Bank. In the latest data, ${g[0].name} grew fastest (${valText(g[0].v, '%')} in ${g[0].y}) and ${g.at(-1)!.name} grew slowest (${valText(g.at(-1)!.v, '%')} in ${g.at(-1)!.y}).`;
+const faq = [
+  ['Which country has the fastest GDP growth?', `Among the ${g.length} economies GovPulse covers, ${g[0].name} has the highest real GDP growth: ${valText(g[0].v, '%')} in ${g[0].y} (World Bank, NY.GDP.MKTP.KD.ZG). Next are ${g[1].name} (${valText(g[1].v, '%')}) and ${g[2].name} (${valText(g[2].v, '%')}).`],
+  ['Which country has the highest GDP per capita?', `${pc[0].name}, at ${valText(pc[0].v, 'US$')} in ${pc[0].y} (current US dollars, World Bank NY.GDP.PCAP.CD). The lowest in our set is ${pc.at(-1)!.name} at ${valText(pc.at(-1)!.v, 'US$')}.`],
+  ['What is the difference between GDP growth and GDP per capita?', 'GDP growth is the annual percentage change in real (inflation-adjusted) output. GDP per capita is the size of the economy divided by population, in current US dollars. Fast growth from a low base can still mean low per-capita income.'],
+  ['How often is this updated?', `A pipeline pulls the World Bank API every night (last run ${DATA.generated} UTC). The World Bank itself publishes annual figures, usually with a lag of 1 to 2 years.`],
+];
+---
+<Landing path="/gdp-by-country/" title={`GDP by country ${yr}: growth rates & GDP per capita ranked`} h1="GDP by country" kicker="Rankings · World Bank data" lead={lead} desc={lead.slice(0, 290)} faq={faq} dots="finance">
+ <section aria-labelledby="t1"><h2 id="t1">Real GDP growth, latest year</h2><p class="mt-2 text-sm text-muted">Annual %, constant prices. Click a country for its full dashboard.</p>
+  <div class="tw mt-4 edge rounded-2xl p-2"><table><thead><tr><th>#</th><th>Country</th><th>GDP growth</th><th>GDP per capita</th><th>Investment (% GDP)</th></tr></thead><tbody>
+  {g.map((x, i) => <tr><td>{i + 1}</td><td><a class="underline underline-offset-2 hover:text-accent" href={`/${x.id}/`}>{x.name}</a></td><td><a class="hover:text-accent" href={`/${x.id}/indicator/${slug('NY.GDP.MKTP.KD.ZG')}/`}>{valText(x.v, '%')} ({x.y})</a></td><td>{cell('NY.GDP.PCAP.CD', x.id)}</td><td>{cell('NE.GDI.TOTL.ZS', x.id)}</td></tr>)}</tbody></table></div></section>
+ <section aria-labelledby="t2"><h2 id="t2">GDP per capita ranking</h2><ol class="mt-4 grid gap-2 md:grid-cols-2">{pc.map((x, i) => <li class="edge rounded-xl p-4 flex justify-between gap-3"><span>{i + 1}. <a class="underline underline-offset-2" href={`/${x.id}/indicator/${slug('NY.GDP.PCAP.CD')}/`}>{x.name} GDP per capita</a></span><span class="font-mono">{valText(x.v, 'US$')} ({x.y})</span></li>)}</ol></section>
+ <section aria-labelledby="t3"><h2 id="t3">What the numbers say</h2><div class="mt-3 grid gap-2 text-text max-w-3xl leading-relaxed">
+  <p>{g.filter(x => (x.v as number) >= 5).map(x => x.name).join(', ') || 'No economy'} grew 5% or more in the latest year, while {g.filter(x => (x.v as number) < 1).map(x => x.name).join(', ') || 'none'} grew under 1%.</p>
+  <p>Investment, measured as gross capital formation, was highest in {inv[0].name} ({valText(inv[0].v, '% GDP')}) and lowest in {inv.at(-1)!.name} ({valText(inv.at(-1)!.v, '% GDP')}). High investment usually supports future growth.</p>
+  <p>The per-capita gap is large: {pc[0].name}'s GDP per person is about {Math.round((pc[0].v as number) / (pc.at(-1)!.v as number))} times {pc.at(-1)!.name}'s.</p></div></section>
+</Landing>

@@ -42,3 +42,14 @@ export const faqLd = (faq: string[][]) => ({ '@context': 'https://schema.org', '
 export const crumbLd = (c: string[][]) => ({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: c.map(([n, u], i) => ({ '@type': 'ListItem', position: i + 1, name: n, item: u })) });
 export function indicatorList() { return Object.entries(DATA.indicators).map(([code, m]: any) => ({ code, ...m })); }
 export { series };
+/** Latest value per country for an indicator, ranked (desc). */
+export function ranked(code: string) {
+  return Object.entries(COUNTRIES).map(([id, c]) => { const s = series(id, code); const l = s.at(-1); return { id, name: c.name, v: l?.[1] ?? null, y: l?.[0] ?? null }; })
+    .filter(x => x.v != null).sort((a, b) => (b.v as number) - (a.v as number));
+}
+export const meta = (code: string) => (DATA.indicators as any)[code];
+export const cell = (code: string, id: string) => { const l = series(id, code).at(-1); return l ? `${valText(l[1], meta(code).unit)} (${l[0]})` : '—'; };
+export function moves(id: string, years = 5) {
+  return Object.keys(DATA.indicators).map(code => { const s = series(id, code); const l = s.at(-1); const f = l ? [...s].reverse().find(p => p[0] <= l[0] - years) : undefined;
+    return l && f ? { code, label: meta(code).label, unit: meta(code).unit, from: f, to: l, d: l[1] - f[1], rel: Math.abs((l[1] - f[1]) / (Math.abs(f[1]) || 1)) } : null; }).filter(Boolean) as any[];
+}

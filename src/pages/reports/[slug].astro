@@ -1,0 +1,19 @@
+---
+import Landing from '../../components/Landing.astro'; import { COUNTRIES, INDUSTRIES, kpis } from '../../lib/data'; import { reports, edition } from '../../lib/reports'; import { sentence, moves, ranked, valText, slug, lc } from '../../lib/seo'; import { SITE } from '../../config/site';
+export function getStaticPaths() { return reports().map(r => ({ params: { slug: r.slug }, props: r })); }
+const { id, name, year } = Astro.props as any; const ed = edition();
+const mv = moves(id).sort((a, b) => b.rel - a.rel).slice(0, 6);
+const pos = (code: string) => { const r = ranked(code); const i = r.findIndex(x => x.id === id); return i < 0 ? null : `${i + 1} of ${r.length}`; };
+const g = kpis(id, 'overview');
+const head = g.map((k: any) => sentence(id, k)).filter(Boolean).slice(0, 3).join(' ');
+const lead = `${name}'s economy in ${year}: ${head}`;
+const faq = [[`How fast is ${name}'s economy growing?`, sentence(id, g.find((k: any) => k.code === 'NY.GDP.MKTP.KD.ZG')) ?? 'Data not available.'], [`What changed most in ${name} over five years?`, mv.length ? `${mv[0].label}: from ${valText(mv[0].from[1], mv[0].unit)} (${mv[0].from[0]}) to ${valText(mv[0].to[1], mv[0].unit)} (${mv[0].to[0]}).` : 'Not enough data.'], ['Where does the data come from?', 'World Bank World Development Indicators (CC BY 4.0), processed automatically by GovPulse.']];
+const article = { '@context': 'https://schema.org', '@type': 'Report', name: `${name} Economic Report ${year}`, headline: `${name} Economic Report ${year} (${ed} edition)`, url: `${SITE}/reports/${Astro.params.slug}/`, datePublished: new Date().toISOString().slice(0, 10), author: { '@type': 'Organization', name: 'GovPulse' }, isAccessibleForFree: true, about: { '@type': 'Country', name } };
+---
+<Landing path={`/reports/${Astro.params.slug}/`} title={`${name} Economic Report ${year}: GDP, inflation, jobs & sectors (${ed})`} h1={`${name} Economic Report ${year}`} kicker={`${ed} edition · auto-generated from World Bank data`} lead={lead} desc={lead.slice(0, 290)} faq={faq} extraLd={[article]}>
+ <section aria-labelledby="k"><h2 id="k">Key changes over five years</h2><div class="tw mt-4 edge rounded-2xl p-2"><table><thead><tr><th>Indicator</th><th>From</th><th>To</th><th>Change</th></tr></thead><tbody>{mv.map((m: any) => <tr><td><a class="underline underline-offset-2 hover:text-accent" href={`/${id}/indicator/${slug(m.code)}/`}>{m.label}</a></td><td>{valText(m.from[1], m.unit)} ({m.from[0]})</td><td>{valText(m.to[1], m.unit)} ({m.to[0]})</td><td class="font-mono">{m.d > 0 ? '+' : ''}{m.d.toFixed(1)}</td></tr>)}</tbody></table></div></section>
+ {INDUSTRIES.map(ind => { const ks = kpis(id, ind.id).filter((k: any) => k.value != null); return ks.length > 0 && <section aria-labelledby={`i-${ind.id}`}><h2 id={`i-${ind.id}`}>{ind.id === 'overview' ? 'Macroeconomy' : ind.name}</h2>
+  <div class="mt-3 grid gap-2 max-w-3xl text-text leading-relaxed">{ks.map((k: any) => <p>{sentence(id, k)} {pos(k.code) && <span class="text-muted">It ranks {pos(k.code)} among GovPulse countries on this measure (highest first).</span>}</p>)}</div>
+  <p class="mt-3 text-sm"><a class="underline" href={`/${id}/${ind.id === 'overview' ? '' : ind.id + '/'}`}>Open the {name} {ind.id === 'overview' ? 'economy' : lc(ind.name)} dashboard →</a></p></section>; })}
+ <section aria-labelledby="o"><h2 id="o">Other country reports</h2><ul class="mt-3 flex flex-wrap gap-2 text-sm">{reports().filter(r => r.id !== id).map(r => <li><a class="inline-block rounded-full border border-white/15 px-3 py-1 hover:border-accent" href={`/reports/${r.slug}/`}>{r.name} Economic Report {r.year}</a></li>)}</ul></section>
+</Landing>

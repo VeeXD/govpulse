@@ -1,0 +1,9 @@
+---
+import Landing from '../../components/Landing.astro'; import { reports, edition } from '../../lib/reports'; import { sentence } from '../../lib/seo'; import { kpis } from '../../lib/data';
+const R = reports(); const ed = edition();
+const lead = `Free economic reports by country, regenerated every month from World Bank data (${ed} edition). Each report covers the macroeconomy, agriculture, healthcare, finance, energy and manufacturing, with the biggest five-year changes and peer rankings.`;
+const faq = [['How are the reports made?', 'Automatically, from the latest World Bank World Development Indicators. Every sentence comes from a published figure with its year and indicator code. There is no opinion and no forecasting.'], ['How often are they updated?', 'Monthly. The data refreshes nightly, and new data years appear as the World Bank publishes them.'], ['Can I cite a report?', 'Yes. Cite GovPulse with the report URL, and the World Bank (CC BY 4.0) as the original source.']];
+---
+<Landing path="/reports/" title={`Economic reports by country (${ed} edition)`} h1="Economic reports" kicker={`Monthly · ${ed}`} lead={lead} desc={lead.slice(0, 290)} faq={faq} dots="finance">
+ <section aria-labelledby="r1"><h2 id="r1">Country reports</h2><div class="mt-4 grid gap-4 md:grid-cols-2">{R.map(r => { const g = kpis(r.id, 'overview').find((k: any) => k.code === 'NY.GDP.MKTP.KD.ZG'); return <a href={`/reports/${r.slug}/`} class="edge tilt rounded-2xl p-5 block hover:border-accent"><p class="kicker">{ed} edition</p><h3 class="mt-2 text-xl font-semibold">{r.name} Economic Report {r.year}</h3><p class="mt-2 text-sm text-muted">{g ? sentence(r.id, g) : ''}</p></a>; })}</div></section>
+</Landing>
