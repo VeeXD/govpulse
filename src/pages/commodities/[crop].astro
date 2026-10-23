@@ -1,0 +1,30 @@
+---
+import Base from '../../layouts/Base.astro'; import Chart from '../../components/Chart.tsx'; import { CM, NAMES, area, tonnes, cropName, fiveW } from '../../lib/commodity';
+export function getStaticPaths() { return Object.keys(CM.crops).map(crop => ({ params: { crop } })); }
+const { crop } = Astro.params; const c = CM.crops[crop!]; const nm = cropName(crop!);
+const title = `${nm} production by country (${c.year}): top producers & world share`;
+const desc = `${area(c.top[0].area)} produced ${c.top[0].share.toFixed(1)}% of the world's ${nm.toLowerCase()} in ${c.year}. Top producers, 25-year trend and output for India, the US, China and more, from FAOSTAT.`;
+const W = fiveW(crop!);
+const series = Object.entries(c.series).filter(([a]) => a !== 'World').map(([a, d]: any) => ({ name: area(a), data: d.map((p: number[]) => [p[0], +(p[1] / 1e6).toFixed(3)]), unit: 'million t' }));
+const ld = [{ '@context': 'https://schema.org', '@type': 'Dataset', name: `${nm} production by country`, description: desc, url: `https://govpulse.pages.dev/commodities/${crop}/`, temporalCoverage: `${c.year - 24}/${c.year}`, isAccessibleForFree: true, license: 'https://creativecommons.org/licenses/by/4.0/', citation: CM.fao.source, creator: { '@type': 'Organization', name: 'GovPulse', url: 'https://govpulse.pages.dev' } },
+ { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: W.map(([q, a]) => ({ '@type': 'Question', name: `${q}: ${nm} production`, acceptedAnswer: { '@type': 'Answer', text: a } })) }];
+const ours = Object.entries(c.ours).filter(([, v]: any) => v.value).sort((a: any, b: any) => b[1].value - a[1].value);
+---
+<Base title={title} desc={desc} jsonld={ld}>
+<section class="mx-auto max-w-7xl px-4 md:px-6 pt-28 pb-16">
+ <p class="kicker"><a href="/commodities/" class="hover:text-strong">Commodities</a> · crop production</p>
+ <h1 class="mt-3 text-4xl md:text-5xl font-extralight text-strong">{nm} production by country</h1>
+ <p class="mt-3 text-muted">World output {tonnes(c.world)} in {c.year} · FAOSTAT</p>
+ <dl class="mt-8 grid md:grid-cols-5 gap-3">{W.map(([q, a]) => <div class="edge rounded-xl p-4"><dt class="kicker">{q}</dt><dd class="mt-2 text-sm">{a}</dd></div>)}</dl>
+ <div class="mt-8"><Chart client:visible title={`${nm}: top 5 producers`} series={series} colors={['#FFB224', '#FF6A45', '#F2F2F2', '#FFD27A', '#B8B8B8']} area={false} source={CM.fao.source} /></div>
+ <div class="mt-8 grid lg:grid-cols-2 gap-4">
+  <div class="edge rounded-2xl overflow-x-auto"><table class="w-full text-sm tabular-nums"><caption class="p-3 text-left font-semibold text-strong">Top 10 producers, {c.year}</caption><thead><tr class="text-left text-muted border-b border-white/10"><th class="p-3">#</th><th class="p-3">Country</th><th class="p-3">Production</th><th class="p-3">World share</th></tr></thead>
+   <tbody>{c.top.map((t: any, i: number) => <tr class="border-b border-white/10"><td class="p-3 text-muted">{i + 1}</td><td class="p-3">{area(t.area)}</td><td class="p-3 font-mono">{tonnes(t.value)}</td><td class="p-3 font-mono">{t.share.toFixed(1)}%</td></tr>)}</tbody></table></div>
+  <div class="edge rounded-2xl overflow-x-auto"><table class="w-full text-sm tabular-nums"><caption class="p-3 text-left font-semibold text-strong">GovPulse countries, {c.year}</caption><thead><tr class="text-left text-muted border-b border-white/10"><th class="p-3">Country</th><th class="p-3">Production</th><th class="p-3">World rank</th></tr></thead>
+   <tbody>{ours.map(([k, v]: any) => <tr class="border-b border-white/10"><td class="p-3"><a href={`/${k}/`} class="hover:text-accent">{NAMES[k]}</a></td><td class="p-3 font-mono">{tonnes(v.value)}</td><td class="p-3 font-mono">#{v.rank} of {c.producers}</td></tr>)}</tbody></table>
+   {ours.length < 10 && <p class="p-3 text-xs text-muted">Not listed: no {nm.toLowerCase()} production reported to FAOSTAT for {c.year}.</p>}</div>
+ </div>
+ <p class="mt-6 text-sm">Other crops: {Object.keys(CM.crops).filter(s => s !== crop).map((s, i) => <>{i ? ' · ' : ''}<a href={`/commodities/${s}/`} class="hover:text-accent underline underline-offset-2">{cropName(s)}</a></>)}</p>
+ <p class="mt-4 text-xs text-muted">Source: <a href={CM.fao.url} class="underline">{CM.fao.source}</a>. "China (mainland)" excludes Hong Kong, Macao and Taiwan. Summary sentences are generated from these figures only.</p>
+</section>
+</Base>
