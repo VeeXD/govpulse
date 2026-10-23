@@ -88,7 +88,7 @@ I run GovPulse (https://govpulse.pages.dev), a free dashboard of economic indica
 
 {One line on why them, e.g. "Your investor-education work at Groww and our India finance and industry dashboards reach the same people."}
 
-We're funded by sponsors instead of paywalls. A {Silver/Gold} sponsorship ({$250/$1,000} a month) would fund {specific item: adding OECD data / 10 more countries / the policy tracker} and show a clearly labelled "{Supported by / Presented by} {Company}" on {placement}. Sponsors never influence data or content. Our disclosure policy is at https://govpulse.pages.dev/sponsor/#disclosure.
+We're funded by sponsors instead of paywalls. A sponsorship would fund {specific item: adding OECD data / 10 more countries / the policy tracker} and could include a clearly labelled "{Supported by / Presented by} {Company}" on {placement}. Sponsors never influence data or content. Our disclosure policy is at https://govpulse.pages.dev/sponsor/#disclosure.
 
 Could we have a 15-minute call next week? I'm happy to share traffic numbers once Search Console data comes in.
 

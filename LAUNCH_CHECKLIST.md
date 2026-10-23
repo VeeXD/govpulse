@@ -59,7 +59,7 @@ PASS: 0 violations on /, /india, /india/agriculture, /pricing, /methodology, /ap
 **Cookie banner choice:** none needed. The site sets no cookies and no localStorage IDs. Analytics are Cloudflare Web Analytics (cookieless, no fingerprinting), switched on by setting `PUBLIC_CF_BEACON` at build time; CSP already allows it. If sign-in launches, only a strictly necessary session cookie is planned (no consent required, but list it).
 
 ## Payments (superseded in v6)
-(v6) No paid plans: GovPulse is free; funding is through sponsorship (/sponsor, Zelle).
+(v6) No paid plans: GovPulse is free; funding is through sponsorship (/sponsor, contact by email).
 
 ## Public API
 Static JSON generated at build: `/api/v1/index.json`, `/api/v1/countries.json`, `/api/v1/indicators.json`, `/api/v1/{country}.json`, `/api/v1/{country}/{indicator}.json` (~250 series). CORS `*`, 1 h cache, `license` and `attribution` fields. Documented at /api. PASS.
@@ -111,11 +111,11 @@ Static JSON generated at build: `/api/v1/index.json`, `/api/v1/countries.json`, 
 |---|---|
 | Paid plans removed; /pricing returns 301 to /sponsor (`public/_redirects`); payments and entitlement config deleted | PASS |
 | Basic filters (industry, year range, single metric chart) free for everyone; advanced comparisons marked "coming soon" | PASS |
-| /sponsor: tiers, Zelle instructions (sadam.veekshith01@gmail.com), disclosure policy, FAQ JSON-LD; sponsor slots driven by `src/config/sponsors.ts` (empty) | PASS |
+| /sponsor: email contact (sadam.veekshtih007@gmail.com), disclosure policy, FAQ JSON-LD; sponsor slots driven by `src/config/sponsors.ts` (empty) | PASS |
 | Terms, privacy, cookies, contact and JSON-LD updated for a free service (WebSite isAccessibleForFree) | PASS |
 | SEO/GEO: data-driven titles and meta, H1 with page intent, factual summary sentences, FAQPage, BreadcrumbList and Dataset JSON-LD, 260 per-indicator pages, internal links | PASS |
 | /llms.txt and /llms-full.txt; robots.txt allows the major search and AI crawlers; sitemap lastmod | PASS |
 | IndexNow key file and ping after deploy | PASS |
 | Optional GSC (`PUBLIC_GSC_VERIFICATION`) and GA4 (`PUBLIC_GA4_ID`): gtag and consent banner load only when set (Consent Mode default denied); CSP widened only then | PASS (off by default) |
 
-**Needs owner:** set `PUBLIC_GSC_VERIFICATION` and/or `PUBLIC_GA4_ID` as GitHub/Cloudflare build env vars if wanted; verify the site in Bing Webmaster Tools (it can import from GSC); confirm Zelle details; legal review of the sponsorship wording in the terms.
+**Needs owner:** set `PUBLIC_GSC_VERIFICATION` and/or `PUBLIC_GA4_ID` as GitHub/Cloudflare build env vars if wanted; verify the site in Bing Webmaster Tools (it can import from GSC); legal review of the sponsorship wording in the terms.
