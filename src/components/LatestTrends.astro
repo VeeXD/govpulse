@@ -1,0 +1,19 @@
+---
+import { LATEST, KEYS, period, n, explain } from '../lib/latest'; import { COUNTRIES } from '../lib/data'; import Icon from './Icon.tsx';
+const { country, heading = true } = Astro.props; const r = LATEST.countries[country];
+const tone = (d: number, good: boolean | null) => Math.abs(d) < 0.005 || good == null ? 'text-muted' : (d > 0) === good ? 'text-up' : 'text-down';
+---
+<section class="mx-auto max-w-7xl px-4 md:px-6 pt-10" aria-labelledby={`lt-${country}`} data-latest>
+ {heading && <div class="flex flex-wrap items-end justify-between gap-2 mb-4"><div class="label-pair"><b id={`lt-${country}`}>Latest trends</b><span>{COUNTRIES[country].name}, newest official readings</span></div><a href="/latest-trends/" class="text-sm text-accent hover:underline">All countries →</a></div>}
+ <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+  {KEYS.map(K => { const x = r?.[K.k]; return <article class="edge rounded-2xl p-4 flex flex-col gap-1.5">
+   <p class="text-xs text-muted uppercase tracking-wider">{x?.note ? 'Lending rate' : K.label}</p>
+   {x ? <>
+    <p class="font-mono text-3xl text-strong tabular-nums">{n(x.value)}<span class="text-lg">%</span></p>
+    <p class={`font-mono text-sm inline-flex items-center gap-1 ${tone(x.change, K.good)}`}><Icon name={Math.abs(x.change) < 0.005 ? 'Minus' : x.change > 0 ? 'ArrowUpRight' : 'ArrowDownRight'} size={14}/>{x.change > 0 ? '+' : ''}{n(x.change)} pts <span class="text-muted text-xs">vs {period(x.prevPeriod)}</span></p>
+    <p class="text-sm text-text leading-snug">{explain(country, K.k)}</p>
+    <p class="text-[11px] text-muted mt-auto">{period(x.period)} · {x.freq} · <a href={x.url} class="underline underline-offset-2">{x.source}</a></p>
+   </> : <p class="text-sm text-muted">No free official series available yet.</p>}
+  </article>; })}
+ </div>
+</section>

@@ -19,7 +19,7 @@ const bgId = M[`${country}-${industry}`] ? `${country}-${industry}` : industry !
 const bgAlt = industry === 'healthcare' && M[`${country}-wellness`] ? `${country}-wellness` : undefined;
 const indList = Object.entries(DATA.indicators).map(([code, m]: any) => ({ code, label: m.label, unit: m.unit, industry: m.industry }));
 const allYears = Object.values(DATA.countries[country] ?? {}).flat() as any[]; const years: [number, number] = [Math.min(...allYears.map(x => x[0])), Math.max(...allYears.map(x => x[0]))];
-import { mediaCredit } from '../lib/credits'; import { pageSeo, faqLd, crumbLd, slug, lc } from '../lib/seo'; import SponsorSlot from './SponsorSlot.astro';
+import { mediaCredit } from '../lib/credits'; import { pageSeo, faqLd, crumbLd, slug, lc } from '../lib/seo'; import SponsorSlot from './SponsorSlot.astro'; import LatestTrends from './LatestTrends.astro';
 const seo = pageSeo(country, industry);
 const heroCredit = mediaCredit(`${country}-photo`, 'Hero photo') ?? mediaCredit(country, 'Hero');
 const indMeta = Object.entries(DATA.indicators).map(([code, m]: any) => ({ code, label: m.label, unit: m.unit, industry: m.industry, good: m.good ?? null }));
@@ -38,6 +38,7 @@ const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.in
  </div>
  {industry !== 'overview' && <div class="mt-3"><SponsorSlot tier="gold" industry={industry} label="Presented by"/></div>}
 </div>
+{industry === 'overview' && <LatestTrends country={country}/>}
 <Dashboard client:load country={country} countryName={C.name} pageIndustry={industry} meta={indMeta} data={DATA.countries[country]} years={years} industries={INDUSTRIES.slice(1).map(i => ({ id: i.id, name: i.name }))}/>
 <div class="relative">
  <div class="relative mx-auto max-w-7xl px-4 md:px-6 pb-8 grid gap-6">

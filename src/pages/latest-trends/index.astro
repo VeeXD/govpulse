@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro'; import { LATEST, KEYS, period, n } from '../../lib/latest'; import { COUNTRIES } from '../../lib/data';
+const title = 'Latest inflation, unemployment, interest rates & GDP growth';
+const desc = `Today's latest inflation rate, unemployment rate, central bank policy interest rate and GDP growth for ${Object.values(COUNTRIES).map(c => c.name).join(', ')}, with change vs the prior period, date and official source.`;
+const ld = { '@context': 'https://schema.org', '@type': 'Dataset', name: 'Latest macroeconomic indicators by country', description: desc, url: 'https://govpulse.pages.dev/latest-trends/', dateModified: LATEST.generated, isAccessibleForFree: true, license: 'https://creativecommons.org/licenses/by/4.0/', variableMeasured: KEYS.map(k => k.label), spatialCoverage: Object.values(COUNTRIES).map(c => c.name), creator: { '@type': 'Organization', name: 'GovPulse', url: 'https://govpulse.pages.dev' }, citation: ['Bank for International Settlements (BIS) data portal', 'Federal Reserve Bank of St. Louis FRED', 'World Bank World Development Indicators'], distribution: [{ '@type': 'DataDownload', encodingFormat: 'application/json', contentUrl: 'https://govpulse.pages.dev/api/v1/latest.json' }] };
+const tone = (d: number, good: boolean | null) => Math.abs(d) < 0.005 || good == null ? 'text-muted' : (d > 0) === good ? 'text-up' : 'text-down';
+---
+<Base title={title} desc={desc} jsonld={[ld]}>
+<section class="mx-auto max-w-7xl px-4 md:px-6 pt-28 pb-16">
+ <p class="kicker">Updated {LATEST.generated.replace('T', ' ')} UTC</p>
+ <h1 class="mt-3 text-4xl md:text-6xl font-extralight text-strong">Latest economic trends</h1>
+ <p class="mt-4 max-w-3xl text-muted">The newest official reading of inflation, unemployment, the central bank policy rate and real GDP growth for each country, with the change since the previous release. Monthly data comes from the BIS and FRED; where no free monthly series exists we show the latest World Bank annual figure and say so.</p>
+ <div class="mt-8 overflow-x-auto edge rounded-2xl">
+  <table class="w-full text-sm tabular-nums min-w-[760px]"><caption class="sr-only">Latest indicators by country</caption>
+   <thead><tr class="text-left text-muted border-b border-white/10"><th class="p-3">Country</th>{KEYS.map(K => <th class="p-3">{K.label}</th>)}</tr></thead>
+   <tbody>{Object.entries(COUNTRIES).map(([id, c]) => <tr class="border-b border-white/10"><th class="p-3 text-left"><a href={`/${id}/`} class="hover:text-accent">{c.name}</a></th>
+    {KEYS.map(K => { const x = LATEST.countries[id]?.[K.k]; return <td class="p-3 align-top">{x ? <><span class="font-mono text-strong">{n(x.value)}%</span> <span class={`font-mono text-xs ${tone(x.change, K.good)}`}>{x.change > 0 ? '+' : ''}{n(x.change)}</span><br/><span class="text-[11px] text-muted">{period(x.period)} · {x.note ? 'lending rate, ' : ''}<a href={x.url} class="underline underline-offset-2">{x.source.split(' (')[0]}</a></span></> : <span class="text-muted">—</span>}</td>; })}</tr>)}</tbody>
+  </table>
+ </div>
+ <p class="mt-3 text-xs text-muted">Change is in percentage points vs the previous period of the same series. Germany's policy rate is the European Central Bank's euro-area policy rate as reported by the BIS. Nigeria and the UAE have no free monthly series in these sources, so annual World Bank figures are shown.</p>
+ <h2 class="mt-12 text-2xl font-light text-strong">What each number means</h2>
+ <dl class="mt-4 grid md:grid-cols-2 gap-4">{KEYS.map(K => <div class="edge rounded-xl p-4"><dt class="font-semibold">{K.label}</dt><dd class="mt-1 text-sm text-muted">Measures {K.what}.</dd></div>)}</dl>
+</section>
+</Base>
