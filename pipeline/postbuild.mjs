@@ -23,7 +23,7 @@ for (const f of walk('dist')) {
     hashes.add(`'sha256-${crypto.createHash('sha256').update(m[2]).digest('base64')}'`);
   }
 }
-const hp = 'dist/_headers'; let H = fs.readFileSync(hp, 'utf8').replace('__SCRIPT_HASHES__', [...hashes].join(' '));
+const hp = 'dist/_headers'; let H = fs.readFileSync(hp, 'utf8').replaceAll('__SCRIPT_HASHES__', [...hashes].join(' '));
 const cfg = fs.readFileSync('src/config/site.ts', 'utf8');
 const GA4 = process.env.PUBLIC_GA4_ID || (cfg.match(/PUBLIC_GA4_ID \|\| '([^']*)'/) || [])[1];
 if (GA4) { // widen CSP only when GA4 is enabled

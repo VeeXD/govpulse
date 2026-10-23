@@ -1,0 +1,6 @@
+---
+import '../../styles/global.css'; import Embed from '../../components/Embed.tsx'; import { DATA } from '../../lib/data';
+const meta = Object.fromEntries(Object.entries(DATA.indicators).map(([k, m]: any) => [k, { label: m.label, unit: m.unit }]));
+---
+<!doctype html><html lang="en" class="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="robots" content="noindex,follow"/><link rel="canonical" href="https://govpulse.pages.dev/"/><title>GovPulse chart</title></head>
+<body class="bg-surface text-text m-0"><Embed client:only="react" meta={meta}/></body></html>
