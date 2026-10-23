@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro'; import Bars from './Bars.astro';
+import { D, CS, nm, hsName, MANUF, AGRI, top, across, SRC, cropSlug, TWH } from '../../lib/deepdata';
+import { DEEP } from '../../lib/deep'; import { CM, tonnes, usd, cropName, area } from '../../lib/commodity';
+const { ind } = Astro.props as { ind: string }; const L = DEEP[ind].label;
+const f = ind === 'manufacturing' ? MANUF : ind === 'agriculture' ? AGRI : () => true;
+const title = { trade: 'Commodity explorer: top imports & exports by country (HS chapters)', agriculture: 'Crop explorer: top crops by country & who grows most', energy: 'Energy explorer: fuel mix by country & world top producers', manufacturing: 'Manufacturing explorer: output ranking & top manufactured exports' }[ind]!;
+const desc = `${L} commodity explorer for ${CS.length} countries: top 10 lists per country, the same commodity compared across countries, and a full dashboard for each. Official open data, nothing estimated.`;
+const per = (c: string) => { const T = D.trade[c];
+  if (ind === 'agriculture') { const A = D.agri?.[c]; return A ? [{ cap: `Top 10 crops & farm products, ${A.year}`, head: ['#', 'Crop', 'Tonnes'], rows: A.top.map((t: any) => { const s = cropSlug(t.item); return { label: t.item, href: s ? `/commodities/${s}/` : undefined, value: t.value, text: tonnes(t.value) }; }) }] : []; }
+  if (ind === 'energy') { const L2 = D.energy?.[c]?.latest ?? {}; const fu = ['coal', 'oil', 'gas', 'nuclear', 'hydro', 'solar', 'wind', 'biofuel', 'other_renewable'];
+    return [{ cap: 'Energy use by source (latest)', head: ['#', 'Source', 'TWh', 'Year'], rows: fu.filter(x => L2[x + '_consumption']).map(x => ({ label: x.replace('_', ' '), value: L2[x + '_consumption'][1], text: TWH(L2[x + '_consumption'][1]), extra: L2[x + '_consumption'][0] })).sort((a, b) => b.value - a.value) }]; }
+  if (!T) return [];
+  const r = (fl: 'X' | 'M') => top(T[fl], f).map(([h, v]) => ({ label: `${h} · ${hsName(h)}`, href: `#hs${h}`, value: v, text: usd(v) }));
+  return [{ cap: `Top 10 ${ind === 'manufacturing' ? 'manufactured ' : ''}exports, ${T.year}`, head: ['#', 'HS chapter', 'US$'], rows: r('X') }, { cap: `Top 10 ${ind === 'manufacturing' ? 'manufactured ' : ''}imports, ${T.year}`, head: ['#', 'HS chapter', 'US$'], rows: r('M') }]; };
+const chapters = (() => { const s: Record<string, number> = {}; for (const c of CS) for (const fl of ['X', 'M']) for (const [h, v] of Object.entries(D.trade[c]?.[fl] ?? {})) if (f(h)) s[h] = (s[h] ?? 0) + (v as number); return Object.entries(s).sort((a, b) => b[1] - a[1]).slice(0, ind === 'trade' ? 40 : 25).map(([h]) => h); })();
+const eT = D.energyTop ?? {}; const eN: Record<string, string> = { oil_production: 'Oil production', gas_production: 'Gas production', coal_production: 'Coal production', primary_energy_consumption: 'Primary energy use', electricity_generation: 'Electricity generation', solar_electricity: 'Solar electricity', wind_electricity: 'Wind electricity' };
+const ld = [{ '@context': 'https://schema.org', '@type': 'Dataset', name: title, description: desc, url: `https://govpulse.pages.dev/commodities/${ind}/`, isAccessibleForFree: true, license: 'https://creativecommons.org/licenses/by/4.0/' }];
+---
+<Base title={title} desc={desc} jsonld={ld}>
+<section class="mx-auto max-w-7xl px-4 md:px-6 pt-28 pb-16" data-explorer={ind}>
+ <nav aria-label="Breadcrumb" class="kicker"><a href="/commodities/" class="hover:text-strong">In-depth</a> · {L} · Commodity explorer</nav>
+ <h1 class="mt-3 text-4xl md:text-5xl font-extralight text-strong">{title.split(':')[0]}</h1>
+ <p class="mt-2 text-muted max-w-3xl">{DEEP[ind].what}. Level: Headline → <b class="text-strong">Commodity explorer</b> → Dashboard. Pick a country; the choice is kept in the link (<code>?c=</code>).</p>
+ <div class="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Country">{CS.map((c, i) => <button type="button" role="tab" data-c={c} aria-selected={i === 0 ? 'true' : 'false'} class="rounded-full border border-white/15 px-3 py-1 text-sm aria-selected:border-accent aria-selected:text-accent">{nm(c)}</button>)}</div>
+ {CS.map((c, i) => <div role="tabpanel" data-panel={c} hidden={i !== 0} class="mt-4">
+  <div class="flex flex-wrap items-center justify-between gap-3"><h2 class="text-xl font-light text-strong">{nm(c)}</h2><a href={`/commodities/${ind}/${c}/`} class="rounded-md bg-accent text-black px-3 py-1.5 text-sm font-semibold hover:opacity-90">Open {nm(c)} {L.toLowerCase()} dashboard →</a></div>
+  <div class="mt-3 grid lg:grid-cols-2 gap-4">{per(c).map(p => <Bars caption={p.cap} head={p.head} rows={p.rows} />)}</div></div>)}
+
+ <h2 class="mt-12 text-2xl font-light text-strong">Same commodity across countries</h2>
+ {(ind === 'trade' || ind === 'manufacturing') && <div class="mt-3 edge rounded-2xl overflow-x-auto"><table class="w-full text-sm tabular-nums"><caption class="sr-only">HS chapters across tracked countries</caption><thead><tr class="text-left text-muted text-xs border-b border-white/10">{['HS chapter', 'Biggest exporter (tracked)', 'Exports', 'Biggest importer (tracked)', 'Imports'].map(h => <th scope="col" class="px-3 py-2 font-normal">{h}</th>)}</tr></thead>
+  <tbody>{chapters.map(h => { const x = across(h, 'X'), m = across(h, 'M'); return <tr id={`hs${h}`} class="border-b border-white/10 target:bg-accent/10"><td class="px-3 py-2"><b class="font-mono text-muted">{h}</b> {hsName(h)}</td><td class="px-3 py-2">{x[0] ? <a class="hover:text-accent" href={`/commodities/${ind}/${x[0].c}/`}>{nm(x[0].c)}</a> : '–'}<span class="block text-[11px] text-muted">{x.slice(1, 4).map(r => nm(r.c)).join(', ')}</span></td><td class="px-3 py-2 font-mono">{x[0] ? usd(x[0].v) : ''}</td><td class="px-3 py-2">{m[0] ? <a class="hover:text-accent" href={`/commodities/${ind}/${m[0].c}/`}>{nm(m[0].c)}</a> : '–'}<span class="block text-[11px] text-muted">{m.slice(1, 4).map(r => nm(r.c)).join(', ')}</span></td><td class="px-3 py-2 font-mono">{m[0] ? usd(m[0].v) : ''}</td></tr>; })}</tbody></table></div>}
+ {ind === 'manufacturing' && <div class="mt-6 max-w-2xl"><Bars caption="Manufacturing value added, tracked countries (world rank)" head={['#', 'Country', 'US$', 'World rank']} rows={Object.entries(CM.manufacturing ?? {}).sort((a: any, b: any) => b[1].value - a[1].value).map(([c, v]: any) => ({ label: nm(c), href: `/commodities/manufacturing/${c}/`, value: v.value, text: usd(v.value), extra: `${v.rank}/${v.of} (${v.year})` }))} /></div>}
+ {ind === 'agriculture' && <div class="mt-3 edge rounded-2xl overflow-x-auto"><table class="w-full text-sm tabular-nums"><caption class="sr-only">Crops across tracked countries</caption><thead><tr class="text-left text-muted text-xs border-b border-white/10"><th scope="col" class="px-3 py-2 font-normal">Crop</th><th scope="col" class="px-3 py-2 font-normal">World #1 producer</th>{CS.map(c => <th scope="col" class="px-3 py-2 font-normal">{nm(c)}</th>)}</tr></thead>
+  <tbody>{Object.entries(CM.crops).map(([s, k]: any) => <tr class="border-b border-white/10"><td class="px-3 py-2"><a class="hover:text-accent" href={`/commodities/${s}/`}>{cropName(s)}</a> <span class="text-[11px] text-muted">{k.year}</span></td><td class="px-3 py-2">{area(k.top[0].area)} <span class="text-muted text-[11px]">{k.top[0].share}%</span></td>{CS.map(c => <td class="px-3 py-2 font-mono text-xs">{k.ours?.[c]?.value ? tonnes(k.ours[c].value) : '–'}</td>)}</tr>)}</tbody></table></div>}
+ {ind === 'energy' && <div class="mt-3 grid lg:grid-cols-2 gap-4">{Object.keys(eN).filter(k => eT[k]).map(k => <Bars caption={`World top 10: ${eN[k].toLowerCase()} (${eT[k].year})`} head={['#', 'Country', 'TWh']} rows={eT[k].top.map((t: any) => ({ label: t.name, value: t.value, text: TWH(t.value) }))} />)}</div>}
+ <p class="mt-6 text-xs text-muted">Source: {ind === 'agriculture' ? SRC.fao : ind === 'energy' ? SRC.owid : SRC.ct}{ind === 'manufacturing' ? `; ${SRC.wb}` : ''}. "Tracked" = the {CS.length} GovPulse countries. Values as reported; nothing estimated.</p>
+</section>
+<script>
+ const q = new URLSearchParams(location.search); const tabs = [...document.querySelectorAll<HTMLButtonElement>('[data-c]')];
+ const pick = (c: string, push = true) => { if (!tabs.some(t => t.dataset.c === c)) c = tabs[0].dataset.c!; tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.c === c))); document.querySelectorAll<HTMLElement>('[data-panel]').forEach(p => (p.hidden = p.dataset.panel !== c));
+  if (push) { const u = new URLSearchParams(location.search); u.set('c', c); history.replaceState(null, '', location.pathname + '?' + u + location.hash); } };
+ tabs.forEach(t => t.addEventListener('click', () => pick(t.dataset.c!))); if (q.get('c')) pick(q.get('c')!, false);
+ const hs = q.get('hs'); if (hs) document.getElementById('hs' + hs)?.scrollIntoView({ block: 'center' });
+</script>
+</Base>

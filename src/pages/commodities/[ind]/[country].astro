@@ -1,0 +1,104 @@
+---
+import Base from '../../../layouts/Base.astro'; import DeepChart from '../../../components/DeepChart.tsx'; import Bars from '../../../components/deep/Bars.astro';
+import { D, CS, nm, wb, last, scale, hsName, MANUF, AGRI, top, across, SRC, cropSlug, TWH } from '../../../lib/deepdata';
+import { DEEP } from '../../../lib/deep'; import { CM, tonnes, usd, cropName } from '../../../lib/commodity'; import { meta, fmt } from '../../../lib/data';
+export function getStaticPaths() { return Object.keys(DEEP).flatMap(ind => CS.map(country => ({ params: { ind, country } }))); }
+const { ind, country } = Astro.params as { ind: string; country: string }; const N = nm(country); const L = DEEP[ind].label;
+const T = D.trade[country]; const byC = (f: (c: string) => Record<string, [number, number][]>) => Object.fromEntries(CS.map(c => [c, f(c)]).filter(([, v]: any) => Object.values(v).some((s: any) => s.length)));
+const wbC = (code: string, k = 1, d = 2) => byC(c => ({ [meta(code)?.label ?? code]: scale(wb(c, code), k, d) }));
+const lastV = (code: string) => { const l = last(wb(country, code)); return l ? `${fmt(l[1], meta(code)?.unit)} (${l[0]})` : 'not reported'; };
+const pct = (v: number, t: number) => t ? `${(100 * v / t).toFixed(1)}%` : '';
+const hsRows = (o: any, f: any, tot: number, fl: string) => top(o, f).map(([h, v]) => ({ label: `${h} · ${hsName(h)}`, href: `/commodities/trade/?hs=${h}#hs${h}`, value: v, text: usd(v), extra: pct(v, tot), note: (() => { const a = across(h, fl === 'X' ? 'X' : 'X'); return a[0] && a[0].c !== country ? `Biggest exporter among tracked countries: ${nm(a[0].c)} (${usd(a[0].v)})` : a[0] ? 'Largest exporter among tracked countries' : ''; })() }));
+const pRows = (ps: any[]) => (ps ?? []).map((p: any) => ({ label: p.name, value: p.value, text: usd(p.value), extra: p.share != null ? p.share + '%' : '' }));
+const sug = (extra: { label: string; href: string }[] = []) => [...extra, ...Object.keys(DEEP).filter(i => i !== ind).map(i => ({ label: `${DEEP[i].label} dashboard: ${N}`, href: `/commodities/${i}/${country}/` })), { label: `${N} ${L.toLowerCase()} headline metrics`, href: `/${country}/${ind}/` }];
+const E = D.energy?.[country]; const EL = E?.latest ?? {};
+const A = D.agri?.[country]; const M = CM.manufacturing?.[country];
+const FU = ['coal', 'oil', 'gas', 'nuclear', 'hydro', 'solar', 'wind', 'biofuel', 'other_renewable'];
+const title = `${N} ${L.toLowerCase()} dashboard: ${ind === 'trade' ? 'top imports, exports & partners' : ind === 'agriculture' ? 'top crops, crop use & farm trade' : ind === 'energy' ? 'energy mix, production & electricity' : 'output, manufactured exports & imports'}`;
+const desc = ind === 'trade' && T ? `${N} exported ${usd(T.Xtotal)} and imported ${usd(T.Mtotal)} of goods in ${T.year}. Top 10 export and import products (HS chapters), top partner countries and trends from UN Comtrade and the World Bank.`
+ : ind === 'agriculture' && A ? `${N}'s top crop in ${A.year} was ${A.top[0].item} (${tonnes(A.top[0].value)}). Top 10 crops, production trends, how crops are used and farm trade, from FAOSTAT and UN Comtrade.`
+ : ind === 'energy' && E ? `${N} energy dashboard: primary energy use, fuel mix, electricity mix and fossil fuel production, with world top producers. Data: Energy Institute and Ember via Our World in Data.`
+ : `${N} ${L.toLowerCase()} dashboard with top 10 lists, trends and comparisons from official open data.`;
+const ld = [{ '@context': 'https://schema.org', '@type': 'Dataset', name: title, description: desc, url: `https://govpulse.pages.dev/commodities/${ind}/${country}/`, isAccessibleForFree: true, license: 'https://creativecommons.org/licenses/by/4.0/', creator: { '@type': 'Organization', name: 'GovPulse' } }];
+const kpis: [string, string, string][] = ind === 'trade' ? [['Goods exports', T ? usd(T.Xtotal) : '–', `${T?.year ?? ''} · UN Comtrade`], ['Goods imports', T ? usd(T.Mtotal) : '–', `${T?.year ?? ''} · UN Comtrade`], ['Trade balance', T ? (T.Xtotal >= T.Mtotal ? '+' : '−') + usd(Math.abs(T.Xtotal - T.Mtotal)) : '–', 'exports minus imports'], ['Exports of goods & services', lastV('NE.EXP.GNFS.ZS'), 'World Bank']]
+ : ind === 'agriculture' ? [['Top crop', A ? A.top[0].item : '–', A ? `${tonnes(A.top[0].value)} · ${A.year}` : ''], ['Agriculture value added', lastV('NV.AGR.TOTL.ZS'), 'World Bank'], ['Farm jobs', lastV('SL.AGR.EMPL.ZS'), 'World Bank (ILO model)'], ['Cereal yield', lastV('AG.YLD.CREL.KG'), 'World Bank']]
+ : ind === 'energy' ? [['Primary energy use', EL.primary_energy_consumption ? `${TWH(EL.primary_energy_consumption[1])} (${EL.primary_energy_consumption[0]})` : '–', 'Energy Institute via OWID'], ['Renewables share of energy', EL.renewables_share_energy ? `${EL.renewables_share_energy[1].toFixed(1)}% (${EL.renewables_share_energy[0]})` : '–', 'Energy Institute via OWID'], ['Electricity generated', EL.electricity_generation ? `${TWH(EL.electricity_generation[1])} (${EL.electricity_generation[0]})` : '–', 'Ember / EI via OWID'], ['Energy imports, net', lastV('EG.IMP.CONS.ZS'), 'World Bank (negative = net exporter)']]
+ : [['Manufacturing value added', M ? `${usd(M.value)} (${M.year})` : '–', M ? `rank ${M.rank} of ${M.of} economies` : ''], ['Manufacturing share of GDP', lastV('NV.IND.MANF.ZS'), 'World Bank'], ['Manufactured share of goods exports', CM.trade?.[country]?.X?.manufShare != null ? `${CM.trade[country].X.manufShare}%` : '–', `HS 28–96 excl. 71 · ${CM.trade?.[country]?.year ?? ''}`], ['High-tech share of manuf. exports', lastV('TX.VAL.TECH.MF.ZS'), 'World Bank']];
+const fbs = Object.entries(D.use ?? {}).map(([crop, by]: any) => ({ crop, r: by[country], w: by.world })).filter(x => x.r && x.r.supply);
+const use = (r: any) => { const t = ['food', 'feed', 'proc', 'loss', 'other'].reduce((a, k) => a + (r[k] ?? 0), 0) || 1; return ['food', 'feed', 'proc', 'loss', 'other'].map(k => `${(100 * (r[k] ?? 0) / t).toFixed(0)}%`); };
+const isM = (h: string) => +h >= 28 && +h <= 96 && h !== '71', isA = (h: string) => +h >= 1 && +h <= 24;
+const eT = D.energyTop ?? {}; const eNames: Record<string, string> = { oil_production: 'Oil production', gas_production: 'Gas production', coal_production: 'Coal production', solar_electricity: 'Solar electricity', wind_electricity: 'Wind electricity', primary_energy_consumption: 'Primary energy use', electricity_generation: 'Electricity generation' };
+---
+<Base title={title} desc={desc} jsonld={ld}>
+<section class="mx-auto max-w-7xl px-4 md:px-6 pt-28 pb-16" data-deepdash={ind}>
+ <nav aria-label="Breadcrumb" class="kicker"><a href="/commodities/" class="hover:text-strong">In-depth</a> · <a href={`/commodities/${ind}/?c=${country}`} class="hover:text-strong">{L} commodity explorer</a> · Dashboard</nav>
+ <div class="mt-3 flex flex-wrap items-end justify-between gap-4"><h1 class="text-4xl md:text-5xl font-extralight text-strong">{N}: {L.toLowerCase()} dashboard</h1>
+  <form action="" class="flex gap-2 items-center text-sm" data-country-switch><label for="dsw" class="text-muted">Country</label><select id="dsw" class="bg-black/50 border border-white/15 rounded-md px-2 py-1.5" data-nav>{CS.map(c => <option value={`/commodities/${ind}/${c}/`} selected={c === country}>{nm(c)}</option>)}</select>
+   <label for="isw" class="text-muted">Industry</label><select id="isw" class="bg-black/50 border border-white/15 rounded-md px-2 py-1.5" data-nav>{Object.keys(DEEP).map(i => <option value={`/commodities/${i}/${country}/`} selected={i === ind}>{DEEP[i].label}</option>)}</select></form></div>
+ <p class="mt-2 text-muted text-sm max-w-3xl">{DEEP[ind].what}. Level: Headline → Commodity explorer → <b class="text-strong">Dashboard</b>.</p>
+ <dl class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-3">{kpis.map(([k, v, s]) => <div class="edge rounded-xl p-4"><dt class="kicker">{k}</dt><dd class="mt-2 text-xl font-light text-strong">{v}</dd><dd class="text-[11px] text-muted">{s}</dd></div>)}</dl>
+
+ {ind === 'trade' && <>
+  <div class="mt-6 grid lg:grid-cols-2 gap-4">
+   <DeepChart client:visible id="x" title="Merchandise exports" unit="US$ bn" country={country} data={wbC('TX.VAL.MRCH.CD.WT', 1e9)} source={SRC.wb + ' TX.VAL.MRCH.CD.WT'} suggest={sug([{ label: 'Same products across countries', href: `/commodities/trade/?c=${country}` }])} />
+   <DeepChart client:visible id="m" title="Merchandise imports" unit="US$ bn" country={country} data={wbC('TM.VAL.MRCH.CD.WT', 1e9)} source={SRC.wb + ' TM.VAL.MRCH.CD.WT'} suggest={sug()} />
+  </div>
+  <div class="mt-4"><DeepChart client:visible id="cat" title="Imports by broad category" unit="% of merchandise imports" country={country} data={byC(c => Object.fromEntries(['MANF', 'FUEL', 'FOOD', 'MMTL', 'AGRI'].map(k => [meta(`TM.VAL.${k}.ZS.UN`)?.label?.replace(/ imports.*$/i, '') ?? k, wb(c, `TM.VAL.${k}.ZS.UN`)])))} source={SRC.wb + ' TM.VAL.*.ZS.UN (SITC groups)'} suggest={sug()} /></div>
+  {T ? <><div class="mt-6 grid lg:grid-cols-2 gap-4">
+   <Bars caption={`Top 10 exported products, ${T.year}`} head={['#', 'HS chapter', 'US$', 'Share']} rows={hsRows(T.X, () => true, T.Xtotal, 'X')} />
+   <Bars caption={`Top 10 imported products, ${T.year}`} head={['#', 'HS chapter', 'US$', 'Share']} rows={hsRows(T.M, () => true, T.Mtotal, 'M')} />
+   <Bars caption={`Top 10 export destinations, ${T.year}`} head={['#', 'Country', 'US$', 'Share']} rows={pRows(T.Xp)} empty="Partner breakdown not available." />
+   <Bars caption={`Top 10 import sources, ${T.year}`} head={['#', 'Country', 'US$', 'Share']} rows={pRows(T.Mp)} empty="Partner breakdown not available." />
+  </div></> : <p class="mt-6 text-sm text-muted">UN Comtrade has no reported data for {N} in 2022–2024.</p>}
+ </>}
+
+ {ind === 'agriculture' && <>
+  <div class="mt-6 grid lg:grid-cols-2 gap-4">
+   {A && <DeepChart client:visible id="crops" title={`Top 5 crops & farm products, ${N}`} unit="million t" country={country} data={{ [country]: Object.fromEntries(Object.entries(A.series).map(([k, s]: any) => [k, scale(s, 1e6, 3)])) }} source={SRC.fao} suggest={sug(A.top.slice(0, 5).map((t: any) => cropSlug(t.item)).filter(Boolean).map((s: any) => ({ label: `Who produces most ${cropName(s).toLowerCase()}`, href: `/commodities/${s}/` })))} />}
+   <DeepChart client:visible id="yld" title="Cereal yield" unit="kg per hectare" country={country} data={wbC('AG.YLD.CREL.KG', 1, 0)} source={SRC.wb + ' AG.YLD.CREL.KG'} suggest={sug()} />
+  </div>
+  {A && <div class="mt-6 grid lg:grid-cols-2 gap-4">
+   <Bars caption={`Top 10 crops & farm products by tonnes, ${A.year}`} head={['#', 'Crop', 'Production']} rows={A.top.map((t: any) => { const s = cropSlug(t.item); const w = s && CM.crops[s].ours?.[country]; return { label: t.item, href: s ? `/commodities/${s}/` : undefined, value: t.value, text: tonnes(t.value), note: w?.rank ? `World rank ${w.rank} · see top producers` : '' }; })} />
+   {T && <Bars caption={`Top farm & food exports (HS 01–24), ${T.year}`} head={['#', 'HS chapter', 'US$', 'Share of exports']} rows={hsRows(T.X, isA, T.Xtotal, 'X')} />}
+  </div>}
+  <h2 class="mt-10 text-xl font-light text-strong">How crops are used in {N}</h2>
+  <div class="mt-3 edge rounded-2xl overflow-x-auto"><table class="w-full text-sm tabular-nums"><caption class="sr-only">Crop use, FAO food balance sheets</caption><thead><tr class="text-left text-muted text-xs border-b border-white/10">{['Crop', 'Year', 'Production', 'Imports', 'Exports', 'Food', 'Feed', 'Processing', 'Losses', 'Other uses', 'World: food share'].map(h => <th scope="col" class="px-3 py-2 font-normal">{h}</th>)}</tr></thead>
+   <tbody>{fbs.map(x => { const u = use(x.r); return <tr class="border-b border-white/10"><td class="px-3 py-2"><a href={`/commodities/${x.crop}/`} class="hover:text-accent">{cropName(x.crop)}</a></td><td class="px-3 py-2 text-muted">{x.r.year}</td><td class="px-3 py-2 font-mono">{x.r.prod != null ? tonnes(x.r.prod) : '–'}</td><td class="px-3 py-2 font-mono">{x.r.imp != null ? tonnes(x.r.imp) : '–'}</td><td class="px-3 py-2 font-mono">{x.r.exp != null ? tonnes(x.r.exp) : '–'}</td>{u.map(v => <td class="px-3 py-2 font-mono">{v}</td>)}<td class="px-3 py-2 font-mono text-muted">{x.w ? use(x.w)[0] : '–'}</td></tr>; })}</tbody></table>
+   {!fbs.length && <p class="p-3 text-xs text-muted">No food balance data for {N}.</p>}</div>
+  <p class="mt-2 text-xs text-muted">Shares are of domestic use (food + feed + processing + losses + other). FAO food balance sheets; crops in primary-equivalent terms, so "products" include flour, oil and similar.</p>
+ </>}
+
+ {ind === 'energy' && <>
+  <div class="mt-6 grid lg:grid-cols-2 gap-4">
+   <DeepChart client:visible id="pe" title="Primary energy consumption" unit="TWh" country={country} data={byC(c => ({ 'Primary energy': D.energy?.[c]?.series?.primary_energy_consumption ?? [] }))} source={SRC.owid} suggest={sug([{ label: 'World top energy producers', href: `/commodities/energy/?c=${country}` }])} />
+   <DeepChart client:visible id="ren" title="Renewables share of primary energy" unit="%" country={country} data={byC(c => ({ Renewables: D.energy?.[c]?.series?.renewables_share_energy ?? [] }))} source={SRC.owid} suggest={sug()} />
+   <DeepChart client:visible id="use" title={`Fossil fuel consumption, ${N}`} unit="TWh" country={country} data={{ [country]: { Oil: E?.series?.oil_consumption ?? [], Gas: E?.series?.gas_consumption ?? [], Coal: E?.series?.coal_consumption ?? [] } }} source={SRC.owid} suggest={sug()} />
+   <DeepChart client:visible id="prod" title={`Fossil fuel production, ${N}`} unit="TWh" country={country} data={{ [country]: { Oil: E?.series?.oil_production ?? [], Gas: E?.series?.gas_production ?? [], Coal: E?.series?.coal_production ?? [] } }} source={SRC.owid} suggest={sug()} />
+  </div>
+  <div class="mt-6 grid lg:grid-cols-2 gap-4">
+   <Bars caption="Energy consumption by source (latest year)" head={['#', 'Source', 'TWh', 'Year']} rows={FU.filter(f => EL[f + '_consumption']).map(f => ({ label: f.replace('_', ' '), value: EL[f + '_consumption'][1], text: TWH(EL[f + '_consumption'][1]), extra: EL[f + '_consumption'][0] })).sort((a, b) => b.value - a.value)} />
+   <Bars caption="Electricity generation by source (latest year)" head={['#', 'Source', 'TWh', 'Year']} rows={FU.filter(f => EL[f + '_electricity']).map(f => ({ label: f.replace('_', ' '), value: EL[f + '_electricity'][1], text: TWH(EL[f + '_electricity'][1]), extra: EL[f + '_electricity'][0] })).sort((a, b) => b.value - a.value)} />
+   {['oil_production', 'gas_production'].filter(f => eT[f]).map(f => <Bars caption={`Who produces most: ${eNames[f].toLowerCase()}, world top 10 (${eT[f].year})`} head={['#', 'Country', 'TWh']} rows={eT[f].top.map((t: any) => ({ label: t.name, value: t.value, text: TWH(t.value) }))} />)}
+   {T && <Bars caption={`Energy trade: mineral fuels (HS 27), ${T.year}`} head={['#', 'Flow', 'US$', 'Share of flow']} rows={[{ label: 'Exports', value: T.X['27'] ?? 0, text: usd(T.X['27'] ?? 0), extra: pct(T.X['27'] ?? 0, T.Xtotal) }, { label: 'Imports', value: T.M['27'] ?? 0, text: usd(T.M['27'] ?? 0), extra: pct(T.M['27'] ?? 0, T.Mtotal) }]} />}
+  </div>
+  <p class="mt-2 text-xs text-muted">Primary energy uses the substitution method (Energy Institute). Fuel figures are in TWh of primary energy. Latest years differ by source; each row shows its own year.</p>
+ </>}
+
+ {ind === 'manufacturing' && <>
+  <div class="mt-6 grid lg:grid-cols-2 gap-4">
+   <DeepChart client:visible id="mva" title="Manufacturing value added" unit="US$ bn" country={country} data={wbC('NV.IND.MANF.CD', 1e9)} source={SRC.wb + ' NV.IND.MANF.CD'} suggest={sug([{ label: 'Manufacturing ranking, all economies', href: `/commodities/manufacturing/?c=${country}` }])} />
+   <DeepChart client:visible id="mshare" title="Manufacturing share of GDP" unit="% GDP" country={country} data={wbC('NV.IND.MANF.ZS')} source={SRC.wb + ' NV.IND.MANF.ZS'} suggest={sug()} />
+  </div>
+  {T && <div class="mt-6 grid lg:grid-cols-2 gap-4">
+   <Bars caption={`Top 10 manufactured exports, ${T.year}`} head={['#', 'HS chapter', 'US$', 'Share of exports']} rows={hsRows(T.X, isM, T.Xtotal, 'X')} />
+   <Bars caption={`Top 10 manufactured imports, ${T.year}`} head={['#', 'HS chapter', 'US$', 'Share of imports']} rows={hsRows(T.M, isM, T.Mtotal, 'M')} />
+  </div>}
+  <p class="mt-2 text-xs text-muted">"Manufactured" = HS chapters 28–96 excluding 71 (precious stones and metals). There is no free product-level production dataset, so "who makes most" uses exports among the 10 tracked countries as a proxy.</p>
+ </>}
+
+ <h2 class="mt-10 text-xl font-light text-strong">Related</h2>
+ <ul class="mt-3 grid md:grid-cols-3 gap-3 text-sm">{sug([{ label: `Compare ${L.toLowerCase()} across all countries`, href: `/commodities/${ind}/?c=${country}` }]).map(s => <li><a href={s.href} class="edge rounded-xl p-3 block hover:border-accent">{s.label} →</a></li>)}</ul>
+ <p class="mt-6 text-xs text-muted">Caveats: values are as reported by each country to the source; Comtrade figures are reporter-side and in current US$, so they differ from mirror data and from World Bank goods-and-services totals. HS 2-digit chapters only. Nothing on this page is estimated or modelled by GovPulse. Data built {D.generated?.slice(0, 10)}.</p>
+</section>
+<script>document.querySelectorAll<HTMLSelectElement>('select[data-nav]').forEach(s => s.addEventListener('change', () => { location.href = s.value; }));</script>
+</Base>

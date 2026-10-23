@@ -1,0 +1,9 @@
+---
+/** Ranked table with inline bars. rows: {label, href?, value, text, note?} */
+const { caption, rows, head = ['#', 'Item', 'Value'], empty = 'No data reported.' } = Astro.props;
+const mx = Math.max(...rows.map((r: any) => r.value), 1);
+---
+<div class="edge rounded-2xl overflow-x-auto"><table class="w-full text-sm tabular-nums"><caption class="p-3 text-left font-semibold text-strong">{caption}</caption>
+ <thead><tr class="text-left text-muted text-xs border-b border-white/10">{head.map((h: string) => <th scope="col" class="px-3 py-2 font-normal">{h}</th>)}</tr></thead>
+ <tbody>{rows.map((r: any, i: number) => <tr class="border-b border-white/10 align-top"><td class="px-3 py-2 text-muted">{i + 1}</td><td class="px-3 py-2 w-[55%]">{r.href ? <a href={r.href} class="hover:text-accent underline-offset-2 hover:underline">{r.label}</a> : r.label}{r.note && <span class="block text-[11px] text-muted">{r.note}</span>}<span class="mt-1 block h-1 rounded bg-white/10" aria-hidden="true"><span class="block h-1 rounded bg-accent" style={`width:${(100 * r.value / mx).toFixed(1)}%`}></span></span></td><td class="px-3 py-2 font-mono whitespace-nowrap">{r.text}</td>{r.extra != null && <td class="px-3 py-2 font-mono text-muted">{r.extra}</td>}</tr>)}</tbody></table>
+ {!rows.length && <p class="p-3 text-xs text-muted">{empty}</p>}</div>

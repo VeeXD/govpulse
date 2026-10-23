@@ -15,11 +15,14 @@ export const COUNTRIES: Record<string, { name: string; iso: string; flag: string
 };
 export const INDUSTRIES = [
   { id: 'overview', name: 'Overview', icon: 'LayoutDashboard' },
-  { id: 'agriculture', name: 'Agriculture', icon: 'Wheat' },
-  { id: 'healthcare', name: 'Healthcare', icon: 'HeartPulse' },
+  { id: 'it', name: 'IT & digital', icon: 'Cpu' },
+  { id: 'healthcare', name: 'Health', icon: 'HeartPulse' },
   { id: 'finance', name: 'Finance', icon: 'Landmark' },
+  { id: 'agriculture', name: 'Agriculture', icon: 'Wheat' },
+  { id: 'trade', name: 'Imports & exports', icon: 'ArrowLeftRight' },
   { id: 'energy', name: 'Energy', icon: 'Zap' },
   { id: 'manufacturing', name: 'Manufacturing', icon: 'Factory' },
+  { id: 'other', name: 'Other (population, tourism, life)', icon: 'Globe' },
 ] as const;
 export function series(c: string, code: string): Series { return DATA.countries[c]?.[code] ?? []; }
 export function meta(code: string) { return DATA.indicators[code]; }

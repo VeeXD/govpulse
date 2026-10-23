@@ -1,3 +1,4 @@
+import { DEEP, deepUrl } from '../lib/deep';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SlidersHorizontal, Maximize2, X, ArrowUpRight, ArrowDownRight, Minus, ChevronLeft, ChevronRight, Scale, Link2, Image as ImageIcon, FileDown, Code2, Plus, Layers } from 'lucide-react';
 import { PALETTE, MAX_SERIES, COUNTRY_NAMES, parseCmp, fmtCmp, loadCountry, seed, build, units, csv, download, type Ref } from '../lib/compose';
@@ -36,7 +37,7 @@ function Range({ yrs, r, set, id }: { yrs: number[]; r: [number, number]; set: (
 }
 function ChartCard({ m, s, range, setRange, yrs, onOpen, big, color = AMBER, comp, onChart, share }: any) {
   const pts = s.filter((p: Pt) => p[0] >= range[0] && p[0] <= range[1]); const st = stats(s);
-  return <article className="edge rounded-2xl p-4 md:p-5 flex flex-col gap-2 min-w-0 fade-in">
+  return <article onClick={e => { if (!(e.target as HTMLElement).closest('select,button,a,input,textarea,label,[data-share]')) onOpen(); }} className="edge rounded-2xl p-4 md:p-5 flex flex-col gap-2 min-w-0 fade-in cursor-zoom-in">
     <div className="flex flex-wrap items-start justify-between gap-2">
       <div className="min-w-0"><h3 className={`font-semibold ${big ? 'text-lg' : 'text-sm'}`}>{m.label} <span className="text-muted font-normal text-xs">({m.unit})</span></h3>
         <p className="text-xs text-muted">Latest <span className="font-mono text-text">{fmt(st.last?.[1], m.unit)}</span> ({st.last?.[0]})</p></div>
@@ -68,15 +69,15 @@ function ShareBar({ chart, series, title, query, view }: { chart: () => any; ser
       <button type="button" className={b} onClick={async () => { try { await navigator.clipboard.writeText(embed); flash('Embed code copied'); } catch {} }}>Copy embed code</button></div>}
   </div>;
 }
-function CompareBar({ meta, country, cmp, setCmp, idx, setIdx, skipped, base }: any) {
+function CompareBar({ meta, country, cmp, setCmp, idx, setIdx, skipped, base, pre = '' }: any) {
   const [c, setC] = useState(country === 'usa' ? 'india' : 'usa'); const [code, setCode] = useState(base);
   useEffect(() => setCode(base), [base]);
   const full = cmp.length >= MAX_SERIES - 1; const f = 'bg-black/50 border border-white/15 rounded-md px-2 py-1 text-xs text-text focus-visible:border-accent max-w-[14rem]';
   const add = () => { if (full || cmp.some((x: Ref) => x.c === c && x.code === code) || (c === country && code === base)) return; setCmp([...cmp, { c, code }]); };
-  return <section aria-labelledby="cmp-h" className="edge rounded-2xl p-4 flex flex-col gap-3" data-compare>
-    <div className="flex flex-wrap items-center gap-3"><h2 id="cmp-h" className="text-sm font-semibold flex items-center gap-2"><Layers size={15} className="text-accent" aria-hidden />Compare &amp; overlay</h2>
-      <label className="sr-only" htmlFor="cmp-c">Country</label><select id="cmp-c" className={f} value={c} onChange={e => setC(e.target.value)}>{Object.entries(COUNTRY_NAMES).map(([id, n]) => <option key={id} value={id}>{n}</option>)}</select>
-      <label className="sr-only" htmlFor="cmp-m">Metric</label><select id="cmp-m" className={f} value={code} onChange={e => setCode(e.target.value)}>{Object.values(meta).map((m: any) => <option key={m.code} value={m.code}>{m.label}</option>)}</select>
+  return <section aria-labelledby={pre + "cmp-h"} className="edge rounded-2xl p-4 flex flex-col gap-3" data-compare>
+    <div className="flex flex-wrap items-center gap-3"><h2 id={pre + "cmp-h"} className="text-sm font-semibold flex items-center gap-2"><Layers size={15} className="text-accent" aria-hidden />Compare &amp; overlay</h2>
+      <label className="sr-only" htmlFor={pre + "cmp-c"}>Country</label><select id={pre + "cmp-c"} className={f} value={c} onChange={e => setC(e.target.value)}>{Object.entries(COUNTRY_NAMES).map(([id, n]) => <option key={id} value={id}>{n}</option>)}</select>
+      <label className="sr-only" htmlFor={pre + "cmp-m"}>Metric</label><select id={pre + "cmp-m"} className={f} value={code} onChange={e => setCode(e.target.value)}>{Object.values(meta).map((m: any) => <option key={m.code} value={m.code}>{m.label}</option>)}</select>
       <button type="button" disabled={full} onClick={add} className="inline-flex items-center gap-1 rounded-md bg-cta text-black font-semibold px-2.5 py-1 text-xs disabled:opacity-40"><Plus size={13} aria-hidden />Add to chart</button>
       <label className="inline-flex items-center gap-1.5 text-xs text-muted cursor-pointer"><input type="checkbox" checked={idx} onChange={e => setIdx(e.target.checked)} className="accent-[#FFB224]" />Index to 100 (first year)</label>
       <span className="text-[11px] text-muted">{cmp.length + 1}/{MAX_SERIES} series</span></div>
@@ -87,7 +88,16 @@ function CompareBar({ meta, country, cmp, setCmp, idx, setIdx, skipped, base }: 
     <p className="text-[11px] text-muted">Different units get a second y-axis. Click a legend item to hide it; × removes it.</p>
   </section>;
 }
-function FullView({ code, meta, data, yrs, range0, countryName, onClose, onSwap, seq, compose, shareQ }: any) {
+function InDepth({ ind, country, countryName, compact }: { ind: string; country: string; countryName: string; compact?: boolean }) {
+  const d = DEEP[ind]; const u = deepUrl(ind, country);
+  return <section aria-labelledby={'deep-' + (compact ? 'f' : 'p')} className="edge glow-amber rounded-2xl p-4 flex flex-col gap-2" data-indepth>
+    <p className="kicker">In-depth analysis</p>
+    {d && u ? <><h3 id={'deep-' + (compact ? 'f' : 'p')} className="font-semibold">{countryName} · {d.label} drill-down</h3><p className="text-xs text-muted">{d.what}.</p>
+      <div className="flex flex-wrap gap-2"><a href={u} className="rounded-full bg-cta text-black text-xs font-semibold px-3 py-1.5 hover:bg-white">Open dashboard →</a><a href={deepUrl(ind, country, 'explorer')!} className="rounded-full border border-white/20 text-xs px-3 py-1.5 hover:border-accent hover:text-accent">Commodity explorer</a></div></>
+    : <><h3 id={'deep-' + (compact ? 'f' : 'p')} className="font-semibold">Deeper data coming</h3><p className="text-xs text-muted">No free, keyless commodity-level source for this field yet. Drill-downs exist for <a className="underline" href={`/commodities/trade/${country}/`}>trade</a>, <a className="underline" href={`/commodities/agriculture/${country}/`}>agriculture</a>, <a className="underline" href={`/commodities/energy/${country}/`}>energy</a> and <a className="underline" href={`/commodities/manufacturing/${country}/`}>manufacturing</a>.</p></>}
+  </section>;
+}
+function FullView({ code, meta, data, yrs, range0, countryName, country, onClose, onSwap, seq, compose, shareQ, cmpProps }: any) {
   const fvChart = useRef<any>(null);
   const m: Meta = meta[code]; const s: Pt[] = data[code] ?? []; const [r, setR] = useState<[number, number]>(range0);
   useEffect(() => setR(range0), [code]);
@@ -122,11 +132,15 @@ function FullView({ code, meta, data, yrs, range0, countryName, onClose, onSwap,
         </div>
         <div className="edge rounded-2xl p-3 md:p-4">{pts.length || comp.series.length > 1 ? <Canvas key={'fv' + comp.key} p={comp} full h="min(62vh, 640px)" onReady={(c: any) => (fvChart.current = c)} /> : <p className="py-20 text-center text-muted">No data in this range.</p>}</div>
         <ShareBar chart={() => fvChart.current} series={comp.series} title={`${countryName} ${m.label}`} query={shareQ(code, r)} view={code} />
+        <div data-fv-compare><CompareBar {...cmpProps} base={code} pre="fv-" /></div>
         <p className="text-xs text-muted">Source: World Bank World Development Indicators, {m.code}, CC BY 4.0. Scroll or pinch on the chart, or drag the slider, to zoom. ← → switch metrics, Esc closes.</p>
         <details className="text-sm"><summary className="cursor-pointer text-muted">Data table</summary><table className="mt-2 w-full max-w-md tabular-nums"><caption className="sr-only">{m.label} by year</caption><thead><tr className="text-left text-muted"><th>Year</th><th>Value ({m.unit})</th></tr></thead><tbody>{[...pts].reverse().map(([y, v]) => <tr key={y} className="border-t border-white/10"><td>{y}</td><td className="font-mono">{v.toFixed(2)}</td></tr>)}</tbody></table></details>
         {next.length > 0 && <section aria-label="More charts in sequence"><h3 className="text-sm font-semibold mb-2">Next in sequence</h3><div className="flex gap-3 overflow-x-auto pb-2">{next.map((c: string) => <Thumb key={c} c={c} />)}</div></section>}
       </div>
-      <aside aria-label="Related metrics" className="min-w-0"><h3 className="text-sm font-semibold mb-2">Related metrics</h3><div className="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-visible pb-2">{rel.map(c => <Thumb key={c} c={c} />)}</div></aside>
+      <aside aria-label="In-depth analysis and related metrics" className="min-w-0 flex flex-col gap-4">
+        <label className="flex flex-col gap-1 text-[11px] uppercase tracking-wider text-muted">Country<select data-fv-country className="bg-black/50 border border-white/15 rounded-lg px-2.5 py-1.5 text-sm text-text normal-case tracking-normal" value={country} onChange={e => { const q = new URLSearchParams(location.search); q.set('view', code); q.set('metric', code); location.href = location.pathname.replace(/^\/[a-z]+/, '/' + e.target.value) + '?' + q.toString().replace(/%7E/g, '~').replace(/%2C/g, ','); }}>{Object.entries(COUNTRY_NAMES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></label>
+        <InDepth ind={m.industry} country={country} countryName={countryName} compact />
+        <div><h3 className="text-sm font-semibold mb-2">Related metrics</h3><div className="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-visible pb-2">{rel.map(c => <Thumb key={c} c={c} />)}</div></div></aside>
     </div>
   </div>;
 }
@@ -177,6 +191,7 @@ export default function Dashboard(p: Props) {
         <span className="flex items-center gap-2 text-sm font-semibold text-accent self-center"><SlidersHorizontal size={16} aria-hidden />Explore</span>
         <label className="flex flex-col gap-1 text-[11px] uppercase tracking-wider text-muted">Industry<select className={field} value={ind} onChange={e => { setInd(e.target.value); setMetric(list(e.target.value)[0]); }}><option value="overview">All industries</option>{p.industries.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}</select></label>
         <label className="flex flex-col gap-1 text-[11px] uppercase tracking-wider text-muted">Metric<select className={field + ' max-w-[15rem]'} value={metric} onChange={e => setMetric(e.target.value)}>{codes.map(c => <option key={c} value={c}>{meta[c].label}</option>)}</select></label>
+        <label className="flex flex-col gap-1 text-[11px] uppercase tracking-wider text-muted">Depth<select data-depth className={field} value="headline" onChange={e => { const di = ind === 'overview' ? m.industry : ind; const u = deepUrl(di, p.country, e.target.value as any); if (u) location.href = u; }}><option value="headline">Headline metrics</option><option value="explorer" disabled={!DEEP[ind === 'overview' ? m.industry : ind]}>Commodity explorer{DEEP[ind === 'overview' ? m.industry : ind] ? '' : ' (coming)'}</option><option value="dashboard" disabled={!DEEP[ind === 'overview' ? m.industry : ind]}>Dashboard{DEEP[ind === 'overview' ? m.industry : ind] ? '' : ' (coming)'}</option></select></label>
         <span className="flex flex-col gap-1 text-[11px] uppercase tracking-wider text-muted">Years (all charts)<Range yrs={yrs} r={g} set={setGlobal} id="g" /></span>
         <a href="#cmp-h" className="self-center text-xs text-accent hover:underline">Compare countries &amp; metrics ↓</a>
       </form>
@@ -189,7 +204,7 @@ export default function Dashboard(p: Props) {
           <p className="font-mono text-5xl md:text-6xl text-strong tabular-nums">{fmt(st.last?.[1], m.unit)}</p>
           <p className="text-sm text-muted">{m.unit} · data year {st.last?.[0] ?? '—'}</p>
           <div className="flex flex-wrap gap-x-4 gap-y-1"><Delta d={st.yoy} unit={m.unit} good={m.good} label={` vs ${st.prev?.[0] ?? '—'}`} /><Delta d={st.d5} unit={m.unit} good={m.good} label={` vs ${st.five?.[0] ?? '—'}`} /></div>
-          <Spark s={s.filter(x => x[0] >= g[0] && x[0] <= g[1])} h={56} />
+          <button type="button" onClick={() => openView(metric)} className="cursor-zoom-in text-left" aria-label={`Open ${m.label} full screen`}><Spark s={s.filter(x => x[0] >= g[0] && x[0] <= g[1])} h={56} /></button>
           <p className="text-sm leading-relaxed text-text">{summary}</p>
           <div className="flex flex-wrap gap-2 mt-1">{codes.filter(c => c !== metric).slice(0, 6).map(c => <button key={c} type="button" onClick={() => setMetric(c)} className="text-xs rounded-full border border-white/15 px-2.5 py-1 hover:border-accent hover:text-accent">{meta[c].label}</button>)}</div>
         </div>
@@ -201,10 +216,11 @@ export default function Dashboard(p: Props) {
         <div className="min-w-0"><p className="text-xs text-muted">Claim metric · {m.label}</p><p className="font-mono tabular-nums">{fmt(st.five?.[1], m.unit)} ({st.five?.[0]}) → {fmt(st.last[1], m.unit)} ({st.last[0]})</p></div>
         <button type="button" onClick={() => openView(ctr)} className="min-w-0 text-left hover:text-accent"><p className="text-xs text-muted">Counter-metric · {cm.label}</p><p className="font-mono tabular-nums">{fmt(cs.five?.[1], cm.unit)} ({cs.five?.[0]}) → {fmt(cs.last[1], cm.unit)} ({cs.last[0]})</p></button>
       </section>}
+      <InDepth ind={m.industry} country={p.country} countryName={p.countryName} />
       <section key={'r' + metric} aria-labelledby="rel-h" className="fade-in"><div className="label-pair mb-4"><b id="rel-h">Related</b><span>What to read next to {lc(m.label)}</span></div>
         <div className="grid gap-4 md:grid-cols-2">{rel.map((c, i) => <ChartCard key={c} m={meta[c]} s={p.data[c]} range={rangeOf(c)} setRange={setRange(c)} yrs={yrs} onOpen={() => openView(c)} color={i % 2 ? '#E6E6E6' : AMBER} />)}</div>
       </section>
     </div>
-    {view && meta[view] && <FullView code={view} meta={meta} data={p.data} yrs={yrs} range0={rangeOf(view)} countryName={p.countryName} onClose={closeView} onSwap={swapView} compose={compose} shareQ={shareQ} seq={seq.includes(view) ? seq : [view, ...seq]} />}
+    {view && meta[view] && <FullView code={view} meta={meta} data={p.data} yrs={yrs} range0={rangeOf(view)} countryName={p.countryName} country={p.country} cmpProps={{ meta, country: p.country, cmp, setCmp, idx, setIdx, skipped: compose(view, rangeOf(view)).skipped }} onClose={closeView} onSwap={swapView} compose={compose} shareQ={shareQ} seq={seq.includes(view) ? seq : [view, ...seq]} />}
   </div>;
 }
