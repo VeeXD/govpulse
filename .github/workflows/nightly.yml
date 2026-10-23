@@ -16,7 +16,7 @@ jobs:
       - name: Commit data if changed
         run: |
           git config user.name govpulse-bot && git config user.email bot@users.noreply.github.com
-          git add src/data pipeline/data.parquet datasets && git diff --cached --quiet || git commit -m "data: nightly refresh" && git push
+          git add src/data pipeline/data.parquet datasets && git diff --cached --quiet || (git commit -m "data: nightly refresh" && git pull --rebase && git push)
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci && npm run build
@@ -24,6 +24,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=govpulse
+          command: pages deploy dist --project-name=govpulse --branch=main
       - name: Ping IndexNow
         run: python3 pipeline/indexnow.py || true
