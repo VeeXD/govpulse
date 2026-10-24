@@ -16,11 +16,13 @@
   "cobe": "^0.6.5",
   "echarts": "^6.1.0",
   "framer-motion": "^14.3.0",
+  "jspdf": "^4.2.1",
   "lucide-react": "^1.59.0",
   "react": "^19.3.1",
   "react-dom": "^19.3.1",
   "tailwindcss": "^4.3.3",
-  "three": "^0.186.1"
+  "three": "^0.186.1",
+  "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
  },
  "devDependencies": {
   "@axe-core/playwright": "^4.13.0",

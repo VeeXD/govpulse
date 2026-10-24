@@ -88,13 +88,13 @@ function CompareBar({ meta, country, cmp, setCmp, idx, setIdx, skipped, base, pr
     <p className="text-[11px] text-muted">Different units get a second y-axis. Click a legend item to hide it; × removes it.</p>
   </section>;
 }
-function InDepth({ ind, country, countryName, compact }: { ind: string; country: string; countryName: string; compact?: boolean }) {
-  const d = DEEP[ind]; const u = deepUrl(ind, country);
+function InDepth({ ind, country, countryName, compact, metric }: { ind: string; country: string; countryName: string; compact?: boolean; metric?: string }) {
+  const d = DEEP[ind]; const u = deepUrl(ind, country); const dash = `/dashboards/?c=${country}&industry=${ind}${metric ? '&metric=' + metric : ''}`;
   return <section aria-labelledby={'deep-' + (compact ? 'f' : 'p')} className="edge glow-amber rounded-2xl p-4 flex flex-col gap-2" data-indepth>
     <p className="kicker">In-depth analysis</p>
     {d && u ? <><h3 id={'deep-' + (compact ? 'f' : 'p')} className="font-semibold">{countryName} · {d.label} drill-down</h3><p className="text-xs text-muted">{d.what}.</p>
-      <div className="flex flex-wrap gap-2"><a href={u} className="rounded-full bg-cta text-black text-xs font-semibold px-3 py-1.5 hover:bg-white">Open dashboard →</a><a href={deepUrl(ind, country, 'explorer')!} className="rounded-full border border-white/20 text-xs px-3 py-1.5 hover:border-accent hover:text-accent">Commodity explorer</a></div></>
-    : <><h3 id={'deep-' + (compact ? 'f' : 'p')} className="font-semibold">Deeper data coming</h3><p className="text-xs text-muted">No free, keyless commodity-level source for this field yet. Drill-downs exist for <a className="underline" href={`/commodities/trade/${country}/`}>trade</a>, <a className="underline" href={`/commodities/agriculture/${country}/`}>agriculture</a>, <a className="underline" href={`/commodities/energy/${country}/`}>energy</a> and <a className="underline" href={`/commodities/manufacturing/${country}/`}>manufacturing</a>.</p></>}
+      <div className="flex flex-wrap gap-2"><a href={dash} data-indepth-go className="rounded-full bg-cta text-black text-xs font-semibold px-3 py-1.5 hover:bg-white">Open in Dashboards →</a><a href={u} className="rounded-full border border-white/20 text-xs px-3 py-1.5 hover:border-accent hover:text-accent">Commodity dashboard</a><a href={deepUrl(ind, country, 'explorer')!} className="rounded-full border border-white/20 text-xs px-3 py-1.5 hover:border-accent hover:text-accent">Commodity explorer</a></div></>
+    : <><h3 id={'deep-' + (compact ? 'f' : 'p')} className="font-semibold">{countryName} dashboard</h3><a href={dash} data-indepth-go className="self-start rounded-full bg-cta text-black text-xs font-semibold px-3 py-1.5 hover:bg-white">Open in Dashboards →</a><p className="text-xs text-muted">No free, keyless commodity-level source for this field yet. Drill-downs exist for <a className="underline" href={`/commodities/trade/${country}/`}>trade</a>, <a className="underline" href={`/commodities/agriculture/${country}/`}>agriculture</a>, <a className="underline" href={`/commodities/energy/${country}/`}>energy</a> and <a className="underline" href={`/commodities/manufacturing/${country}/`}>manufacturing</a>.</p></>}
   </section>;
 }
 function FullView({ code, meta, data, yrs, range0, countryName, country, onClose, onSwap, seq, compose, shareQ, cmpProps }: any) {
@@ -139,7 +139,7 @@ function FullView({ code, meta, data, yrs, range0, countryName, country, onClose
       </div>
       <aside aria-label="In-depth analysis and related metrics" className="min-w-0 flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-[11px] uppercase tracking-wider text-muted">Country<select data-fv-country className="bg-black/50 border border-white/15 rounded-lg px-2.5 py-1.5 text-sm text-text normal-case tracking-normal" value={country} onChange={e => { const q = new URLSearchParams(location.search); q.set('view', code); q.set('metric', code); location.href = location.pathname.replace(/^\/[a-z]+/, '/' + e.target.value) + '?' + q.toString().replace(/%7E/g, '~').replace(/%2C/g, ','); }}>{Object.entries(COUNTRY_NAMES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></label>
-        <InDepth ind={m.industry} country={country} countryName={countryName} compact />
+        <InDepth ind={m.industry} country={country} countryName={countryName} metric={code} compact />
         <div><h3 className="text-sm font-semibold mb-2">Related metrics</h3><div className="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-visible pb-2">{rel.map(c => <Thumb key={c} c={c} />)}</div></div></aside>
     </div>
   </div>;
@@ -216,7 +216,7 @@ export default function Dashboard(p: Props) {
         <div className="min-w-0"><p className="text-xs text-muted">Claim metric · {m.label}</p><p className="font-mono tabular-nums">{fmt(st.five?.[1], m.unit)} ({st.five?.[0]}) → {fmt(st.last[1], m.unit)} ({st.last[0]})</p></div>
         <button type="button" onClick={() => openView(ctr)} className="min-w-0 text-left hover:text-accent"><p className="text-xs text-muted">Counter-metric · {cm.label}</p><p className="font-mono tabular-nums">{fmt(cs.five?.[1], cm.unit)} ({cs.five?.[0]}) → {fmt(cs.last[1], cm.unit)} ({cs.last[0]})</p></button>
       </section>}
-      <InDepth ind={m.industry} country={p.country} countryName={p.countryName} />
+      <InDepth ind={m.industry} country={p.country} countryName={p.countryName} metric={metric} />
       <section key={'r' + metric} aria-labelledby="rel-h" className="fade-in"><div className="label-pair mb-4"><b id="rel-h">Related</b><span>What to read next to {lc(m.label)}</span></div>
         <div className="grid gap-4 md:grid-cols-2">{rel.map((c, i) => <ChartCard key={c} m={meta[c]} s={p.data[c]} range={rangeOf(c)} setRange={setRange(c)} yrs={yrs} onOpen={() => openView(c)} color={i % 2 ? '#E6E6E6' : AMBER} />)}</div>
       </section>

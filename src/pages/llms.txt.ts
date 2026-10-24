@@ -7,6 +7,7 @@ export function GET() {
 
 ## Key pages
 - [Home](${SITE}/): overview, GDP growth leaderboard, claim checks
+- [Dashboards](${SITE}/dashboards/): prebuilt country, industry and commodity dashboards plus a builder; download any dashboard as PNG or PDF with optional Excel (.xlsx) data, shareable by link
 - [Methodology](${SITE}/methodology/): sources, refresh schedule, claim-check rules
 - [Public JSON API](${SITE}/api/): /api/v1/countries.json, /api/v1/{country}.json, /api/v1/{country}/{indicator}.json
 - [Full data summary for LLMs](${SITE}/llms-full.txt): latest value and year for every country × indicator

@@ -1,0 +1,26 @@
+---
+import Base from '../../layouts/Base.astro'; import Builder from '../../components/Builder.tsx';
+import { COUNTRIES, INDUSTRIES, DATA } from '../../lib/data'; import { DEEP } from '../../lib/deep';
+const meta = Object.entries(DATA.indicators).map(([code, m]: any) => ({ code, label: m.label, unit: m.unit, industry: m.industry }));
+const srcUrl = Object.fromEntries(Object.entries(DATA.indicators).map(([c, m]: any) => [c, m.url]));
+const ys = Object.values(DATA.countries).flatMap((s: any) => Object.values(s).flatMap((p: any) => p.map((x: any) => x[0])));
+const years: [number, number] = [Math.min(...ys), Math.max(...ys)];
+const inds = INDUSTRIES.slice(1).map(i => ({ id: i.id, name: i.name }));
+const desc = 'Build, share and download economic dashboards: mix World Bank charts for 10 countries and 9 industries, export as PNG or PDF with the underlying data in Excel.';
+const ld = { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'GovPulse dashboard builder', applicationCategory: 'BusinessApplication', operatingSystem: 'Web', offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, description: desc };
+---
+<Base title="Dashboards: build & download economic dashboards (PNG, PDF, Excel)" desc={desc} jsonld={[ld]}>
+<div class="mx-auto max-w-7xl px-4 md:px-6 py-10 flex flex-col gap-10">
+ <header><p class="kicker">Dashboards</p><h1 class="text-3xl md:text-5xl font-light mt-2 text-strong">Build, share &amp; download dashboards</h1>
+  <p class="mt-3 max-w-3xl text-muted">Open a ready-made dashboard or mix and match charts from any country and industry. Download the whole dashboard as PNG or PDF, and choose whether to include the Excel data behind every chart. Free, no sign-up.</p>
+  <p class="mt-3 flex flex-wrap gap-3 text-sm"><a href="#builder" class="rounded-full bg-cta text-black font-semibold px-4 py-2">Create your own →</a><a href="#gallery" class="rounded-full border border-white/20 px-4 py-2 hover:border-accent hover:text-accent">Browse prebuilt dashboards</a></p></header>
+ <Builder client:load meta={meta} industries={inds} years={years} srcUrl={srcUrl}/>
+ <section id="gallery" aria-labelledby="g-h" class="flex flex-col gap-6 scroll-mt-20" data-gallery>
+  <div class="label-pair"><b id="g-h">Prebuilt dashboards</b><span>Open any of these in the builder, then edit or download</span></div>
+  <div><h3 class="text-sm font-semibold mb-3">Country overviews</h3><div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">{Object.entries(COUNTRIES).map(([id, c]) => <a href={`/dashboards/?c=${id}&industry=overview`} class="edge rounded-xl p-4 hover:border-accent"><span class="kicker">{c.region}</span><span class="mt-1 block text-strong">{c.name} overview →</span></a>)}</div></div>
+  <div><h3 class="text-sm font-semibold mb-3">By industry</h3><div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">{inds.map(i => <div class="edge rounded-xl p-4"><span class="block text-strong">{i.name}</span><span class="mt-2 flex flex-wrap gap-1.5 text-xs">{Object.entries(COUNTRIES).map(([id, c]) => <a href={`/dashboards/?c=${id}&industry=${i.id}`} class="rounded-full border border-white/15 px-2 py-0.5 hover:border-accent hover:text-accent">{c.name}</a>)}</span></div>)}</div></div>
+  <div><h3 class="text-sm font-semibold mb-3">Commodity dashboards</h3><div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">{Object.entries(DEEP).map(([k, d]) => <div class="edge rounded-xl p-4"><span class="block text-strong">{d.label}</span><span class="block text-xs text-muted mt-1">{d.what}</span><span class="mt-2 flex flex-wrap gap-1.5 text-xs">{Object.entries(COUNTRIES).map(([id, c]) => <a href={`/commodities/${k}/${id}/`} class="rounded-full border border-white/15 px-2 py-0.5 hover:border-accent hover:text-accent">{c.name}</a>)}</span></div>)}</div></div>
+ </section>
+ <section class="text-sm text-muted max-w-3xl"><h2 class="text-strong font-semibold">How downloads work</h2><p class="mt-2">Everything runs in your browser. The PNG and PDF contain every panel with axes and the source line. If you say yes to Excel, you also get an .xlsx with one sheet per chart and a Sources sheet listing the World Bank indicator codes and links (CC BY 4.0). Your dashboard is saved in this browser and in the page link, so you can bookmark or share it.</p></section>
+</div>
+</Base>
