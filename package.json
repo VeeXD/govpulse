@@ -12,10 +12,10 @@
   "@astrojs/react": "^7.1.0",
   "@astrojs/sitemap": "^3.7.4",
   "@tailwindcss/vite": "^4.3.3",
-  "astro": "^7.4.0",
+  "astro": "^7.4.1",
   "cobe": "^0.6.5",
   "echarts": "^6.1.0",
-  "framer-motion": "^14.3.0",
+  "framer-motion": "^14.5.0",
   "jspdf": "^4.2.1",
   "lucide-react": "^1.59.0",
   "react": "^19.3.1",
@@ -25,8 +25,9 @@
   "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
  },
  "devDependencies": {
-  "@axe-core/playwright": "^4.13.0",
-  "lighthouse": "^12.8.2",
+  "@axe-core/playwright": "^4.14.0",
+  "@cloudflare/workers-types": "^5.20261024.1",
+  "lighthouse": "^13.5.0",
   "playwright": "^1.64.1"
  }
 }
