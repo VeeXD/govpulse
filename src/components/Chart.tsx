@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Maximize2, X } from 'lucide-react';
 type S = { name: string; data: [number, number][]; unit?: string };
-type P = { series: S[]; colors: string[]; height?: number; area?: boolean; source?: string; title?: string; theme?: any; dual?: boolean; kind?: 'line' | 'bar' | 'area' };
+type P = { series: S[]; colors: string[]; height?: number; area?: boolean; source?: string; title?: string; theme?: any; dual?: boolean; kind?: 'line' | 'bar' | 'area'; dash?: string[]; yName?: string };
 export const CT = { text: '#F2F2F2', muted: '#B8B8B8', line: '#5C5C5C', grid: '#2E2E2E', bg: '#141414' };
 let ec: any; export const loadEc = async () => {
   if (ec) return ec;
@@ -10,20 +10,20 @@ let ec: any; export const loadEc = async () => {
   return (ec = core);
 };
 function option(p: P, full: boolean, reduce: boolean) {
-  const unit = p.series[0]?.unit ?? '';
-  const us = [...new Set(p.series.map(s => s.unit ?? ''))].slice(0, 2); const ax = (s: S) => p.dual ? Math.max(0, us.indexOf(s.unit ?? '')) : 0; const axCol = (i: number) => p.series.length > 2 ? CT.muted : p.colors[i];
+  const unit = p.yName ?? p.series[0]?.unit ?? '';
+  const us = [...new Set(p.series.map(s => s.unit ?? ''))].slice(0, 2); const ax = (s: S) => p.dual ? Math.max(0, us.indexOf(s.unit ?? '')) : 0; const axCol = (i: number) => p.series.length > 2 ? CT.muted : p.colors[p.series.findIndex(s => (s.unit ?? '') === us[i])] ?? CT.muted;
   return {
     animation: !reduce, color: p.colors, backgroundColor: 'transparent',
     textStyle: { fontFamily: 'Fira Sans', color: CT.muted },
     grid: { left: 56, right: p.dual ? 64 : 20, top: p.series.length > 1 ? 48 : 24, bottom: full ? 80 : 44, containLabel: false },
-    legend: p.series.length > 1 ? { type: 'scroll', top: 0, pageTextStyle: { color: CT.muted }, textStyle: { color: CT.text }, icon: 'roundRect' } : undefined,
-    tooltip: { trigger: 'axis', backgroundColor: CT.bg, borderColor: CT.line, textStyle: { color: CT.text, fontFamily: 'Fira Code' },
+    legend: p.series.length > 1 ? { type: 'scroll', top: 0, pageIconColor: '#FFB224', pageIconInactiveColor: '#444', pageTextStyle: { color: CT.muted }, textStyle: { color: CT.text }, icon: 'roundRect' } : undefined,
+    tooltip: { trigger: 'axis', confine: true, backgroundColor: CT.bg, borderColor: CT.line, textStyle: { color: CT.text, fontFamily: 'Fira Code' },
       formatter: (ps: any[]) => `<b>${ps[0]?.value?.[0]}</b><br/>` + ps.filter(x => x.value?.[1] != null).map(x => `${x.marker} ${x.seriesName}: <b>${Number(x.value[1]).toLocaleString('en-US', { maximumFractionDigits: 2 })}</b>`).join('<br/>') },
     xAxis: { type: 'value', name: 'Year', nameLocation: 'middle', nameGap: 28, nameTextStyle: { color: CT.muted }, min: 'dataMin', max: 'dataMax', minInterval: 1,
       axisLabel: { formatter: (v: number) => String(v), color: CT.muted }, axisLine: { show: true, lineStyle: { color: CT.line } }, axisTick: { show: true, lineStyle: { color: CT.line } }, splitLine: { show: true, lineStyle: { color: CT.grid } } },
     yAxis: p.dual ? us.map((u, i) => ({ type: 'value', scale: true, name: u, position: i ? 'right' : 'left', nameTextStyle: { color: axCol(i), align: i ? 'right' : 'left' }, axisLabel: { color: axCol(i) }, axisLine: { show: true, lineStyle: { color: axCol(i) } }, splitLine: { show: !i, lineStyle: { color: CT.grid } } })) : { type: 'value', scale: true, name: unit, nameTextStyle: { color: CT.muted, align: 'left' }, axisLabel: { color: CT.muted }, axisLine: { show: true, lineStyle: { color: CT.line } }, splitLine: { lineStyle: { color: CT.grid } } },
     dataZoom: full ? [{ type: 'inside' }, { type: 'slider', bottom: 18, height: 22, borderColor: CT.line, textStyle: { color: CT.muted }, fillerColor: 'rgba(255,178,36,.18)', handleStyle: { color: CT.text, borderColor: CT.line }, moveHandleStyle: { color: '#3A3A3A' }, emphasis: { moveHandleStyle: { color: '#FFB224' }, handleStyle: { borderColor: '#FFB224' } }, dataBackground: { lineStyle: { color: '#777' }, areaStyle: { color: 'rgba(255,255,255,.08)' } }, selectedDataBackground: { lineStyle: { color: '#FFB224' }, areaStyle: { color: 'rgba(255,178,36,.2)' } }, backgroundColor: 'rgba(255,255,255,.03)' }] : undefined,
-    series: p.series.map((s, i) => ({ name: s.name, type: p.kind === 'bar' ? 'bar' : 'line', barMaxWidth: 18, itemStyle: p.kind === 'bar' ? { borderRadius: [3, 3, 0, 0] } : undefined, yAxisIndex: ax(s), smooth: 0.25, showSymbol: full, symbolSize: 5, data: s.data, lineStyle: { width: 2.25, type: i ? 'dashed' : 'solid' },
+    series: p.series.map((s, i) => ({ name: s.name, type: p.kind === 'bar' && i === 0 ? 'bar' : 'line', barMaxWidth: 18, itemStyle: p.kind === 'bar' ? { borderRadius: [3, 3, 0, 0] } : undefined, yAxisIndex: ax(s), smooth: 0.25, showSymbol: full, symbolSize: 5, data: s.data, lineStyle: { width: 2.25, type: p.dash?.[i] ?? (i ? 'dashed' : 'solid') },
       areaStyle: p.kind !== 'bar' && p.kind !== 'line' && p.area !== false && i === 0 ? { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(255,178,36,.28)' }, { offset: 1, color: 'rgba(255,178,36,0)' }] } } : undefined })),
   };
 }
