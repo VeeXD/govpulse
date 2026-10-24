@@ -16,14 +16,14 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
   const bucket = path.startsWith('/api/') ? 'api' : path.startsWith('/embed/') ? 'embed' : '';
   if (bucket && !BOTS.test(request.headers.get('user-agent') || '')) {
     const now = Date.now();
-    const key = bucket + ':' + (request.headers.get('cf-connecting-ip') || 'unknown');
+    const key = bucket + ':' + clientKey(request.headers.get('cf-connecting-ip') || 'unknown');
     if (env.RL) {
       // Preferred: Workers Rate Limiting binding via the govpulse-ratelimit Worker (workers/ratelimit).
       try {
         const r = await env.RL.fetch(`https://rl/check?b=${bucket}&k=${encodeURIComponent(key)}`);
-        if (r.status === 429) return limited(60);
+        if (r.status === 429) return limited(Number(r.headers.get("retry-after")) || 60);
         return withHeader(await ctx.next(), bucket);
-      } catch { /* fall through to in-memory */ }
+      } catch (e) { console.log('RL binding failed', String(e)); }
     }
     let e = hits.get(key);
     if (!e || now - e.t >= WINDOW) { e = { n: 0, t: now }; hits.set(key, e); }
@@ -35,6 +35,16 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
   }
   return bucket ? withHeader(await ctx.next(), bucket) : ctx.next();
 };
+
+// IPv6 clients usually own a whole /64, so bucket by /64 instead of the full address.
+function clientKey(ip: string) {
+  if (!ip.includes(':')) return ip;
+  const [head, tail = ''] = ip.split('::');
+  const h = head ? head.split(':') : [];
+  const t = tail ? tail.split(':') : [];
+  const full = [...h, ...Array(Math.max(0, 8 - h.length - t.length)).fill('0'), ...t];
+  return full.slice(0, 4).map((x) => x.toLowerCase().replace(/^0+(?=.)/, '')).join(':') + '::/64';
+}
 
 function limited(retry: number) {
   return new Response(JSON.stringify({ error: 'rate_limited', message: `Too many requests. Retry in ${retry}s.` }), {

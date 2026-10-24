@@ -2,9 +2,9 @@ name = "govpulse"
 pages_build_output_dir = "dist"
 compatibility_date = "2026-10-01"
 # Note: Pages config does not support the Workers "ratelimits" binding (verified 2026-10-24).
-# functions/_middleware.ts uses an in-isolate fixed-window counter instead.
+# functions/_middleware.ts calls the RL service binding, falling back to an in-isolate counter.
 
-# Enable after deploying workers/ratelimit (needs a token with Workers Scripts:Edit):
-# [[services]]
-# binding = "RL"
-# service = "govpulse-ratelimit"
+# Strict per-IP limits via the govpulse-ratelimit Worker (workers/ratelimit, Durable Object counter)
+[[services]]
+binding = "RL"
+service = "govpulse-ratelimit"
