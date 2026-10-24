@@ -1,0 +1,18 @@
+name = "govpulse-ratelimit"
+main = "index.ts"
+compatibility_date = "2026-10-01"
+workers_dev = false   # only reachable via service binding from the Pages project
+
+[[ratelimits]]
+name = "RL_API"
+namespace_id = "4201"
+  [ratelimits.simple]
+  limit = 120
+  period = 60
+
+[[ratelimits]]
+name = "RL_EMBED"
+namespace_id = "4202"
+  [ratelimits.simple]
+  limit = 300
+  period = 60
