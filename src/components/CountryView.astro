@@ -19,8 +19,10 @@ const bgId = M[`${country}-${industry}`] ? `${country}-${industry}` : industry !
 const bgAlt = industry === 'healthcare' && M[`${country}-wellness`] ? `${country}-wellness` : undefined;
 const indList = Object.entries(DATA.indicators).map(([code, m]: any) => ({ code, label: m.label, unit: m.unit, industry: m.industry }));
 const allYears = Object.values(DATA.countries[country] ?? {}).flat() as any[]; const years: [number, number] = [Math.min(...allYears.map(x => x[0])), Math.max(...allYears.map(x => x[0]))];
-import { mediaCredit } from '../lib/credits'; import { pageSeo, faqLd, crumbLd, slug, lc } from '../lib/seo'; import SponsorSlot from './SponsorSlot.astro'; import LatestTrends from './LatestTrends.astro';
+import { mediaCredit } from '../lib/credits'; import { pageSeo, faqLd, crumbLd, slug, lc } from '../lib/seo'; import SponsorSlot from './SponsorSlot.astro'; import { countryFaq } from '../lib/countryFaq'; import LatestTrends from './LatestTrends.astro';
 const seo = pageSeo(country, industry);
+const rich = country === 'india' && industry === 'overview' ? countryFaq(country) : null;
+if (rich) { seo.title = rich.title; if (rich.desc) seo.desc = rich.desc; seo.faq = rich.faq; }
 const heroCredit = mediaCredit(`${country}-photo`, 'Hero photo') ?? mediaCredit(country, 'Hero');
 const indMeta = Object.entries(DATA.indicators).map(([code, m]: any) => ({ code, label: m.label, unit: m.unit, industry: m.industry, good: m.good ?? null }));
 const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.industry, x.b.industry].includes(industry));
@@ -58,9 +60,16 @@ const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.in
    <h3 class="mt-6 text-sm font-semibold">Same view, other countries</h3>
    <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">{Object.entries(COUNTRIES).filter(([id]) => id !== country).map(([id, c]) => <li><a class="underline underline-offset-2 hover:text-accent" href={`/${id}/${industry === 'overview' ? '' : industry + '/'}`}>{c.name} {industry === 'overview' ? 'economy' : ind.name.toLowerCase()}</a></li>)}</ul>
   </div>
-  <div class="grid gap-3 content-start"><h2 class="text-xl font-semibold">FAQ</h2>{seo.faq.map(([q, a]) => <details class="edge rounded-xl p-4"><summary class="cursor-pointer font-semibold text-sm">{q}</summary><p class="mt-2 text-sm text-muted">{a}</p></details>)}
+  <div class="grid gap-3 content-start">{!rich && <><h2 class="text-xl font-semibold">FAQ</h2>{seo.faq.map(([q, a]) => <details class="edge rounded-xl p-4"><summary class="cursor-pointer font-semibold text-sm">{q}</summary><p class="mt-2 text-sm text-muted">{a}</p></details>)}</>}
    <a href="/sponsor" class="edge glow-amber rounded-xl p-4 text-sm hover:text-accent"><b>Free and open.</b> Support GovPulse to fund more countries and data sources →</a></div>
  </section>
+ {rich && <section id="summary" aria-labelledby="ov" class="edge rounded-2xl p-6 md:p-8 grid gap-8 lg:grid-cols-[1fr_1fr]">
+  <div><p class="kicker">Summary</p><h2 id="ov" class="mt-2 text-2xl font-semibold">{C.name} economy at a glance<span class="text-accent">.</span></h2>
+   <p class="mt-4 text-text leading-relaxed">{rich.summary}</p>
+   <p class="mt-3 text-xs text-muted">Generated from the {DATA.generated.slice(0, 10)} pipeline run. Sources: World Bank WDI, UN Comtrade.</p></div>
+  <div><h2 class="text-2xl font-semibold">Frequently asked questions</h2>
+   <div class="mt-4 grid gap-2">{rich.faq.map(([q, a]) => <details class="group rounded-xl border border-white/10 p-4 open:border-accent/60"><summary class="cursor-pointer list-none flex justify-between gap-3 font-semibold text-sm"><h3 class="inline">{q}</h3><span class="text-accent group-open:rotate-45 transition-transform">+</span></summary><p class="mt-2 text-sm text-muted leading-relaxed">{a}</p></details>)}</div></div>
+ </section>}
  <SponsorSlot tier="silver" country={country}/>
 </div>
 </div>
