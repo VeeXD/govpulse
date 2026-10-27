@@ -27,6 +27,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.153.0'  # wrangler 3.x peer-conflicts with @cloudflare/workers-types v5
           command: pages deploy dist --project-name=govpulse --branch=main
       - name: Ping IndexNow
         run: python3 pipeline/indexnow.py || true
