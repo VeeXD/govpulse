@@ -1,15 +1,16 @@
 ---
 import Prose from '../components/Prose.astro'; import { CONTACT_EMAIL } from '../config/site';
 ---
-<Prose bg="finance" title="Terms of service" desc="The terms for using GovPulse, its free dashboards, public API and sponsorships." template>
+<Prose bg="finance" title="Terms of service" desc="The terms for using GovPulse: as-is data, sources and licences, free service, and contact." template>
 <h2>1. Acceptance</h2><p>By using GovPulse you agree to these terms. If you do not agree, do not use the site.</p>
 <h2>2. The service</h2><p>GovPulse publishes economic indicators compiled from third-party open data, mainly the World Bank. We may change or discontinue features at any time.</p>
-<h2>3. Data and licences</h2><p>Third-party data remains subject to its own licence (for example World Bank data under CC BY 4.0). You must keep the attribution when you reuse it. Our original compilations, text and design are © GovPulse unless stated otherwise. See <a href="/credits">Data &amp; media licences</a>.</p>
-<h2>4. Public API</h2><p>The static API is provided free, as-is, without uptime guarantees. Do not use it in a way that degrades the service for others. Cite "GovPulse, data: World Bank (CC BY 4.0)".</p>
-<h2>5. Free service and sponsorship</h2><p>GovPulse is free to use and has no paid plans. Organisations may choose to sponsor the site (see <a href="/sponsor">/sponsor</a>). Sponsorships are voluntary payments, are not purchases of any service or data, give no influence over content, and can be stopped at any time. Payments already made are not refundable unless required by law.</p>
-<h2>6. No advice</h2><p>Nothing on GovPulse is financial, investment, legal or policy advice. See the <a href="/disclaimer">Disclaimer</a>.</p>
-<h2>7. Acceptable use</h2><p>No scraping that bypasses rate limits, no attempts to breach security, no unlawful use.</p>
+<h2>3. Data provided as-is</h2><p>All indicators, charts, rankings and API responses are provided <strong>as-is</strong>, without warranty of accuracy, completeness or fitness for a particular purpose. Official statistics are often lagged and revised. Nothing on GovPulse is financial, investment, legal or policy advice. See the <a href="/disclaimer">Disclaimer</a>.</p>
+<h2>4. Sources and licences</h2><p>Third-party data remains subject to its own licence (for example World Bank World Development Indicators under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>). You must keep the attribution when you reuse it. Background photos and videos are credited on <a href="/credits">Data &amp; media licences</a> (Creative Commons or owner-held rights as listed). Our original compilations, text and design are © GovPulse unless stated otherwise.</p>
+<h2>5. Public API</h2><p>The static API is provided free, as-is, without uptime guarantees. Do not use it in a way that degrades the service for others. Cite "GovPulse, data: World Bank (CC BY 4.0)".</p>
+<h2>6. Free service and sponsorship</h2><p>GovPulse is free to use and has <strong>no paid plans</strong> today. Organisations may choose to sponsor the site (see <a href="/sponsor">/sponsor</a>). Sponsorships are voluntary payments, are not purchases of any service or data, give no influence over content, and can be stopped at any time. Payments already made are not refundable unless required by law. If a paid Pro plan is launched later, renewal terms, price, and cancellation will be shown next to the purchase control before you pay.</p>
+<h2>7. Acceptable use</h2><p>No scraping that bypasses rate limits, no attempts to breach security, no unlawful use. The site has no user-upload feature; do not attempt to host content here.</p>
 <h2>8. Liability</h2><p>To the extent permitted by law, GovPulse is provided "as is" and we are not liable for indirect or consequential losses. Nothing limits liability that cannot be limited by law.</p>
 <h2>9. Governing law</h2><p>[Owner: choose governing law and courts.]</p>
 <h2>10. Contact</h2><p><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+<p>Last updated: 27 October 2026.</p>
 </Prose>

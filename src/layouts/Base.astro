@@ -65,10 +65,10 @@ const pageCredits: Credit[] = (Astro.props.credits ?? []).filter(Boolean);
    <li>Fonts: Fira Sans &amp; Fira Code (SIL OFL 1.1) · <a class="underline underline-offset-2 hover:text-strong" href="/credits">All credits &amp; licences</a> · Contact <a class="underline underline-offset-2 hover:text-strong" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
   </ul>
  </section>
- <p class="mx-auto max-w-7xl px-4 md:px-6 pb-10 text-xs text-muted">© {new Date().getFullYear()} GovPulse. No cookies, no tracking pixels.</p>
+ <p class="mx-auto max-w-7xl px-4 md:px-6 pb-10 text-xs text-muted">© {new Date().getFullYear()} GovPulse. No accounts · analytics cookies only if you accept · see Privacy.</p>
 </footer>
 <div class="cursor" aria-hidden="true"></div>
-{GA4_ID && <div id="consent" hidden role="dialog" aria-labelledby="consent-t" class="fixed bottom-4 inset-x-4 md:left-auto md:right-6 md:max-w-sm z-[70] edge rounded-2xl p-5 text-sm"><p id="consent-t" class="font-semibold">Analytics cookies?</p><p class="mt-2 text-muted">We'd like to use Google Analytics, which sets cookies, to see which pages help people. It's off unless you accept. <a href="/cookies" class="underline">Cookie policy</a></p><div class="mt-4 flex gap-2"><button type="button" data-consent="granted" class="rounded-full bg-cta text-black font-semibold px-4 py-2">Accept</button><button type="button" data-consent="denied" class="rounded-full border border-white/30 px-4 py-2">Decline</button></div></div>}
+{GA4_ID && <div id="consent" hidden role="dialog" aria-labelledby="consent-t" class="fixed bottom-4 inset-x-4 md:left-auto md:right-6 md:max-w-sm z-[70] rounded-2xl border border-white/10 bg-[#141414] p-5 text-sm shadow-2xl"><p id="consent-t" class="font-semibold">Analytics cookies?</p><p class="mt-2 text-muted">We'd like to use Google Analytics, which sets cookies, to see which pages help people. It's off unless you accept. <a href="/cookies" class="underline">Cookie policy</a></p><div class="mt-4 flex gap-2"><button type="button" data-consent="granted" class="rounded-full bg-cta text-black font-semibold px-4 py-2">Accept</button><button type="button" data-consent="denied" class="rounded-full border border-cta/70 text-strong px-4 py-2 hover:bg-white/5">Decline</button></div></div>}
 <script src="/js/site.js" defer is:inline></script>
 {CF_BEACON && <script defer is:inline src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: CF_BEACON })}></script>}
 </body></html>

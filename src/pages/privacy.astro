@@ -1,20 +1,34 @@
 ---
 import Prose from '../components/Prose.astro'; import { CONTACT_EMAIL } from '../config/site';
 ---
-<Prose bg="overview" title="Privacy policy" desc="How GovPulse handles personal data: no cookies, cookieless analytics, GDPR and CCPA rights, and how to contact us." template>
+<Prose bg="overview" title="Privacy policy" desc="How GovPulse handles personal data: no accounts, optional analytics only after consent, GDPR and CCPA rights, and how to contact us." template>
 <h2>Summary</h2>
-<ul><li>By default, browsing GovPulse does not set cookies and does not use tracking pixels or advertising networks.</li><li>We may use Cloudflare Web Analytics, which is cookieless and does not fingerprint visitors, to count page views in aggregate.</li><li>If you subscribe or buy a plan, we process the data needed to provide it (email, billing details handled by our payment provider).</li></ul>
-<h2>Who we are</h2><p>GovPulse ("we") operates this website. Controller contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. [Owner: add legal entity name and postal address.]</p>
+<ul>
+<li>GovPulse has <strong>no user accounts</strong> and does not knowingly collect personal information to identify you.</li>
+<li>By default, browsing sets no analytics cookies and loads no advertising networks or session-replay tools.</li>
+<li>We may use <strong>Cloudflare Web Analytics</strong> (cookieless, no fingerprinting) to count page views in aggregate.</li>
+<li>If Google Analytics 4 is enabled, it loads <strong>only after you Accept</strong> in the consent banner. Until then (and if you Decline), Google Consent Mode v2 keeps <code>analytics_storage</code> denied, so GA4 does not set analytics cookies.</li>
+<li>We do <strong>not</strong> use session-replay or keystroke-recording products (no Hotjar, Microsoft Clarity, FullStory, or similar).</li>
+</ul>
+<h2>Who we are</h2><p>GovPulse ("we") operates this website. Controller contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. [Owner: add legal entity name and postal address when you have them.]</p>
+<h2>Children (COPPA)</h2><p>GovPulse is <strong>not directed to children under 13</strong>. We do not knowingly collect personal information from anyone under 13. If you believe a child has provided personal information, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we will delete it.</p>
 <h2>Data we process</h2>
 <table><thead><tr><th>Data</th><th>Purpose</th><th>Legal basis (GDPR)</th><th>Retention</th></tr></thead><tbody>
 <tr><td>Server/CDN logs (IP, user agent, URL) via Cloudflare</td><td>Security, abuse prevention, delivery</td><td>Legitimate interests (Art. 6(1)(f))</td><td>Per Cloudflare's retention, typically short-term</td></tr>
 <tr><td>Aggregate analytics (Cloudflare Web Analytics, if enabled)</td><td>Understand which pages are used</td><td>Legitimate interests</td><td>Aggregated, no personal profile</td></tr>
-<tr><td>Email address (newsletter, when launched)</td><td>Send the briefs you asked for</td><td>Consent (Art. 6(1)(a)); withdraw any time</td><td>Until you unsubscribe</td></tr>
+<tr><td>GA4 analytics cookies (<code>_ga</code>, <code>_ga_*</code>), only after Accept</td><td>Page-view and engagement metrics</td><td>Consent (Art. 6(1)(a)); withdraw by clearing site data</td><td>Up to 2 years (Google default)</td></tr>
+<tr><td>Consent choice in <code>localStorage</code> (<code>gp-consent</code>)</td><td>Remember Accept / Decline</td><td>Legitimate interests / consent management</td><td>Until you clear site data</td></tr>
+<tr><td>Email address (newsletter, when launched — not live yet)</td><td>Send briefs you asked for</td><td>Consent (Art. 6(1)(a)); withdraw any time</td><td>Until you unsubscribe</td></tr>
 <tr><td>Sponsor and enquiry correspondence (name, email, message)</td><td>Manage sponsorships, accounting</td><td>Contract (Art. 6(1)(b)), legal obligation</td><td>As required by tax law</td></tr>
 </tbody></table>
-<h2>Processors</h2><p>Cloudflare, Inc. (hosting, CDN, analytics). If the owner enables it, Google Analytics 4 (Google LLC) is loaded only after you accept analytics cookies. International transfers rely on Standard Contractual Clauses or equivalent safeguards.</p>
+<h2>Third-party requests</h2>
+<ul>
+<li><strong>Self-hosted fonts</strong> — Fira Sans and Fira Code are served from this site (<code>/fonts/</code>). We do not load fonts from Google Fonts (<code>fonts.googleapis.com</code> / <code>fonts.gstatic.com</code>).</li>
+<li><strong>Cloudflare</strong> — hosting/CDN; optional Web Analytics beacon (<code>static.cloudflareinsights.com</code>), cookieless.</li>
+<li><strong>Google Analytics 4</strong> — only after Accept: scripts from <code>www.googletagmanager.com</code> and hits to Google Analytics endpoints. GA4 can set first-party cookies; we do not enable advertising features. Enhanced measurement does not record keystrokes.</li>
+</ul>
+<h2>Processors</h2><p>Cloudflare, Inc. (hosting, CDN, analytics). If you accept analytics cookies, Google LLC (GA4). International transfers rely on Standard Contractual Clauses or equivalent safeguards.</p>
 <h2>Your rights</h2><p><strong>EU/UK (GDPR):</strong> access, rectification, erasure, restriction, portability, objection, and the right to complain to your supervisory authority. <strong>California (CCPA/CPRA):</strong> right to know, delete, correct, and to opt out of sale or sharing. We do not sell or share personal information for cross-context behavioural advertising.</p>
 <p>To exercise a right, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. We respond within 30 days (GDPR) or 45 days (CCPA).</p>
-<h2>Children</h2><p>GovPulse is not directed at children under 16.</p>
-<h2>Changes</h2><p>We will post updates on this page with a new date.</p>
+<h2>Changes</h2><p>We will post updates on this page with a new date. Last updated: 27 October 2026.</p>
 </Prose>

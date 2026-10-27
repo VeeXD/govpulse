@@ -1,8 +1,17 @@
 ---
 import Prose from '../components/Prose.astro';
 ---
-<Prose bg="overview" title="Cookie policy" desc="GovPulse sets no cookies by default. If Google Analytics is enabled, it only loads after you accept in the consent banner." template>
-<h2>No cookies by default</h2><p>Browsing GovPulse sets no cookies, uses no localStorage identifiers and loads no third-party trackers. That is why there is no cookie banner: under the ePrivacy Directive and GDPR, consent is required for non-essential storage on your device, and we do not do any.</p>
-<h2>Analytics</h2><p>If enabled, we use <a href="https://www.cloudflare.com/web-analytics/">Cloudflare Web Analytics</a>, which works without cookies and without fingerprinting, measuring page views in aggregate only.</p>
-<h2>Google Analytics (only if enabled)</h2><p>The site owner may switch on Google Analytics 4. When they do, a consent banner appears on your first visit, and analytics cookies (<code>_ga</code>, <code>_ga_*</code>, kept up to 2 years) are set only if you click Accept. Before you choose, Google Consent Mode stays at "denied", so no analytics cookies are written. Your choice is stored in your browser's localStorage under <code>gp-consent</code>. To change it, clear site data for govpulse.pages.dev and you'll be asked again. Declining is as easy as accepting.</p><h2>No accounts</h2><p>GovPulse has no sign-in and no paid plans, so it uses no session cookies.</p>
+<Prose bg="overview" title="Cookie policy" desc="GovPulse sets no analytics cookies by default. Google Analytics loads only after you accept in the consent banner. Cloudflare Web Analytics is cookieless." template>
+<h2>No analytics cookies by default</h2>
+<p>Browsing GovPulse does not set Google Analytics cookies unless you click Accept on the consent banner. We do not use advertising cookies, and we do not use session-replay tools that record keystrokes or page playback.</p>
+<h2>Cloudflare Web Analytics</h2>
+<p>If enabled, <a href="https://www.cloudflare.com/web-analytics/">Cloudflare Web Analytics</a> measures page views in aggregate without cookies and without fingerprinting.</p>
+<h2>Google Analytics 4 (optional)</h2>
+<p>When GA4 is configured, a consent banner appears on your first visit. Google Consent Mode v2 defaults to <code>analytics_storage: denied</code> (and ad-related storage denied). Analytics cookies (<code>_ga</code>, <code>_ga_*</code>, kept up to 2 years) are set only if you Accept. Declining is as easy as accepting — equal-weight buttons, no dark patterns. Your choice is stored in <code>localStorage</code> under <code>gp-consent</code>. Clear site data for this domain to be asked again.</p>
+<p>GA4 enhanced measurement (if used) does not record keystrokes. We do not load Hotjar, Microsoft Clarity, FullStory, or similar session-replay products.</p>
+<h2>Fonts</h2>
+<p>Fonts are self-hosted. No requests go to <code>fonts.googleapis.com</code> or <code>fonts.gstatic.com</code>.</p>
+<h2>No accounts</h2>
+<p>GovPulse has no sign-in and no paid plans, so it uses no session or authentication cookies.</p>
+<p>Last updated: 27 October 2026.</p>
 </Prose>
