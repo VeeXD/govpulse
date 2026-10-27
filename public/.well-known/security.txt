@@ -1,4 +1,4 @@
-Contact: mailto:sadam.veekshtih007@gmail.com
+Contact: mailto:sadam.veekshith007@gmail.com
 Expires: 2027-10-18T00:00:00.000Z
 Preferred-Languages: en
 Canonical: https://govpulse.pages.dev/.well-known/security.txt

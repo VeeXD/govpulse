@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import Icon from '../components/Icon.tsx';
-import { SITE, BRAND, CF_BEACON, GSC_VERIFICATION, GA4_ID } from '../config/site'; import SponsorSlot from '../components/SponsorSlot.astro';
+import { SITE, BRAND, CF_BEACON, GSC_VERIFICATION, GA4_ID, CONTACT_EMAIL } from '../config/site'; import SponsorSlot from '../components/SponsorSlot.astro';
 interface Props { title?: string; desc?: string; overlay?: boolean; og?: string; jsonld?: any[]; noindex?: boolean }
 const { overlay = false, title = BRAND, desc = 'Country-first economic analytics by industry for 10 countries. Every KPI shows its World Bank source and date.', og = '/og/default.png', jsonld = [], noindex = false } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -11,12 +11,12 @@ const ogUrl = new URL(og, SITE).href;
 const nav = [['/', 'Home'], ['/india', 'Countries'], ['/dashboards/', 'Dashboards'], ['/reports/', 'Reports'], ['/sponsor', 'Sponsor'], ['/api', 'API'], ['/methodology', 'Methodology']];
 const isCountry = /^\/(india|usa|china|uk|germany|japan|brazil|indonesia|nigeria|uae)/.test(path);
 const ld = [
-  { '@context': 'https://schema.org', '@type': 'Organization', name: BRAND, url: SITE, logo: `${SITE}/icons/icon-512.png`, email: 'sadam.veekshtih007@gmail.com', description: 'Free, open economic analytics by country and industry, sourced from the World Bank.' },
+  { '@context': 'https://schema.org', '@type': 'Organization', name: BRAND, url: SITE, logo: `${SITE}/icons/icon-512.png`, email: CONTACT_EMAIL, description: 'Free, open economic analytics by country and industry, sourced from the World Bank.' },
   { '@context': 'https://schema.org', '@type': 'WebSite', name: BRAND, url: SITE, inLanguage: 'en', isAccessibleForFree: true },
   ...jsonld,
 ];
 const legal = [['/privacy', 'Privacy'], ['/cookies', 'Cookies'], ['/terms', 'Terms'], ['/disclaimer', 'Disclaimer'], ['/credits', 'Data & media licences'], ['/accessibility', 'Accessibility'], ['/contact', 'Contact']];
-import type { Credit } from '../lib/credits'; import { CONTACT_EMAIL } from '../config/site';
+import type { Credit } from '../lib/credits';
 const pageCredits: Credit[] = (Astro.props.credits ?? []).filter(Boolean);
 ---
 <!doctype html><html lang="en" class="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>

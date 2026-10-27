@@ -97,7 +97,7 @@ If you work in policy, economics or data journalism, I'd value your feedback.
 | Bing Webmaster Tools | import from GSC, submit the sitemap (IndexNow is already wired) | Microsoft account |
 
 ---
-## 9. Sponsor emails (send from sadam.veekshtih007@gmail.com)
+## 9. Sponsor emails (send from sadam.veekshith007@gmail.com)
 
 ### a) Rainmatter Foundation
 - **To:** info@rainmatter.org (verified in the rainmatter.org site footer; grants info at https://rainmatter.org)

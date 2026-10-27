@@ -104,14 +104,14 @@ Static JSON generated at build: `/api/v1/index.json`, `/api/v1/countries.json`, 
 | Industry tabs removed; the industry filter is free; other filters show a "Pro" tooltip on hover/focus | PASS |
 | Credits and sources moved to the footer of every page; inline credit captions removed | PASS |
 | Plans: Free (10 countries) and Pro $9.99/mo; Analyst, Enterprise and yearly billing removed | PASS |
-| Contact sadam.veekshtih007@gmail.com (contact, footer, privacy, terms, security.txt) | PASS |
+| Contact sadam.veekshith007@gmail.com (contact, footer, privacy, terms, security.txt) | PASS |
 
 ## v6 update (2026-10-18): free + growth mode
 | Item | Result |
 |---|---|
 | Paid plans removed; /pricing returns 301 to /sponsor (`public/_redirects`); payments and entitlement config deleted | PASS |
 | Basic filters (industry, year range, single metric chart) free for everyone; advanced comparisons marked "coming soon" | PASS |
-| /sponsor: email contact (sadam.veekshtih007@gmail.com), disclosure policy, FAQ JSON-LD; sponsor slots driven by `src/config/sponsors.ts` (empty) | PASS |
+| /sponsor: email contact (sadam.veekshith007@gmail.com), disclosure policy, FAQ JSON-LD; sponsor slots driven by `src/config/sponsors.ts` (empty) | PASS |
 | Terms, privacy, cookies, contact and JSON-LD updated for a free service (WebSite isAccessibleForFree) | PASS |
 | SEO/GEO: data-driven titles and meta, H1 with page intent, factual summary sentences, FAQPage, BreadcrumbList and Dataset JSON-LD, 260 per-indicator pages, internal links | PASS |
 | /llms.txt and /llms-full.txt; robots.txt allows the major search and AI crawlers; sitemap lastmod | PASS |

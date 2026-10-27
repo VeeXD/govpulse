@@ -1,5 +1,5 @@
 ---
-import Prose from '../components/Prose.astro'; import media from '../data/media.json'; import heroes from '../data/heroes.json'; import { COUNTRIES, DATA } from '../lib/data';
+import Prose from '../components/Prose.astro'; import media from '../data/media.json'; import heroes from '../data/heroes.json'; import { COUNTRIES, DATA } from '../lib/data'; import { CONTACT_EMAIL } from '../config/site';
 ---
 <Prose bg="agriculture" title="Data & media licences" kicker="Credits" desc="Licences and attributions for GovPulse data (World Bank CC BY 4.0), fonts, background videos and photos.">
 <h2>Data</h2><p>Indicators: <strong>The World Bank, World Development Indicators</strong>, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. {Object.keys(DATA.indicators).length} indicators, retrieved {DATA.generated} UTC from <a href="https://data.worldbank.org/">data.worldbank.org</a>. GovPulse reformats the data; the World Bank does not endorse GovPulse.</p>
@@ -12,5 +12,5 @@ import Prose from '../components/Prose.astro'; import media from '../data/media.
 {Object.entries(heroes as any).map(([c, h]: any) => <tr><td>{COUNTRIES[c].name}</td><td><a href={h.url}>{h.title}</a></td><td>{h.author}</td><td>{h.licenseUrl ? <a href={h.licenseUrl}>{h.license}</a> : h.license}</td></tr>)}
 </tbody></table>
 <h2>Fonts and software</h2><ul><li>Fira Sans and Fira Code, SIL Open Font License 1.1 (<a href="/fonts/OFL.txt">licence text</a>), self-hosted.</li><li>Icons: <a href="https://lucide.dev">Lucide</a> (ISC). Charts: <a href="https://echarts.apache.org">Apache ECharts</a> (Apache 2.0). Built with Astro, React and Tailwind CSS (MIT).</li></ul>
-<h2>User-generated content</h2><p>GovPulse does not host user uploads or comments. A formal DMCA designated-agent registration is therefore optional; copyright notices for our own media can still be sent to <a href="mailto:sadam.veekshtih007@gmail.com">sadam.veekshtih007@gmail.com</a>.</p>
+<h2>User-generated content</h2><p>GovPulse does not host user uploads or comments. A formal DMCA designated-agent registration is therefore optional; copyright notices for our own media can still be sent to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
 </Prose>

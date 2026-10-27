@@ -94,7 +94,7 @@ Could we have a 15-minute call next week? I'm happy to share traffic numbers onc
 
 Thanks,
 {Owner name}
-GovPulse · sadam.veekshtih007@gmail.com
+GovPulse · sadam.veekshith007@gmail.com
 
 ## 6. Metrics to watch
 Search Console impressions and clicks per page type, top queries, AI-referral traffic (referrers chatgpt.com, perplexity.ai, copilot), API hits, /sponsor visits, and sponsor conversions.
