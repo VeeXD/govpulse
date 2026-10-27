@@ -1,0 +1,22 @@
+---
+import Landing from '../components/Landing.astro';
+import { rankingPage } from '../lib/topicSeo';
+import { valText } from '../lib/seo';
+const p = rankingPage('unemployment-by-country');
+---
+<Landing path={p.path} title={p.def.title(p.yr)} h1={p.def.h1} kicker="Rankings · World Bank data" lead={p.lead} desc={p.lead.slice(0, 290)} faq={p.faq} dots={p.def.dots} extraLd={[p.dataset]}>
+ <section aria-labelledby="t1"><h2 id="t1">{p.m.label}, latest year</h2>
+  <p class="mt-2 text-sm text-muted">{p.summaryExtra}</p>
+  <div class="tw mt-4 edge rounded-2xl p-2"><table><thead><tr><th>#</th><th>Country</th><th>{p.m.label}</th><th>Topic page</th></tr></thead><tbody>
+  {p.rows.map((x, i) => <tr>
+    <td>{i + 1}</td>
+    <td><a class="underline underline-offset-2 hover:text-accent" href={`/${x.id}/`}>{x.name}</a></td>
+    <td><a class="hover:text-accent" href={`/${x.id}/indicator/${p.slug}/`}>{valText(x.v, p.unit)} ({x.y})</a></td>
+    <td><a class="underline underline-offset-2 hover:text-accent" href={`/${x.id}/${p.topicPath}/`}>{x.name} {p.def.h1.replace(' by country', '').toLowerCase()}</a></td>
+  </tr>)}
+  </tbody></table></div>
+ </section>
+ <section aria-labelledby="t2"><h2 id="t2">Explore further</h2>
+  <p class="mt-3 text-sm">Also see <a class="underline" href="/gdp-by-country/">GDP by country</a>, <a class="underline" href="/inflation-by-country/">inflation by country</a>, <a class="underline" href="/gdp-growth-by-country/">GDP growth by country</a>, <a class="underline" href="/unemployment-by-country/">unemployment by country</a>, and the <a class="underline" href="/dashboards/">dashboards builder</a>.</p>
+ </section>
+</Landing>

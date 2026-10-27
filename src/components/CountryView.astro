@@ -21,7 +21,7 @@ const indList = Object.entries(DATA.indicators).map(([code, m]: any) => ({ code,
 const allYears = Object.values(DATA.countries[country] ?? {}).flat() as any[]; const years: [number, number] = [Math.min(...allYears.map(x => x[0])), Math.max(...allYears.map(x => x[0]))];
 import { mediaCredit } from '../lib/credits'; import { pageSeo, faqLd, crumbLd, slug, lc } from '../lib/seo'; import SponsorSlot from './SponsorSlot.astro'; import { countryFaq } from '../lib/countryFaq'; import LatestTrends from './LatestTrends.astro';
 const seo = pageSeo(country, industry);
-const rich = country === 'india' && industry === 'overview' ? countryFaq(country) : null;
+const rich = industry === 'overview' ? countryFaq(country) : null;
 if (rich) { seo.title = rich.title; if (rich.desc) seo.desc = rich.desc; seo.faq = rich.faq; }
 const heroCredit = mediaCredit(`${country}-photo`, 'Hero photo') ?? mediaCredit(country, 'Hero');
 const indMeta = Object.entries(DATA.indicators).map(([code, m]: any) => ({ code, label: m.label, unit: m.unit, industry: m.industry, good: m.good ?? null }));
@@ -55,6 +55,8 @@ const cl = claims(country).filter((x: any) => industry === 'overview' || [x.a.in
   <div class="edge rounded-2xl p-6"><h2 id="sum" class="text-xl font-semibold">{C.name} {ind.id === 'overview' ? 'economy' : ind.name.toLowerCase()} in numbers</h2>
    <nav aria-label="Breadcrumb" class="mt-1 text-xs text-muted"><a href="/" class="underline-offset-2 hover:underline">Home</a> / <a href={`/${country}/`} class="underline-offset-2 hover:underline">{C.name}</a>{industry !== 'overview' && <> / <span>{ind.name}</span></>}</nav>
    <div class="mt-4 grid gap-2 text-text leading-relaxed">{seo.sentences.map(t => <p>{t}</p>)}</div>
+   {industry === 'overview' && <><h3 class="mt-6 text-sm font-semibold">Key topic pages</h3>
+   <ul class="mt-2 flex flex-wrap gap-2 text-sm">{[['gdp-growth','GDP growth'],['inflation-rate','Inflation rate'],['unemployment-rate','Unemployment'],['top-exports','Top exports'],['population','Population'],['health-statistics','Health statistics']].map(([path, label]) => <li><a href={`/${country}/${path}/`} class="inline-block rounded-full border border-accent/40 px-3 py-1 hover:bg-accent/10 text-accent">{C.name} {label}</a></li>)}</ul></>}
    <h3 class="mt-6 text-sm font-semibold">Indicator pages</h3>
    <ul class="mt-2 flex flex-wrap gap-2 text-sm">{ks.map((k: any) => <li><a href={`/${country}/indicator/${slug(k.code)}/`} class="inline-block rounded-full border border-white/15 px-3 py-1 hover:border-accent hover:text-accent">{C.name} {lc(k.label)}</a></li>)}</ul>
    <h3 class="mt-6 text-sm font-semibold">Same view, other countries</h3>

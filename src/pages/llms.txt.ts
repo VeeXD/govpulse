@@ -15,6 +15,11 @@ export function GET() {
 ## Countries
 ${c.map(([id, x]) => `- [${x.name} economy](${SITE}/${id}/): ${INDUSTRIES.slice(1).map(i => `[${i.name.toLowerCase()}](${SITE}/${id}/${i.id}/)`).join(', ')}`).join('\n')}
 
+
+## Rankings & topic pages
+- [GDP by country](${SITE}/gdp-by-country/), [GDP growth by country](${SITE}/gdp-growth-by-country/), [Inflation by country](${SITE}/inflation-by-country/), [Unemployment by country](${SITE}/unemployment-by-country/)
+- Per country: /{id}/gdp-growth/, /{id}/inflation-rate/, /{id}/unemployment-rate/, /{id}/top-exports/, /{id}/population/, /{id}/health-statistics/
+
 ## Citation
 Cite as: "GovPulse (${SITE}), data from World Bank World Development Indicators, CC BY 4.0", with the indicator code and data year.
 `;

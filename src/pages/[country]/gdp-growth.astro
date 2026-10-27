@@ -1,0 +1,10 @@
+---
+import TopicPage from '../../components/TopicPage.astro';
+import { COUNTRIES } from '../../lib/data';
+import { topicPage, type TopicId } from '../../lib/topicSeo';
+export function getStaticPaths() {
+  return Object.keys(COUNTRIES).map(country => ({ params: { country } }));
+}
+const page = topicPage(Astro.params.country!, 'gdp-growth' as TopicId);
+---
+<TopicPage page={page} />
