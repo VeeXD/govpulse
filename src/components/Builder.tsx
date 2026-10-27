@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Plus, X, GitCompare, ArrowUp, ArrowDown, Download, Link2, Trash2, LayoutGrid, Copy } from 'lucide-react';
-import { COUNTRY_NAMES, PALETTE, loadCountry, type Pt } from '../lib/compose';
+import { COUNTRY_NAMES, PALETTE, loadCountry, isCode, isCountry, type Pt } from '../lib/compose';
 import { Canvas } from './Chart';
 type Meta = { code: string; label: string; unit: string; industry: string };
 type Kind = 'line' | 'bar' | 'area';
@@ -10,7 +10,7 @@ type Props = { meta: Meta[]; industries: { id: string; name: string }[]; years: 
 const LS = 'govpulse.dash.v2', MAXP = 12, MAXO = 4, OCOL = ['#FFB224', '#FF6A45', '#E6E6E6', '#A3A3A3', '#6E6E6E'], ODASH = ['solid', 'solid', 'dashed', 'dotted', 'dashed'], KINDS: Kind[] = ['area', 'line', 'bar'];
 let uid = 1;
 const enc = (p: Panel[]) => p.map(x => [x.c, x.code, x.kind === 'area' ? '' : x.kind, x.from ?? '', x.to ?? '', (x.o ?? []).map(o => o.c + '*' + o.code).join('!'), x.norm ? 'n' : ''].join('~').replace(/~+$/, '')).join(',');
-const dec = (s: string | null): Panel[] => (s ?? '').split(',').filter(Boolean).map(x => x.split('~')).filter(x => x.length >= 2 && (!x[0] || COUNTRY_NAMES[x[0]])).map(([c, code, k, f, t, o, n]) => ({ id: uid++, c, code, kind: (KINDS.includes(k as Kind) ? k : 'area') as Kind, from: +f || undefined, to: +t || undefined, o: (o ?? '').split('!').filter(Boolean).map(z => z.split('*')).filter(z => z.length === 2 && (!z[0] || COUNTRY_NAMES[z[0]])).map(([c, code]) => ({ c, code })).slice(0, MAXO), norm: n === 'n' })).slice(0, MAXP);
+const dec = (s: string | null): Panel[] => (s ?? '').split(',').filter(Boolean).map(x => x.split('~')).filter(x => x.length >= 2 && (!x[0] || isCountry(x[0])) && isCode(x[1])).map(([c, code, k, f, t, o, n]) => ({ id: uid++, c, code, kind: (KINDS.includes(k as Kind) ? k : 'area') as Kind, from: +f || undefined, to: +t || undefined, o: (o ?? '').split('!').filter(Boolean).map(z => z.split('*')).filter(z => z.length === 2 && (!z[0] || isCountry(z[0])) && isCode(z[1])).map(([c, code]) => ({ c, code })).slice(0, MAXO), norm: n === 'n' })).slice(0, MAXP);
 const slug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'dashboard';
 const field = 'bg-black/50 border border-white/15 rounded-lg px-2.5 py-1.5 text-sm text-text focus-visible:border-accent';
 const mini = 'bg-black/50 border border-white/15 rounded-md px-1.5 py-1 text-xs text-text focus-visible:border-accent max-w-full';
@@ -29,11 +29,11 @@ export default function Builder(p: Props) {
   const preset = (i: string, m?: string | null): Panel[] => { const list = p.meta.filter(x => x.industry === i).map(x => x.code); const first = m && M[m] ? [m] : []; return [...first, ...list.filter(x => x !== m)].slice(0, 6).map(code => ({ id: uid++, c: '', code, kind: 'area' as Kind })); };
   useEffect(() => { const q = new URLSearchParams(location.search); let ps = dec(q.get('p')); let c0 = q.get('dc') || '', i0 = q.get('industry') || '';
     const qc = q.get('c'), qm = q.get('metric');
-    if (qc && COUNTRY_NAMES[qc]) c0 = qc;
+    if (isCountry(qc)) c0 = qc!;
     if (!ps.length && qc) { i0 = i0 && (i0 === 'overview' || p.industries.some(x => x.id === i0)) ? i0 : (qm && M[qm]?.industry) || 'overview'; ps = preset(i0, qm); }
-    if (q.get('t')) { setTitle(q.get('t')!.slice(0, 80)); autoTitle.current = false; }
+    if (q.get('t')) { setTitle(q.get('t')!.replace(/[\u0000-\u001f\u007f]/g, '').slice(0, 80)); autoTitle.current = false; }
     if (!ps.length) { try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s?.panels) { ps = dec(s.panels); c0 ||= s.dc; i0 ||= s.ind; if (s.title) { setTitle(s.title); autoTitle.current = !!s.auto; } if (s.r) setR(s.r); } } catch {} }
-    c0 = COUNTRY_NAMES[c0] ? c0 : 'india'; i0 = i0 || 'overview'; if (!ps.length) ps = preset(i0);
+    c0 = isCountry(c0) ? c0 : 'india'; i0 = i0 || 'overview'; if (!ps.length) ps = preset(i0);
     const f = +(q.get('from') ?? 0), t = +(q.get('to') ?? 0); if (f && t && f <= t) setR([Math.max(f, p.years[0]), Math.min(t, p.years[1])]);
     setDc(c0); setInd(i0); setPanels(ps.filter(x => M[x.code]).map(x => ({ ...x, o: x.o?.filter(o => M[o.code]) }))); setReady(true); }, []);
   const cOf = (x: Panel) => x.c || dc;

@@ -1,0 +1,8 @@
+title = "GovPulse"
+[allowlist]
+description = "Public-by-design tokens (IndexNow key file, GA4, CF beacon, GSC verification)"
+paths = [
+  '''src/config/site.ts''',
+  '''public/[a-f0-9]{32}\.txt''',
+  '''public/9a4ce3307445d62a8cac1d2dbf1b8b77\.txt''',
+]

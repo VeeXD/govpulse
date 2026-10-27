@@ -1,7 +1,7 @@
 import { DEEP, deepUrl } from '../lib/deep';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SlidersHorizontal, Maximize2, X, ArrowUpRight, ArrowDownRight, Minus, ChevronLeft, ChevronRight, Scale, Link2, Image as ImageIcon, FileDown, Code2, Plus, Layers } from 'lucide-react';
-import { PALETTE, MAX_SERIES, COUNTRY_NAMES, parseCmp, fmtCmp, loadCountry, seed, build, units, csv, download, type Ref } from '../lib/compose';
+import { PALETTE, MAX_SERIES, COUNTRY_NAMES, parseCmp, fmtCmp, loadCountry, seed, build, units, csv, download, isCode, type Ref } from '../lib/compose';
 import { Canvas } from './Chart';
 import { RELATED, COUNTER } from '../lib/related';
 type Pt = [number, number];
@@ -162,9 +162,9 @@ export default function Dashboard(p: Props) {
   // read state from URL once hydrated (server render = clean defaults)
   useEffect(() => { const q = new URLSearchParams(location.search); const i = q.get('industry'), m = q.get('metric'), f = +(q.get('from') ?? 0), t = +(q.get('to') ?? 0), v = q.get('view');
     if (i && (i === 'overview' || p.industries.some(x => x.id === i))) setInd(i);
-    if (m && meta[m]) setMetric(m); else if (i) setMetric(list(i)[0]);
+    if (m && isCode(m) && meta[m]) setMetric(m); else if (i) setMetric(list(i)[0]);
     if (f && t && f <= t) setG([Math.max(f, p.years[0]), Math.min(t, p.years[1])]);
-    if (v && meta[v]) setView(v);
+    if (v && isCode(v) && meta[v]) setView(v);
     setCmp(parseCmp(q.get('cmp')).filter(x => meta[x.code])); setIdx(q.get('idx') === '1');
     const pop = () => { if (depth.current > 0) depth.current--; const v2 = new URLSearchParams(location.search).get('view'); setView(v2 && meta[v2] ? v2 : null); };
     addEventListener('popstate', pop); return () => removeEventListener('popstate', pop); }, []);

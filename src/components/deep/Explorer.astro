@@ -41,6 +41,6 @@ const ld = [{ '@context': 'https://schema.org', '@type': 'Dataset', name: title,
  const pick = (c: string, push = true) => { if (!tabs.some(t => t.dataset.c === c)) c = tabs[0].dataset.c!; tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.c === c))); document.querySelectorAll<HTMLElement>('[data-panel]').forEach(p => (p.hidden = p.dataset.panel !== c));
   if (push) { const u = new URLSearchParams(location.search); u.set('c', c); history.replaceState(null, '', location.pathname + '?' + u + location.hash); } };
  tabs.forEach(t => t.addEventListener('click', () => pick(t.dataset.c!))); if (q.get('c')) pick(q.get('c')!, false);
- const hs = q.get('hs'); if (hs) document.getElementById('hs' + hs)?.scrollIntoView({ block: 'center' });
+ const hs = (q.get('hs') || '').replace(/\D/g, '').slice(0, 4); if (hs) document.getElementById('hs' + hs)?.scrollIntoView({ block: 'center' });
 </script>
 </Base>

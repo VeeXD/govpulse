@@ -4,10 +4,16 @@ export type Ref = { c: string; code: string };
 export const PALETTE = ['#FFB224', '#FF6A45', '#E6E6E6', '#FFD27A', '#FFA58F', '#9A9A9A'];
 export const MAX_SERIES = 6;
 export const COUNTRY_NAMES: Record<string, string> = { india: 'India', usa: 'United States', china: 'China', uk: 'United Kingdom', germany: 'Germany', japan: 'Japan', brazil: 'Brazil', indonesia: 'Indonesia', nigeria: 'Nigeria', uae: 'UAE' };
-export const parseCmp = (s: string | null): Ref[] => (s ?? '').split(',').map(x => x.split('~')).filter(x => x.length === 2 && COUNTRY_NAMES[x[0]]).map(([c, code]) => ({ c, code })).slice(0, MAX_SERIES - 1);
+/** World Bank indicator codes look like NY.GDP.MKTP.KD.ZG — reject anything else from the URL. */
+export const isCode = (c: string | null | undefined) => !!c && /^[A-Z]{1,3}(?:\.[A-Z0-9]{1,12}){1,6}$/.test(c);
+export const isCountry = (c: string | null | undefined): c is string => !!c && !!COUNTRY_NAMES[c];
+export const parseCmp = (s: string | null): Ref[] => (s ?? '').split(',').map(x => x.split('~')).filter(x => x.length === 2 && isCountry(x[0]) && isCode(x[1])).map(([c, code]) => ({ c, code })).slice(0, MAX_SERIES - 1);
 export const fmtCmp = (r: Ref[]) => r.map(x => `${x.c}~${x.code}`).join(',');
 const cache: Record<string, Promise<Record<string, Pt[]>>> = {};
-export const loadCountry = (c: string) => (cache[c] ??= fetch(`/api/v1/${c}.json`).then(r => r.json()).then(j => j.series));
+export const loadCountry = (c: string) => {
+  if (!isCountry(c)) return Promise.reject(new Error('unknown country'));
+  return (cache[c] ??= fetch(`/api/v1/${encodeURIComponent(c)}.json`).then(r => { if (!r.ok) throw new Error('load failed'); return r.json(); }).then(j => j.series));
+};
 export function seed(c: string, d: Record<string, Pt[]>) { cache[c] ??= Promise.resolve(d); }
 export type Built = { name: string; data: Pt[]; unit: string };
 /** Build chart series: filter to range; optional index (first in-range value = 100, needs positive base). */

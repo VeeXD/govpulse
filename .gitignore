@@ -3,3 +3,6 @@ dist
 .astro
 shots
 .wrangler/
+
+*.tmp.mjs
+live.tmp.mjs
