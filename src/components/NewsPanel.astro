@@ -1,0 +1,12 @@
+---
+import { NEWS, CATS, ago } from '../lib/news'; import { COUNTRIES } from '../lib/data';
+const { country } = Astro.props; const items = (NEWS.countries[country] || []).slice(0, 8); const now = Date.parse(NEWS.generated);
+---
+{items.length > 0 && <section class="mx-auto max-w-7xl px-4 md:px-6 pt-10" aria-labelledby={`news-${country}`}>
+ <div class="flex flex-wrap items-end justify-between gap-2 mb-4"><div class="label-pair"><b id={`news-${country}`}>Latest news</b><span>{COUNTRIES[country].name} headlines, updated every 2 hours</span></div><a href={`/news/?c=${country}`} class="text-sm text-accent hover:underline">All {COUNTRIES[country].name} news →</a></div>
+ <ul class="grid gap-3 md:grid-cols-2">{items.map(x => <li class="edge rounded-2xl p-4 flex flex-col gap-1.5">
+  <p class="text-[11px] uppercase tracking-wider"><span class="text-[#FFB224]">{CATS[x.category] || x.category}</span> <span class="text-muted">· {x.source} · <time datetime={x.time}>{ago(x.time, now)}</time></span></p>
+  <a href={x.url} target="_blank" rel="noopener nofollow" class="text-strong leading-snug hover:text-[#FF6A45]">{x.title} <span aria-hidden="true">↗</span><span class="sr-only"> (opens {x.source} in a new tab)</span></a>
+ </li>)}</ul>
+ <p class="mt-3 text-xs text-muted">Headlines link to the original publishers. GovPulse shows only the headline, source and time and does not endorse or edit any story.</p>
+</section>}
