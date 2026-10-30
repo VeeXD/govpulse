@@ -20,7 +20,7 @@ jobs:
         run: |
           git config user.name govpulse-bot && git config user.email bot@users.noreply.github.com
           git add src/data pipeline/data.parquet datasets && git diff --cached --quiet || (git commit -m "data: nightly refresh" && git pull --rebase && git push)
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with: { node-version: 22, cache: npm }
       - run: npm ci && npm run build
       - uses: cloudflare/wrangler-action@da0e0dfe58b7a431659754fdf3f186c529afbe65 # v3.14.1
