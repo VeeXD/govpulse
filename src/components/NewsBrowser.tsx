@@ -24,7 +24,7 @@ export default function NewsBrowser({ countries, cats, initial, generated }: Pro
     <p className="mt-4 text-xs text-muted" aria-live="polite">{list.length} headlines</p>
     <ul className="mt-2 grid gap-3 md:grid-cols-2">{list.slice(0, limit).map(x => <li key={x.id + (x.country || '')} className="edge rounded-2xl p-4 flex flex-col gap-1.5">
       <p className="text-[11px] uppercase tracking-wider"><span className="text-[#FFB224]">{cats[x.category] || x.category}</span> <span className="text-muted">· {x.country ? countries[x.country] + ' · ' : ''}{x.source} · <time dateTime={x.time}>{ago(x.time, now)}</time></span></p>
-      <a href={x.url} target="_blank" rel="noopener nofollow" className="text-strong leading-snug hover:text-[#FF6A45]">{x.title} <span aria-hidden="true">↗</span></a>
+      <a href={x.url} target="_blank" rel="noopener noreferrer nofollow" data-ext="" className="text-strong leading-snug hover:text-[#FF6A45]">{x.title} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in new tab)</span></a>
     </li>)}</ul>
     {list.length > limit && <button type="button" onClick={() => setLimit(limit + 60)} className="mt-6 rounded-full border border-[#FF6A45]/70 px-5 py-2 text-sm hover:bg-white/5">Show more</button>}
     {list.length === 0 && <p className="mt-6 text-muted">No headlines match. Try another country, category or search.</p>}
