@@ -61,10 +61,24 @@ def get(url):
     raise err
 out = {"generated": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ"), "source":"World Bank World Development Indicators (CC BY 4.0)", "indicators":{}, "countries":{v:{} for v in COUNTRIES.values()}}
 rows=[]
+_prev_path=pathlib.Path(__file__).resolve().parent.parent/"src/data/wb.json"
+try: prev=json.loads(_prev_path.read_text())
+except Exception: prev={"indicators":{},"countries":{}}
+def carry(code):
+    # World Bank API hiccup: keep last good data for this indicator instead of dropping it
+    if code not in prev.get("indicators",{}): return False
+    out["indicators"][code]=prev["indicators"][code]
+    for c,ser in prev.get("countries",{}).items():
+        if code in ser and c in out["countries"]:
+            out["countries"][c][code]=ser[code]
+            rows.extend({"country":c,"indicator":code,"year":y,"value":v} for y,v in ser[code])
+    return True
+failed=0
 for code,(label,unit,ind,good) in IND.items():
     url=f"https://api.worldbank.org/v2/country/{';'.join(COUNTRIES)}/indicator/{code}?format=json&date=2000:2025&per_page=2000"
     try: data=get(url)
-    except Exception as e: print("FAIL",code,e); continue
+    except Exception as e:
+        failed+=1; print("FAIL",code,e,"(kept previous data)" if carry(code) else "(no previous data)"); continue
     meta, recs = data[0], (data[1] or [])
     out["indicators"][code]={"label":label,"unit":unit,"industry":ind,"good":good,"wb_updated":meta.get("lastupdated"),"url":f"https://data.worldbank.org/indicator/{code}"}
     for r in recs:
