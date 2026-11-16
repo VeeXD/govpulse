@@ -39,24 +39,45 @@ except Exception as e:
 # ---- UN Comtrade public preview, exports & imports by HS chapter
 HS2 = json.load(open(os.path.join(os.path.dirname(__file__), 'hs2.json')))
 MANUF = lambda h: 28 <= h <= 96 and h != 71
+CT = 'https://comtradeapi.un.org/public/v1/preview/C/A/HS'
+def ct(code, yr, fl):
+    """One Comtrade preview call with retries. The public preview rate-limits bursts (HTTP 429), which used to
+    silently blank the import lists for some countries. Returns {hs: {desc, v}}; empty only if the source has no data."""
+    for i in range(4):
+        try:
+            d = json.loads(get(f'{CT}?reporterCode={code}&period={yr}&partnerCode=0&flowCode={fl}&cmdCode=AG2', 60)).get('data') or []
+            time.sleep(1.5)
+            return {int(r['cmdCode']): {'desc': r['cmdDesc'], 'v': r['primaryValue']} for r in d if r['cmdCode'].isdigit() and r.get('primaryValue')}
+        except Exception:
+            time.sleep(4 * (i + 1))
+    return None  # request failed (not the same as "no data")
+OUTF = os.path.join(os.path.dirname(__file__), '..', 'src', 'data', 'commodity.json')
+try: PREV = json.load(open(OUTF)).get('trade', {})
+except Exception: PREV = {}
+def summarise(d):
+    tot = sum(x['v'] for x in d.values()); top = sorted(d.items(), key=lambda x: -x[1]['v'])[:10]
+    return {'total': tot, 'manufShare': round(100 * sum(x['v'] for h, x in d.items() if MANUF(h)) / tot, 1) if tot else None,
+            'top': [{'hs': f'{h:02d}', 'desc': x['desc'] or HS2.get(f'{h:02d}', f'HS {h:02d}'), 'value': x['v'], 'share': round(100 * x['v'] / tot, 1), 'manuf': MANUF(h)} for h, x in top]}
+YEARS = (2024, 2023, 2022)
 for k, (_, code, iso, lab) in C.items():
-    got = None
-    for yr in (2024, 2023, 2022):
-        flows = {}
-        for fl in ('X', 'M'):
-            try:
-                d = json.loads(get(f'https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode={code}&period={yr}&partnerCode=0&flowCode={fl}&cmdCode=AG2', 60))['data']
-            except Exception: d = []
-            time.sleep(1.2)
-            flows[fl] = {int(r['cmdCode']): {'desc': r['cmdDesc'], 'v': r['primaryValue']} for r in d if r['cmdCode'].isdigit() and r.get('primaryValue')}
-        if flows['X']: got = (yr, flows); break
-    if not got: out['gaps'].append(f'No Comtrade preview data for {lab}'); continue
-    yr, flows = got; t = {}
-    for fl, d in flows.items():
-        tot = sum(x['v'] for x in d.values()); top = sorted(d.items(), key=lambda x: -x[1]['v'])[:10]
-        t[fl] = {'total': tot, 'manufShare': round(100 * sum(x['v'] for h, x in d.items() if MANUF(h)) / tot, 1) if tot else None,
-                 'top': [{'hs': f'{h:02d}', 'desc': x['desc'] or HS2.get(f'{h:02d}', f'HS {h:02d}'), 'value': x['v'], 'share': round(100 * x['v'] / tot, 1), 'manuf': MANUF(h)} for h, x in top]}
-    out['trade'][k] = {'year': yr, **t}
+    yr = X = None
+    for y in YEARS:
+        X = ct(code, y, 'X')
+        if X: yr = y; break
+    if not yr:
+        if PREV.get(k): out['trade'][k] = PREV[k]; out['gaps'].append(f'Comtrade exports fetch failed for {lab}; kept previous data')
+        else: out['gaps'].append(f'No Comtrade preview data for {lab}')
+        continue
+    t = {'year': yr, 'X': summarise(X)}
+    # imports: same year first, then the latest earlier year that has data (labelled via Myear)
+    for y in [y for y in YEARS if y <= yr]:
+        M = ct(code, y, 'M')
+        if M: t['M'] = summarise(M); t['Myear'] = y; break
+    if 'M' not in t:
+        p = PREV.get(k, {})
+        if p.get('M', {}).get('top'): t['M'] = p['M']; t['Myear'] = p.get('Myear', p.get('year')); out['gaps'].append(f'Comtrade imports fetch failed for {lab}; kept previous data')
+        else: t['M'] = {'total': None, 'manufShare': None, 'top': []}; t['Myear'] = None; out['gaps'].append(f'No Comtrade import data for {lab}')
+    out['trade'][k] = t
 out['comtrade'] = {'source': 'UN Comtrade public preview API (HS 2-digit, partner World)', 'url': 'https://comtradeplus.un.org/', 'manufDef': 'HS chapters 28–96 excluding 71 (precious stones and metals)'}
 # ---- World Bank manufacturing value added (current US$), ranked across all economies
 try:
@@ -69,5 +90,5 @@ try:
     out['wb'] = {'source': 'World Bank WDI NV.IND.MANF.CD, CC BY 4.0', 'url': 'https://data.worldbank.org/indicator/NV.IND.MANF.CD'}
 except Exception as e:
     out['gaps'].append(f'World Bank manufacturing fetch failed: {type(e).__name__}')
-if out['crops'] and out['trade']: json.dump(out, open(os.path.join(os.path.dirname(__file__), '..', 'src', 'data', 'commodity.json'), 'w'), separators=(',', ':'))
-print('crops', list(out['crops']), 'trade', {k: v['year'] for k, v in out['trade'].items()}, 'manuf', len(out['manufacturing']), 'gaps', out['gaps'])
+if out['crops'] and out['trade']: json.dump(out, open(OUTF, 'w'), separators=(',', ':'))
+print('crops', list(out['crops']), 'trade', {k: (v['year'], v.get('Myear'), len(v['M']['top'])) for k, v in out['trade'].items()}, 'manuf', len(out['manufacturing']), 'gaps', out['gaps'])
